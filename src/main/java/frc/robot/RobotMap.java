@@ -27,7 +27,7 @@ public class RobotMap {
     // public static int rangefinderModule = 1;
 
     public static final PowerDistributionPanel pdp = new PowerDistributionPanel();
-
+  
     public static void init() {
         
     }
