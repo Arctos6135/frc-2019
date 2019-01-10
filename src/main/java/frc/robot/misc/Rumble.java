@@ -4,17 +4,23 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
 import java.lang.Thread;
 
-public class Rumble implements Runnable{
-	/*
-		* This class (and it's only function) rumbles the controller anyway you like it.
-		* Use cases include notifying the driver of certain values
-		* It sets the rumble to the intensity you want, and then waits a certain time before turning it off
-		* To run this function in another part of the project, and have it done asynchronously: do it like this:
-			ExecutorService executor = Executors.newSingleThreadExecutor(); // only needed once
-			Rumble myRumble = new Rumble(values); // set preset Rumbles that you will be using beforehand with their values ; only needed once
-			executor.execute(myRumble); // whenever you need to rumble the controller, run this, passing in the Rumble object you created before
+public class Rumble implements Runnable {
+	/**
+	 * This class (and it's only function) rumbles the controller anyway you like it.
+	 * Use cases include notifying the driver of certain values
+	 * It sets the rumble to the intensity you want, and then waits a certain time before turning it off
+	 * To run this function in another part of the project, and have it done asynchronously: do it like this
+	 * 
+		 * ExecutorService executor = Executors.newSingleThreadExecutor(); // only needed once
+		 * Rumble myRumble = new Rumble(values); // set preset Rumbles that you will be using beforehand with their values ; only needed once
+		 * executor.execute(myRumble); // whenever you need to rumble the controller, run this, passing in the Rumble object you created before
+		 * 
+	 @param controller The XboxController object that you're rumbling on
+	 @param side A string value that details the side to rumble: "left", "right", or "both"
+	 @param intensity The intensity to rumble at between 0 and 1
+		
+	 */
 
-	*/
 	private static final int sleepTime = 300;
 	private XboxController controller;
 	private String side;
