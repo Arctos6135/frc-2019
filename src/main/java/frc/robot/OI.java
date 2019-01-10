@@ -8,6 +8,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import frc.robot.commands.OperateHank;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -68,4 +70,12 @@ public class OI {
 
     public static final XboxController driverController = new XboxController(0);
     public static final XboxController operatorController = new XboxController(1);
+
+    public OI() {
+        JoystickButton hankOut = new JoystickButton(driverController, ControllerMap.RBUMPER);
+        JoystickButton hankIn = new JoystickButton(driverController, ControllerMap.LBUMPER);
+
+        hankOut.whenActive(new OperateHank(OperateHank.PUSH_OUT));
+        hankIn.whenActive(new OperateHank(OperateHank.RETRACT));
+    }
 }

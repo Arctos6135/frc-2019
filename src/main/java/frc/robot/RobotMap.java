@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
 /**
@@ -27,6 +28,9 @@ public class RobotMap {
     // public static int rangefinderModule = 1;
 
     public static final PowerDistributionPanel pdp = new PowerDistributionPanel();
+
+    public static final DoubleSolenoid hankSolenoidA = new DoubleSolenoid(0, 1);
+    public static final DoubleSolenoid hankSolenoidB = new DoubleSolenoid(2, 3);
   
     public static void init() {
         
