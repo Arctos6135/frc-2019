@@ -4,8 +4,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 
 import java.lang.Thread;
 
-public class Rumble implements Runnable {
-	/**
+/**
 	 * This class (and it's only function) rumbles the controller anyway you like it.
 	 * Use cases include notifying the driver of certain values
 	 * It sets the rumble to the intensity you want, and then waits a certain time before turning it off
@@ -20,6 +19,7 @@ public class Rumble implements Runnable {
 	 @param intensity The intensity to rumble at between 0 and 1
 		
 	 */
+public class Rumble implements Runnable {
 
 	private static final int sleepTime = 300;
 	private XboxController controller;
