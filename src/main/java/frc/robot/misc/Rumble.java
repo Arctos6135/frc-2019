@@ -8,27 +8,28 @@ import java.lang.Thread;
 
 /**
 	 * This class (and it's only function) rumbles the controller anyway you like it.
-	 * Use cases include notifying the driver of certain values
+	 * Use cases include notifying the driver of certain values.
 	 * It sets the rumble to the intensity you want, and then waits a certain time before turning it off
 	 * To run this function in another part of the project, and have it done asynchronously: do it like this
 	 * 
 		 * Rumble myRumble = new Rumble(values); // set preset Rumbles that you will be using beforehand with their values ; only needed once
 		 * myRumble.execute(); // whenever you need to rumble the controller, run this, using the Rumble object you created before
-		 * 
-	 @param controller The XboxController object that you're rumbling on
-	 @param side A string value that details the side to rumble: "left", "right", or "both"
-	 @param intensity The intensity to rumble at between 0 and 1
 	 */
 public class Rumble implements Runnable {
 
 	private static final int sleepTime = 300;
 	private XboxController controller;
 	private String side;
-	private float intensity;
+	private double intensity;
 
 	private static ExecutorService executor = Executors.newSingleThreadExecutor();
 
-	public void Rumble (XboxController controller, String side, float intensity) {
+	/**
+	 @param controller The XboxController object that you're rumbling on
+	 @param side A string value that details the side to rumble: "left", "right", or "both"
+	 @param intensity The intensity to rumble at between 0 and 1
+	 */
+	public Rumble (XboxController controller, String side, double intensity) {
 		this.controller = controller;
 		this.side = side;
 		this.intensity = intensity;
