@@ -1,6 +1,8 @@
 package frc.robot.misc;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import java.lang.Thread;
 
@@ -10,14 +12,12 @@ import java.lang.Thread;
 	 * It sets the rumble to the intensity you want, and then waits a certain time before turning it off
 	 * To run this function in another part of the project, and have it done asynchronously: do it like this
 	 * 
-		 * ExecutorService executor = Executors.newSingleThreadExecutor(); // only needed once
 		 * Rumble myRumble = new Rumble(values); // set preset Rumbles that you will be using beforehand with their values ; only needed once
-		 * executor.execute(myRumble); // whenever you need to rumble the controller, run this, passing in the Rumble object you created before
+		 * myRumble.execute(); // whenever you need to rumble the controller, run this, using the Rumble object you created before
 		 * 
 	 @param controller The XboxController object that you're rumbling on
 	 @param side A string value that details the side to rumble: "left", "right", or "both"
 	 @param intensity The intensity to rumble at between 0 and 1
-		
 	 */
 public class Rumble implements Runnable {
 
@@ -25,6 +25,8 @@ public class Rumble implements Runnable {
 	private XboxController controller;
 	private String side;
 	private float intensity;
+
+	private static ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	public void Rumble (XboxController controller, String side, float intensity) {
 		this.controller = controller;
@@ -54,5 +56,9 @@ public class Rumble implements Runnable {
 		} catch (InterruptedException e) {
 			System.out.println("Rumble's sleep method returned an InterruptedException. Hope that never happens.");
 		}
+	}
+
+	public void execute() {
+		executor.execute(this);
 	}
 }
