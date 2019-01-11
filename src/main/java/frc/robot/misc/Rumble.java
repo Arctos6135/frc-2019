@@ -21,8 +21,8 @@ public class Rumble implements Runnable {
 	private XboxController controller;
 	private String side;
 	private double intensity;
-
-	private static ExecutorService executor = Executors.newSingleThreadExecutor();
+	
+	private static ExecutorService executor = Executors.newCachedThreadPool();
 
 	/**
 	 @param controller The XboxController object that you're rumbling on
