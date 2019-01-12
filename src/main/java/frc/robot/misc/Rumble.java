@@ -38,24 +38,26 @@ public class Rumble implements Runnable {
 
 	@Override
 	public void run() {
-		try { // run() can't throw errors and Thread.sleep() can throw InterruptedException
-			if (side == "right")  {
-				controller.setRumble(RumbleType.kRightRumble, intensity);
-				Thread.sleep(sleepTime);
-				controller.setRumble(RumbleType.kRightRumble, 0.0);
-			} else if (side == "left") {
-				controller.setRumble(RumbleType.kLeftRumble, intensity);
-				Thread.sleep(sleepTime);
-				controller.setRumble(RumbleType.kLeftRumble, 0.0);
-			} else if (side == "both") {
-				controller.setRumble(RumbleType.kRightRumble, intensity);
-				controller.setRumble(RumbleType.kLeftRumble, intensity);
-				Thread.sleep(sleepTime);
-				controller.setRumble(RumbleType.kRightRumble, 0.0);
-				controller.setRumble(RumbleType.kLeftRumble, 0.0);
+		synchronized(this.controller) {
+			try { // run() can't throw errors and Thread.sleep() can throw InterruptedException
+				if (side == "right")  {
+					controller.setRumble(RumbleType.kRightRumble, intensity);
+					Thread.sleep(sleepTime);
+					controller.setRumble(RumbleType.kRightRumble, 0.0);
+				} else if (side == "left") {
+					controller.setRumble(RumbleType.kLeftRumble, intensity);
+					Thread.sleep(sleepTime);
+					controller.setRumble(RumbleType.kLeftRumble, 0.0);
+				} else if (side == "both") {
+					controller.setRumble(RumbleType.kRightRumble, intensity);
+					controller.setRumble(RumbleType.kLeftRumble, intensity);
+					Thread.sleep(sleepTime);
+					controller.setRumble(RumbleType.kRightRumble, 0.0);
+					controller.setRumble(RumbleType.kLeftRumble, 0.0);
+				}
+			} catch (InterruptedException e) {
+				System.out.println("Rumble's sleep method returned an InterruptedException. Hope that never happens.");
 			}
-		} catch (InterruptedException e) {
-			System.out.println("Rumble's sleep method returned an InterruptedException. Hope that never happens.");
 		}
 	}
 
