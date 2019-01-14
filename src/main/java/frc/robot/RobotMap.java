@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
@@ -35,8 +36,25 @@ public class RobotMap {
     public static final TalonSRX lTalon1 = new TalonSRX(0);
     public static final TalonSRX lTalon2 = new TalonSRX(1);
     public static final VictorSPX lVictor = new VictorSPX(2);
+    public static final TalonSRX rTalon1 = new TalonSRX(3);
+    public static final TalonSRX rTalon2 = new TalonSRX(4);
+    public static final VictorSPX rVictor = new VictorSPX(5);
   
     public static void init() {
-        
+        // Invert victors due to gearbox config
+        lVictor.setInverted(true);
+        rVictor.setInverted(true);
+        // Set the motors to follow
+        lTalon1.follow(lVictor);
+        lTalon2.follow(lVictor);
+        rTalon1.follow(rVictor);
+        rTalon2.follow(rVictor);
+        // Set all motors into coast mode
+        lVictor.setNeutralMode(NeutralMode.Coast);
+        rVictor.setNeutralMode(NeutralMode.Coast);
+        lTalon1.setNeutralMode(NeutralMode.Coast);
+        lTalon2.setNeutralMode(NeutralMode.Coast);
+        rTalon1.setNeutralMode(NeutralMode.Coast);
+        rTalon2.setNeutralMode(NeutralMode.Coast); 
     }
 }
