@@ -7,6 +7,9 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
 /**
@@ -27,6 +30,11 @@ public class RobotMap {
     // public static int rangefinderModule = 1;
 
     public static final PowerDistributionPanel pdp = new PowerDistributionPanel();
+
+    // Drive motors
+    public static final TalonSRX lTalon1 = new TalonSRX(0);
+    public static final TalonSRX lTalon2 = new TalonSRX(1);
+    public static final VictorSPX lVictor = new VictorSPX(2);
   
     public static void init() {
         
