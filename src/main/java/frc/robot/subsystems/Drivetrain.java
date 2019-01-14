@@ -30,8 +30,20 @@ public class Drivetrain extends Subsystem {
     public double getSpeedMultiplier() {
         return speedMultiplier;
     }
+    
+    double prevLeft = 0;
+    double prevRight = 0;
+
+    public double getPrevLeft() {
+        return prevLeft;
+    }
+    public double getPrevRight() {
+        return prevRight;
+    }
 
     public void setMotors(double left, double right) {
+        prevLeft = left;
+        prevRight = right;
         RobotMap.lVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, left * speedMultiplier)));
         // Invert right side
         RobotMap.rVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, -right * speedMultiplier)));
