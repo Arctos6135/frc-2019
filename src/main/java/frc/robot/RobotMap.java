@@ -33,12 +33,12 @@ public class RobotMap {
     public static final PowerDistributionPanel pdp = new PowerDistributionPanel();
 
     // Drive motors
-    public static final TalonSRX lTalon1 = new TalonSRX(0);
-    public static final TalonSRX lTalon2 = new TalonSRX(1);
-    public static final VictorSPX lVictor = new VictorSPX(2);
-    public static final TalonSRX rTalon1 = new TalonSRX(3);
-    public static final TalonSRX rTalon2 = new TalonSRX(4);
-    public static final VictorSPX rVictor = new VictorSPX(5);
+    public static final VictorSPX lVictor = new VictorSPX(0);
+    public static final TalonSRX lTalon1 = new TalonSRX(1);
+    public static final TalonSRX lTalon2 = new TalonSRX(2);
+    public static final VictorSPX rVictor = new VictorSPX(3);
+    public static final TalonSRX rTalon1 = new TalonSRX(4);
+    public static final TalonSRX rTalon2 = new TalonSRX(5);
   
     public static void init() {
         // Invert victors due to gearbox config
