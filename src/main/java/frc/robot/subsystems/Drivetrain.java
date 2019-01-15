@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
+import frc.robot.commands.TeleopDrive;
 
 public class Drivetrain extends Subsystem {
     // Put methods for controlling this subsystem
@@ -20,6 +21,7 @@ public class Drivetrain extends Subsystem {
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
         // setDefaultCommand(new MySpecialCommand());
+        setDefaultCommand(new TeleopDrive());
     }
 
     private double speedMultiplier = 1.0;
