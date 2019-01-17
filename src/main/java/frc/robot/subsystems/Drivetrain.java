@@ -81,6 +81,14 @@ public class Drivetrain extends Subsystem {
     }
 
     public Drivetrain() {
+        super();
+
+        setMotors(0, 0);
+        setGear(Gear.LOW);
+    }
+    public Drivetrain(String name) {
+        super(name);
+
         setMotors(0, 0);
         setGear(Gear.LOW);
     }
