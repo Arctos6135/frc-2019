@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.SerialPort;
  * </p>
  * For more information, refer to the README in its repository on <a href="https://github.com/Arctos6135/BeautifulRobot#beautifulrobot">GitHub</a>.
  */
-public class BeautifulRobot {
+public class BeautifulRobotDriver {
     
     protected final SerialPort serial;
     //A single-threaded ExecutorService is used for concurrent writes
@@ -31,7 +31,7 @@ public class BeautifulRobot {
      * For information about what all the operations do, as well as their valid range of parameters, refer to
      * <a href="https://github.com/Arctos6135/BeautifulRobot#valid-operations-and-parameters">this table</a>.
      */
-    enum Operation {
+    public enum Operation {
 
         ENABLE(0x01), BRIGHTNESS(0x02), MODE(0x03), COLOR(0x04), DIRECTION(0x05), LED_COUNT(0x06),
         SPEED_HIGH(0x07), SPEED_LOW(0x08), RESET(0x09);
@@ -52,7 +52,7 @@ public class BeautifulRobot {
      * Creates a new {@code BeautifulRobot} object representing a BeautifulRobot&#8482; connected to a serial port.
      * @param port The serial port it's connected to
      */
-    public BeautifulRobot(SerialPort.Port port) {
+    public BeautifulRobotDriver(SerialPort.Port port) {
         writeExecutor = Executors.newSingleThreadExecutor();
         //Should default to 8 data bits, one stop bit, and no parity bit
         serial = new SerialPort(9600, port);

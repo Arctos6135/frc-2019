@@ -13,6 +13,8 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.SerialPort.Port;
+import frc.robot.misc.BeautifulRobotDriver;
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
@@ -43,6 +45,8 @@ public class RobotMap {
 
     public static final DoubleSolenoid lShift = new DoubleSolenoid(0, 1);
     public static final DoubleSolenoid rShift = new DoubleSolenoid(2, 3);
+
+    public static final BeautifulRobotDriver beautifulRobotDriver = new BeautifulRobotDriver(Port.kOnboard);
   
     public static void init() {
         // Invert victors due to gearbox config
