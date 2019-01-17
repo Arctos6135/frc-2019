@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
 /**
@@ -39,6 +40,9 @@ public class RobotMap {
     public static final VictorSPX rVictor = new VictorSPX(3);
     public static final TalonSRX rTalon1 = new TalonSRX(4);
     public static final TalonSRX rTalon2 = new TalonSRX(5);
+
+    public static final DoubleSolenoid lShift = new DoubleSolenoid(0, 1);
+    public static final DoubleSolenoid rShift = new DoubleSolenoid(2, 3);
   
     public static void init() {
         // Invert victors due to gearbox config

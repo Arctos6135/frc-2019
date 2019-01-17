@@ -65,10 +65,15 @@ public class OI {
         public static final int BUTTON_LSTICK = 9;
         public static final int BUTTON_RSTICK = 10;
     }
-
+    /**
+     * A static final class to group all the controls. From here, one can easily change the mappings of any control.
+     */
     public static final class Controls {
         public static final int DRIVE_FWD_REV = ControllerMap.LSTICK_Y_AXIS;
         public static final int DRIVE_LEFT_RIGHT = ControllerMap.RSTICK_X_AXIS;
+
+        public static final int GEARSHIFT_LOW = ControllerMap.LBUMPER;
+        public static final int GEARSHIFT_HIGH = ControllerMap.RBUMPER;
     }
 
     public static final XboxController driverController = new XboxController(0);

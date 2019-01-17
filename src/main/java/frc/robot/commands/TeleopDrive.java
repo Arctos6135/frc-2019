@@ -10,6 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
 import frc.robot.Robot;
+import frc.robot.subsystems.Drivetrain;
 
 public class TeleopDrive extends Command {
 
@@ -45,6 +46,7 @@ public class TeleopDrive extends Command {
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
+        // Handle regular driving
         double x = OI.driverController.getRawAxis(OI.Controls.DRIVE_LEFT_RIGHT);
         double y = OI.driverController.getRawAxis(OI.Controls.DRIVE_FWD_REV);
 
@@ -61,6 +63,24 @@ public class TeleopDrive extends Command {
         }
 
         Robot.drivetrain.setMotors(l, r);
+
+        // Handle gear shifts
+        boolean shiftLow = OI.driverController.getRawButton(OI.Controls.GEARSHIFT_LOW);
+        boolean shiftHigh = OI.driverController.getRawButton(OI.Controls.GEARSHIFT_HIGH);
+        // Both high and low are pressed
+        // Maybe someone is mashing the controller.
+        // Or maybe the driver is just really stupid.
+        // Whatever it is, it doesn't concern us.
+        if(shiftLow && shiftHigh) {
+            return;
+        }
+        // Only one should be down at a time
+        else if(shiftLow) {
+            Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
+        }
+        else if(shiftHigh) {
+            Robot.drivetrain.setGear(Drivetrain.Gear.HIGH);
+        }
     }
 
     // Make this return true when this Command no longer needs to run execute()
