@@ -7,6 +7,11 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
 /**
@@ -27,8 +32,33 @@ public class RobotMap {
     // public static int rangefinderModule = 1;
 
     public static final PowerDistributionPanel pdp = new PowerDistributionPanel();
+
+    // Drive motors
+    public static final VictorSPX lVictor = new VictorSPX(0);
+    public static final TalonSRX lTalon1 = new TalonSRX(1);
+    public static final TalonSRX lTalon2 = new TalonSRX(2);
+    public static final VictorSPX rVictor = new VictorSPX(3);
+    public static final TalonSRX rTalon1 = new TalonSRX(4);
+    public static final TalonSRX rTalon2 = new TalonSRX(5);
+
+    public static final DoubleSolenoid lShift = new DoubleSolenoid(0, 1);
+    public static final DoubleSolenoid rShift = new DoubleSolenoid(2, 3);
   
     public static void init() {
-        
+        // Invert victors due to gearbox config
+        lVictor.setInverted(true);
+        rVictor.setInverted(true);
+        // Set the motors to follow
+        lTalon1.follow(lVictor);
+        lTalon2.follow(lVictor);
+        rTalon1.follow(rVictor);
+        rTalon2.follow(rVictor);
+        // Set all motors into coast mode
+        lVictor.setNeutralMode(NeutralMode.Coast);
+        rVictor.setNeutralMode(NeutralMode.Coast);
+        lTalon1.setNeutralMode(NeutralMode.Coast);
+        lTalon2.setNeutralMode(NeutralMode.Coast);
+        rTalon1.setNeutralMode(NeutralMode.Coast);
+        rTalon2.setNeutralMode(NeutralMode.Coast); 
     }
 }

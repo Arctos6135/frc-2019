@@ -46,7 +46,7 @@ public class OI {
      * A mapping of the XBox controller. Use this static class instead of 
      * magic numbers or individual constants to keep everything clear.
      */
-    public static class ControllerMap {
+    public static final class ControllerMap {
         public static final int LSTICK_X_AXIS = 0;
         public static final int LSTICK_Y_AXIS = 1;
         public static final int RSTICK_X_AXIS = 4;
@@ -64,6 +64,16 @@ public class OI {
         public static final int BUTTON_START = 8;
         public static final int BUTTON_LSTICK = 9;
         public static final int BUTTON_RSTICK = 10;
+    }
+    /**
+     * A static final class to group all the controls. From here, one can easily change the mappings of any control.
+     */
+    public static final class Controls {
+        public static final int DRIVE_FWD_REV = ControllerMap.LSTICK_Y_AXIS;
+        public static final int DRIVE_LEFT_RIGHT = ControllerMap.RSTICK_X_AXIS;
+
+        public static final int GEARSHIFT_LOW = ControllerMap.LBUMPER;
+        public static final int GEARSHIFT_HIGH = ControllerMap.RBUMPER;
     }
 
     public static final XboxController driverController = new XboxController(0);
