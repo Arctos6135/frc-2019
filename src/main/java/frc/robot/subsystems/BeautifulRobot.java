@@ -134,4 +134,13 @@ public class BeautifulRobot extends Subsystem {
         super();
         init();
     }
+    /**
+     * Constructs a new BeautifulRobot&#8482;. This also calls {@link #init()}.
+     * 
+     * @param name The name of the subsystem
+     */
+    public BeautifulRobot(String name) {
+        super(name);
+        init();
+    }
 }
