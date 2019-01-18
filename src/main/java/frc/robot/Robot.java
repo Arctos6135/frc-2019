@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.subsystems.Hank;
+import frc.robot.subsystems.Drivetrain;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -22,6 +23,7 @@ import frc.robot.subsystems.Hank;
  */
 public class Robot extends TimedRobot {
     public static Hank hank;
+    public static Drivetrain drivetrain;
     public static OI oi;
 
     Command autoCommand;
@@ -35,6 +37,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         RobotMap.init();
         hank = new Hank();
+        drivetrain = new Drivetrain();
         oi = new OI();
 
         // chooser.setDefaultOption("Default Auto", new ExampleCommand());
