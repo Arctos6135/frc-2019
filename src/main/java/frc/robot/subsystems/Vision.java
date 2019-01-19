@@ -17,6 +17,19 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  * Vision subsystem. Connects directly to the Jetson using NetworkTables.
  */
 public class Vision extends Subsystem {
+
+    /**
+     * Indicates that something has gone wrong with vision, typically the communications to the Jetson.
+     */
+    public class VisionException extends Exception {
+        public VisionException() {
+            super();
+        }
+        public VisionException(String msg) {
+            super(msg);
+        }
+    }
+
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
 
@@ -86,5 +99,56 @@ public class Vision extends Subsystem {
                 objectToNotify.notifyAll();
             }
         }, TableEntryListener.kNew | TableEntryListener.kUpdate);
+    }
+
+    /**
+     * Sets whether vision processing is enabled.
+     * 
+     * @param enabled Whether vision is enabled
+     * @throws VisionException If vision is not ready
+     */
+    public void setVisionEnabled(boolean enabled) throws VisionException {
+        setVisionEnabled(enabled, false);
+    }
+    /**
+     * Sets whether vision processing is enabled.
+     * 
+     * @param enabled Whether vision is enabled
+     * @param check 
+     * @throws VisionException
+     */
+    public void setVisionEnabled(boolean enabled, boolean check) throws VisionException {
+        if(!ready()) {
+            // Oh no! It's busted
+            throw new VisionException("Vision is offline!");
+        }
+        
+        if(enabled) {
+            // Set up the listener only if enable
+            visionEnableSuccess.addListener(notification -> {
+                this.notifyAll();
+            }, TableEntryListener.kNew | TableEntryListener.kUpdate);
+        }
+
+        visionEnabled.setBoolean(enabled);
+
+        // Wait for value update
+        // Only do this if enable and check
+        if(enabled && check) {
+            try {
+                wait();
+            }
+            catch(InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            if(visionEnableSuccess.getBoolean(false)) {
+                throw new VisionException("Vision enable failed!");
+            }
+        }
+    }
+
+    public boolean getVisionEnabled() {
+        return visionEnabled.getBoolean(false);
     }
 }
