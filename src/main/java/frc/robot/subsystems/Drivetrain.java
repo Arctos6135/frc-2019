@@ -73,12 +73,10 @@ public class Drivetrain extends Subsystem {
      */
     public void setGear(Gear gear) {
         if(gear == Gear.HIGH) {
-            RobotMap.lShift.set(DoubleSolenoid.Value.kForward);
-            RobotMap.rShift.set(DoubleSolenoid.Value.kForward);
+            RobotMap.gearShifter.set(DoubleSolenoid.Value.kForward);
         }
         else {
-            RobotMap.lShift.set(DoubleSolenoid.Value.kReverse);
-            RobotMap.rShift.set(DoubleSolenoid.Value.kReverse);
+            RobotMap.gearShifter.set(DoubleSolenoid.Value.kReverse);
         }
     }
 
