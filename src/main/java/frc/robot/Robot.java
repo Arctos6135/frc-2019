@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Vision;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -22,6 +23,7 @@ import frc.robot.subsystems.Drivetrain;
  */
 public class Robot extends TimedRobot {
     public static Drivetrain drivetrain;
+    public static Vision vision;
     public static OI oi;
 
     Command autoCommand;
@@ -35,11 +37,31 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         RobotMap.init();
         drivetrain = new Drivetrain();
+        vision = new Vision();
         oi = new OI();
 
         // chooser.setDefaultOption("Default Auto", new ExampleCommand());
         // chooser.addOption("My Auto", new MyAutoCommand());
         // SmartDashboard.putData("Auto mode", m_chooser);
+        
+        // Wait for vision to be ready if it's not already
+        System.out.println("Waiting for vision to init...");
+        if(!vision.ready()) {
+            vision.notifyWhenReady(this);
+            try {
+                wait();
+            }
+            catch(InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        if(vision.ready()) {
+            System.out.println("Success!");
+        }
+        else {
+            System.out.println("Vision not enabled!");
+        }
     }
 
     /**
