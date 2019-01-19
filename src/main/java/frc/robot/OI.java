@@ -76,16 +76,15 @@ public class OI {
 
         public static final int GEARSHIFT_LOW = ControllerMap.LBUMPER;
         public static final int GEARSHIFT_HIGH = ControllerMap.RBUMPER;
+
+        public static final int OPERATE_HANK = ControllerMap.BUTTON_A;
     }
 
     public static final XboxController driverController = new XboxController(0);
     public static final XboxController operatorController = new XboxController(1);
 
+    @SuppressWarnings("resource")
     public OI() {
-        JoystickButton hankOut = new JoystickButton(driverController, ControllerMap.RBUMPER);
-        JoystickButton hankIn = new JoystickButton(driverController, ControllerMap.LBUMPER);
-
-        hankOut.whenActive(new OperateHank(OperateHank.PUSH_OUT));
-        hankIn.whenActive(new OperateHank(OperateHank.RETRACT));
+        new JoystickButton(operatorController, Controls.OPERATE_HANK).whenPressed(new OperateHank());
     }
 }

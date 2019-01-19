@@ -11,35 +11,24 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.Robot;
 
 /**
- * Add your docs here.
+ * Operates Hank.
  */
 public class OperateHank extends InstantCommand {
 
-    public static final int PUSH_OUT = 1;
-    public static final int RETRACT = 2;
-
-    private int direction;
-
     /**
-     * Add your docs here.
+     * Toggles Hank.
      */
-    public OperateHank(int direction) {
+    public OperateHank() {
         super();
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
         requires(Robot.hank);
-        this.direction = direction;
     }
 
     // Called once when the command executes
     @Override
     protected void initialize() {
-        if(direction == PUSH_OUT) {
-            Robot.hank.pushOut();
-        }
-        else {
-            Robot.hank.retract();
-        }
+        Robot.hank.toggle();
     }
 
 }

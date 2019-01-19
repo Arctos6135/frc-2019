@@ -23,13 +23,30 @@ public class Hank extends Subsystem {
         retract();
     }
 
+    private boolean isOut;
+
     public void pushOut() {
         RobotMap.hankSolenoidA.set(DoubleSolenoid.Value.kForward);
         RobotMap.hankSolenoidB.set(DoubleSolenoid.Value.kForward);
+        isOut = true;
     }
     public void retract() {
         RobotMap.hankSolenoidA.set(DoubleSolenoid.Value.kReverse);
         RobotMap.hankSolenoidB.set(DoubleSolenoid.Value.kReverse);
+        isOut = false;
+    }
+
+    public boolean isPushedOut() {
+        return isOut;
+    }
+
+    public void toggle() {
+        if(isOut) {
+            retract();
+        }
+        else {
+            pushOut();
+        }
     }
 
     @Override
