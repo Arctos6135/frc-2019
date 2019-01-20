@@ -9,11 +9,11 @@ package frc.robot.subsystems;
 
 import java.util.function.Consumer;
 
+import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.EntryNotification;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.TableEntryListener;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
@@ -109,6 +109,7 @@ public class Vision extends Subsystem {
             }
         }
     }
+
     /**
      * Calls {@link java.lang.Object#notifyAll()} when the Jetson's vision processing is ready.
      * For example:
@@ -122,7 +123,7 @@ public class Vision extends Subsystem {
     public void notifyWhenReady(Object objectToNotify) {
         NotifyWhenReadyCallback callback = new NotifyWhenReadyCallback(objectToNotify, visionOnline);
         // Get the handle
-        int handle = visionOnline.addListener(callback, TableEntryListener.kNew | TableEntryListener.kUpdate);
+        int handle = visionOnline.addListener(callback, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         // Give it back to the callback to remove later
         callback.setHandle(handle);
     }
@@ -136,6 +137,7 @@ public class Vision extends Subsystem {
     public void setVisionEnabled(boolean enabled) throws VisionException {
         setVisionEnabled(enabled, false, 0);
     }
+
     /**
      * Sets whether vision processing is enabled.
      * 
@@ -155,7 +157,7 @@ public class Vision extends Subsystem {
             // Set up the listener only if enable
             handle = visionEnableSuccess.addListener(notification -> {
                 this.notifyAll();
-            }, TableEntryListener.kNew | TableEntryListener.kUpdate);
+            }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         }
 
         visionEnabled.setBoolean(enabled);
@@ -177,7 +179,46 @@ public class Vision extends Subsystem {
         }
     }
 
+    /**
+     * Returns whether or not vision is enabled.
+     * @return Whether vision is enabled.
+     */
     public boolean getVisionEnabled() {
         return visionEnabled.getBoolean(false);
+    }
+
+    /**
+     * Returns the result of the vision tracking.
+     * <b>TODO: Add docs about how the sign indicates the direction.</b>
+     * 
+     * @return The horizontal angle, in degrees, of the tracked object. A value of NaN indcates that the object is not found.
+     * @throws VisionException If vision is not ready
+     */
+    public double getVisionResult() throws VisionException {
+        if(!ready()) {
+            throw new VisionException("Vision is offline!");
+        }
+
+        return visionResult.getDouble(Double.NaN);
+    }
+
+    /**
+     * Adds a callback function to be called whenever there's a new vision tracking result.
+     * @param callback The callback
+     * @return The handle to the callback, used for removal
+     */
+    public int addResultCallback(Consumer<Double> callback) {
+        return visionResult.addListener(notification -> {
+            // Add the listener and return the handle
+            callback.accept(notification.getEntry().getDouble(Double.NaN));
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+    }
+
+    /**
+     * Removes a callback function for the vision tracking result.
+     * @param handle The handle to the callback
+     */
+    public void removeResultCallback(int handle) {
+        visionResult.removeListener(handle);
     }
 }
