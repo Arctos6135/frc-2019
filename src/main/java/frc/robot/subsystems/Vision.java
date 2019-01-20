@@ -7,6 +7,9 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.Consumer;
+
+import edu.wpi.first.networktables.EntryNotification;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -21,6 +24,7 @@ public class Vision extends Subsystem {
     /**
      * Indicates that something has gone wrong with vision, typically the communications to the Jetson.
      */
+    @SuppressWarnings("serial")
     public class VisionException extends Exception {
         public VisionException() {
             super();
@@ -83,6 +87,28 @@ public class Vision extends Subsystem {
         return visionOnline.getBoolean(false);
     }
 
+    // This class was created so that notifyWhenReady can remove its callback after it's done.
+    static class NotifyWhenReadyCallback implements Consumer<EntryNotification> {
+        Object objectToNotify;
+        NetworkTableEntry entry;
+        int handle = 0;
+
+        public NotifyWhenReadyCallback(Object objectToNotify, NetworkTableEntry entry) {
+            this.objectToNotify = objectToNotify;
+            this.entry = entry;
+        }
+        
+        public void setHandle(int handle) {
+            this.handle = handle;
+        }
+
+        public void accept(EntryNotification notif) {
+            objectToNotify.notifyAll();
+            if(handle != 0) {
+                entry.removeListener(handle);
+            }
+        }
+    }
     /**
      * Calls {@link java.lang.Object#notifyAll()} when the Jetson's vision processing is ready.
      * For example:
@@ -94,11 +120,11 @@ public class Vision extends Subsystem {
      * @param objectToNotify The object to call {@link java.lang.Object#notifyAll()} on.
      */
     public void notifyWhenReady(Object objectToNotify) {
-        visionOnline.addListener(notification -> {
-            if(notification.getEntry().getBoolean(false)) {
-                objectToNotify.notifyAll();
-            }
-        }, TableEntryListener.kNew | TableEntryListener.kUpdate);
+        NotifyWhenReadyCallback callback = new NotifyWhenReadyCallback(objectToNotify, visionOnline);
+        // Get the handle
+        int handle = visionOnline.addListener(callback, TableEntryListener.kNew | TableEntryListener.kUpdate);
+        // Give it back to the callback to remove later
+        callback.setHandle(handle);
     }
 
     /**
@@ -108,24 +134,26 @@ public class Vision extends Subsystem {
      * @throws VisionException If vision is not ready
      */
     public void setVisionEnabled(boolean enabled) throws VisionException {
-        setVisionEnabled(enabled, false);
+        setVisionEnabled(enabled, false, 0);
     }
     /**
      * Sets whether vision processing is enabled.
      * 
      * @param enabled Whether vision is enabled
-     * @param check 
-     * @throws VisionException
+     * @param check Whether or not to check if the attempt was successful
+     * @throws VisionException If vision is not ready, or enable not successful, or timeout
      */
-    public void setVisionEnabled(boolean enabled, boolean check) throws VisionException {
+    public void setVisionEnabled(boolean enabled, boolean check, int timeout) throws VisionException {
         if(!ready()) {
             // Oh no! It's busted
             throw new VisionException("Vision is offline!");
         }
         
-        if(enabled) {
+        // Keep a handle to the listener to remove it later
+        int handle = 0;
+        if(enabled && check) {
             // Set up the listener only if enable
-            visionEnableSuccess.addListener(notification -> {
+            handle = visionEnableSuccess.addListener(notification -> {
                 this.notifyAll();
             }, TableEntryListener.kNew | TableEntryListener.kUpdate);
         }
@@ -136,12 +164,13 @@ public class Vision extends Subsystem {
         // Only do this if enable and check
         if(enabled && check) {
             try {
-                wait();
+                wait(timeout);
             }
             catch(InterruptedException e) {
                 e.printStackTrace();
             }
-
+            
+            visionEnableSuccess.removeListener(handle);
             if(visionEnableSuccess.getBoolean(false)) {
                 throw new VisionException("Vision enable failed!");
             }
