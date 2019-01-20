@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
 
@@ -45,23 +46,19 @@ public class Robot extends TimedRobot {
         // SmartDashboard.putData("Auto mode", m_chooser);
         
         // Wait for vision to be ready if it's not already
-        System.out.println("Waiting for vision to init...");
+        SmartDashboard.putBoolean("Vision Status", false);
         if(!vision.ready()) {
             vision.notifyWhenReady(this);
             try {
-                wait();
+                synchronized(this) {
+                    wait();
+                }
             }
             catch(InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        
-        if(vision.ready()) {
-            System.out.println("Success!");
-        }
-        else {
-            System.out.println("Vision not enabled!");
-        }
+        SmartDashboard.putBoolean("Vision Status", vision.ready());
     }
 
     /**
