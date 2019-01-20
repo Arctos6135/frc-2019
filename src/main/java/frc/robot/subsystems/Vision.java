@@ -221,4 +221,15 @@ public class Vision extends Subsystem {
     public void removeResultCallback(int handle) {
         visionResult.removeListener(handle);
     }
+
+    /**
+     * Sends a signal to the Jetson for it to gracefully shutdown.
+     * <b>Use with extreme care. Once the Jetson is shut down, there is no way to turn
+     * it back on using software.</b>
+     */
+    public void shutdownJetson() {
+        NetworkTableEntry shutdown = table.getEntry("shutdown");
+        shutdown.setBoolean(true);
+        visionOnline.setBoolean(false);
+    }
 }
