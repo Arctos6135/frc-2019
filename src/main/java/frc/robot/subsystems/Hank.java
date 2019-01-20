@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
 
 /**
@@ -47,6 +48,7 @@ public class Hank extends Subsystem {
         else {
             pushOut();
         }
+        SmartDashboard.putBoolean("Hank Out", isOut);
     }
 
     @Override
