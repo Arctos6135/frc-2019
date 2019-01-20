@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.ShutdownJetson;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
 
@@ -37,13 +38,15 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         RobotMap.init();
-        drivetrain = new Drivetrain();
-        vision = new Vision();
+        drivetrain = new Drivetrain("Drivetrain");
+        vision = new Vision("Vision");
         oi = new OI();
 
         // chooser.setDefaultOption("Default Auto", new ExampleCommand());
         // chooser.addOption("My Auto", new MyAutoCommand());
         // SmartDashboard.putData("Auto mode", m_chooser);
+
+        SmartDashboard.putData("Shutdown Jetson", new ShutdownJetson());
         
         // Wait for vision to be ready if it's not already
         SmartDashboard.putBoolean("Vision Status", false);
@@ -61,7 +64,9 @@ public class Robot extends TimedRobot {
         }
         SmartDashboard.putBoolean("Vision Status", vision.ready());
 
-        SmartDashboard.putString("Last Error", "Error: Wait for vision initialization timed out.");
+        if(!vision.ready()) {
+            SmartDashboard.putString("Last Error", "Error: Wait for vision initialization timed out.");
+        }
     }
 
     /**
