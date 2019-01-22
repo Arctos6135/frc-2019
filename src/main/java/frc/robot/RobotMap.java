@@ -38,7 +38,7 @@ public class RobotMap {
 	public static final int WHEEL_DIAMETER = 6; //INCHES
 	public static final double WHEEL_CIRCUMFRENCE = WHEEL_DIAMETER*Math.PI;
 	public static final double DRIVE_ENCODER_PPR = 256;
-	public static final double DISTANCE_PER_PULSE = WHEEL_CIRCUMFRENCE/DRIVE_ENCODER_PPR*48/5;
+	public static final double DISTANCE_PER_PULSE = WHEEL_CIRCUMFRENCE/DRIVE_ENCODER_PPR*5/48;
 
     // Drive motors
     public static final VictorSPX lVictor = new VictorSPX(0);
