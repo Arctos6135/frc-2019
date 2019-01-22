@@ -14,9 +14,15 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
 import frc.robot.commands.TeleopDrive;
 
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Timer;
+
 public class Drivetrain extends Subsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
+
+	double leftLastRate = 0, rightLastRate = 0;
+	double lastTime;
 
     @Override
     public void initDefaultCommand() {
@@ -60,7 +66,92 @@ public class Drivetrain extends Subsystem {
         RobotMap.lVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, left * speedMultiplier)));
         // Invert right side
         RobotMap.rVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, -right * speedMultiplier)));
-    }
+	}
+	
+	// Encoders
+	/** 
+	 * Reset the left and right encoders
+	*/
+	public void resetEncoders() {
+		RobotMap.leftEncoder.reset();
+		RobotMap.rightEncoder.reset();
+	}
+
+	/**
+	 * Gets the distance travelled by the left encoder, using the
+	 * {@link edu.wpi.first.wpilibj.Encoder#getDistance() getDistance()} method of the {@code Encoder} class
+	 * @return The distance travelled by the left encoder
+	 */
+	public double getLeftDistance() {
+		return RobotMap.leftEncoder.getDistance();
+	}
+
+	/**
+	 * Gets the distance travelled by the right encoder, using the
+	 * {@link edu.wpi.first.wpilibj.Encoder#getDistance() getDistance()} method of the {@code Encoder} class
+	 * @return The distance travelled by the right encoder
+	 */
+	public double getRightDistance() {
+		return RobotMap.rightEncoder.getDistance();
+	}
+
+	/**
+	 * Gets the speed reading of the left encoder, using the
+	 * {@link edu.wpi.first.wpilibj.Encoder#getRate() getRate()} method of the {@code Encoder} class
+	 * @return The speed of the left encoder
+	 */
+	public double getLeftSpeed() {
+		return RobotMap.leftEncoder.getDistance();
+	}
+
+	/**
+	 * Gets the speed reading of the right encoder, using the
+	 * {@link edu.wpi.first.wpilibj.Encoder#getRate() getRate()} method of the {@code Encoder} class
+	 * @return The speed of the right encoder
+	 */
+	public double getRightSpeed() {
+		return RobotMap.rightEncoder.getDistance();
+	}
+
+	/**
+     * Calculates the acceleration of both sides.<br>
+     * <br>
+     * Instead of being read directly from the encoder, the acceleration is calculated by deriving the result
+     * of {@link #getLeftSpeed()} and {@link #getRightSpeed()}. The derivation is done only when this method
+     * is called, therefore the result will be more accurate if this method was called a short time ago.
+     * However, please note that two subsequent calls right after each other may yield a result of 0, as the
+     * last known encoder rate from {@link edu.wpi.first.wpilibj.Encoder#getRate() getRate()} may not have time
+     * to update.
+     * @return An array containing the acceleration of both sides, with element 0 being the left and element 1 
+     * being the right
+     */
+	public double[] getAccelerations() {
+    	double dt = Timer.getFPGATimestamp() - lastTime;
+    	double leftRate = RobotMap.leftEncoder.getRate();
+    	double rightRate = RobotMap.rightEncoder.getRate();
+    	double leftAccel = (leftRate - leftLastRate) / dt;
+    	double rightAccel = (rightRate - rightLastRate) / dt;
+    	leftLastRate = leftRate;
+    	rightLastRate = rightRate;
+    	lastTime = Timer.getFPGATimestamp();
+    	return new double[] { leftAccel, rightAccel };
+	}
+	
+	/**
+	 * Gets the left {@code Encoder} object
+	 * @return The left encoder
+	 */
+	public Encoder getLeftEncoder() {
+		return RobotMap.leftEncoder;
+	}
+
+	/**
+	 * Gets the right {@code Encoder} object
+	 * @return The right encoder
+	 */
+	public Encoder getRightEncoder() {
+		return RobotMap.rightEncoder;
+	}
 
     public enum Gear {
         LOW, HIGH;
