@@ -10,8 +10,10 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
 /**
@@ -42,6 +44,9 @@ public class RobotMap {
     public static final TalonSRX rTalon2 = new TalonSRX(5);
 
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
+
+    // navX
+    public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
   
     public static void init() {
         // Invert victors due to gearbox config
