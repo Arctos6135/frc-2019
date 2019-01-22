@@ -69,6 +69,9 @@ public class RobotMap {
         lTalon1.setNeutralMode(NeutralMode.Coast);
         lTalon2.setNeutralMode(NeutralMode.Coast);
         rTalon1.setNeutralMode(NeutralMode.Coast);
-        rTalon2.setNeutralMode(NeutralMode.Coast); 
+		rTalon2.setNeutralMode(NeutralMode.Coast); 
+		
+		leftEncoder.setDistancePerPulse(DISTANCE_PER_PULSE);
+		rightEncoder.setDistancePerPulse(DISTANCE_PER_PULSE);
     }
 }
