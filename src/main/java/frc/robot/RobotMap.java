@@ -42,6 +42,9 @@ public class RobotMap {
     public static final TalonSRX rTalon2 = new TalonSRX(5);
 
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
+
+    //elevator motor
+    public static final VictorSPX elevatorVictor = new VictorSPX(6);
   
     public static void init() {
         // Invert victors due to gearbox config
@@ -59,5 +62,6 @@ public class RobotMap {
         lTalon2.setNeutralMode(NeutralMode.Coast);
         rTalon1.setNeutralMode(NeutralMode.Coast);
         rTalon2.setNeutralMode(NeutralMode.Coast); 
+        elevatorVictor.setNeutralMode(NeutralMode.Coast);
     }
 }

@@ -74,6 +74,8 @@ public class OI {
 
         public static final int GEARSHIFT_LOW = ControllerMap.LBUMPER;
         public static final int GEARSHIFT_HIGH = ControllerMap.RBUMPER;
+
+        public static final int ELEVATOR_UP_DOWN = ControllerMap.LSTICK_Y_AXIS;
     }
 
     public static final XboxController driverController = new XboxController(0);
