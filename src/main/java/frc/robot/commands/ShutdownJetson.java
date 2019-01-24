@@ -21,6 +21,10 @@ public class ShutdownJetson extends InstantCommand {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
         requires(Robot.vision);
+
+        // By default, a command will not run when the robot is disabled
+        // This allows the ShutdownJetson command to run anytime
+        setRunWhenDisabled(true);
     }
 
     // Called once when the command executes
