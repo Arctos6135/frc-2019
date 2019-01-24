@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.Trigger;
 import frc.robot.commands.ShutdownJetson;
+import frc.robot.misc.Rumble;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -81,6 +82,9 @@ public class OI {
 
     public static final XboxController driverController = new XboxController(0);
     public static final XboxController operatorController = new XboxController(1);
+
+    public static final Rumble errorRumbleDriver = new Rumble(driverController, "both", 0.75);
+    public static final Rumble errorRumbleOperator = new Rumble(operatorController, "both", 0.75);
 
     public OI() {
 

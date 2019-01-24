@@ -54,8 +54,8 @@ public class Robot extends TimedRobot {
             vision.notifyWhenReady(this);
             try {
                 synchronized(this) {
-                    // Wait for a maximum of 30 seconds before timing out
-                    wait(30000);
+                    // Wait for a maximum of 1 minute before timing out
+                    wait(60000);
                 }
             }
             catch(InterruptedException e) {
@@ -66,6 +66,8 @@ public class Robot extends TimedRobot {
 
         if(!vision.ready()) {
             SmartDashboard.putString("Last Error", "Error: Wait for vision initialization timed out.");
+            OI.errorRumbleDriver.execute();
+            OI.errorRumbleOperator.execute();
         }
     }
 
@@ -79,6 +81,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
+        SmartDashboard.putBoolean("Vision Status", vision.ready());
     }
 
     /**
