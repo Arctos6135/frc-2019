@@ -44,9 +44,6 @@ public class RobotMap {
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
   
     public static void init() {
-        // Invert victors due to gearbox config
-        lVictor.setInverted(true);
-        rVictor.setInverted(true);
         // Set the motors to follow
         lTalon1.follow(lVictor);
         lTalon2.follow(lVictor);
