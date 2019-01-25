@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import frc.robot.subsystems.Claw;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 
@@ -24,6 +25,7 @@ import frc.robot.subsystems.Elevator;
 public class Robot extends TimedRobot {
     public static Drivetrain drivetrain;
     public static Elevator elevator;
+    public static Claw claw;
     public static OI oi;
 
     Command autoCommand;
@@ -38,6 +40,7 @@ public class Robot extends TimedRobot {
         RobotMap.init();
         drivetrain = new Drivetrain();
         elevator = new Elevator();
+        claw = new Claw();
         oi = new OI();
 
         // chooser.setDefaultOption("Default Auto", new ExampleCommand());
