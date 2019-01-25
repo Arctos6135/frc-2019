@@ -82,6 +82,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         SmartDashboard.putBoolean("Vision Status", vision.ready());
+        SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
     }
 
     /**

@@ -10,10 +10,12 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 
 /**
@@ -52,7 +54,9 @@ public class RobotMap {
 	public static Encoder leftEncoder = new Encoder(0, 1, true, EncodingType.k4X);
 	
 	public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
-	
+
+    // navX
+    public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
   
     public static void init() {
         // Set the motors to follow
