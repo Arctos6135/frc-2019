@@ -75,7 +75,7 @@ public class RotateToAngleGyro extends Command {
     @Override
     protected boolean isFinished() {
         // The heading from the navX may need to be reversed
-        if(direction == direction.LEFT) {
+        if(direction == Direction.LEFT) {
             return constrainAngle(Robot.drivetrain.getHeading() - startingHeading) >= angle;
         }
         else {

@@ -177,6 +177,8 @@ public class Vision extends Subsystem {
                 throw new VisionException("Vision enable failed!");
             }
         }
+        // Set the result entry to NaN just to be sure
+        visionResult.setNumber(Double.NaN);
     }
 
     /**
