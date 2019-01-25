@@ -9,8 +9,10 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.Trigger;
 import frc.robot.commands.ShutdownJetson;
+import frc.robot.commands.VisionAlign;
 import frc.robot.misc.Rumble;
 
 /**
@@ -78,6 +80,8 @@ public class OI {
 
         public static final int GEARSHIFT_LOW = ControllerMap.LBUMPER;
         public static final int GEARSHIFT_HIGH = ControllerMap.RBUMPER;
+
+        public static final int VISION_ALIGN = ControllerMap.BUTTON_A;
     }
 
     public static final XboxController driverController = new XboxController(0);
@@ -96,5 +100,8 @@ public class OI {
             }
         };
         shutdownJetson.whenActive(new ShutdownJetson());
+
+        JoystickButton visionAlign = new JoystickButton(driverController, Controls.VISION_ALIGN);
+        visionAlign.whenPressed(new VisionAlign());
     }
 }
