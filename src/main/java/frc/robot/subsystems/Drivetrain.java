@@ -8,14 +8,14 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
 import frc.robot.commands.TeleopDrive;
-
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Timer;
 
 public class Drivetrain extends Subsystem {
     // Put methods for controlling this subsystem
@@ -29,6 +29,24 @@ public class Drivetrain extends Subsystem {
         // Set the default command for a subsystem here.
         // setDefaultCommand(new MySpecialCommand());
         setDefaultCommand(new TeleopDrive());
+    }
+
+    /**
+     * Converts an angle in degrees to be in the range (-180, 180].
+     * 
+     * @param angle The angle to constrain
+     * @return The constrained angle
+     */
+    public static double constrainAngle(double angle) {
+        if(angle <= 180.0 && angle > -180.0)
+            return angle;
+        while(angle > 180.0) {
+            angle -= 360.0;
+        }
+        while(angle <= -180.0) {
+            angle += 360.0;
+        }
+        return angle;
     }
 
     // Having a speed multiplier allows for easy adjustment of top speeds
@@ -171,16 +189,57 @@ public class Drivetrain extends Subsystem {
         }
     }
 
+    /**
+     * Returns the heading (yaw) of the robot.
+     * The yaw is first passed into {@link #constrainAngle(double)}, so it is in the range (-180, 180].
+     * @return The yaw of the robot
+     */
+    public double getHeading() {
+        return constrainAngle(RobotMap.ahrs.getAngle());
+    }
+    /**
+     * Resets the heading (yaw) of the robot.
+     */
+    public void resetHeading() {
+        RobotMap.ahrs.reset();
+    }
+
+    NeutralMode neutralMode;
+    /**
+     * Sets the neutral mode (brake or coast) of all the drivetrain motors.
+     */
+    public void setNeutralMode(NeutralMode mode) {
+        neutralMode = mode;
+        
+        RobotMap.lVictor.setNeutralMode(mode);
+        RobotMap.lTalon1.setNeutralMode(mode);
+        RobotMap.lTalon2.setNeutralMode(mode);
+
+        RobotMap.rVictor.setNeutralMode(mode);
+        RobotMap.rTalon1.setNeutralMode(mode);
+        RobotMap.rTalon2.setNeutralMode(mode);
+    }
+    /**
+     * Gets the neutral mode of all the drivetrain motors.
+     */
+    public NeutralMode getNeutralMode() {
+        return neutralMode;
+    }
+
     public Drivetrain() {
         super();
 
         setMotors(0, 0);
         setGear(Gear.LOW);
+        resetHeading();
+        setNeutralMode(NeutralMode.Coast);
     }
     public Drivetrain(String name) {
         super(name);
 
         setMotors(0, 0);
         setGear(Gear.LOW);
+        resetHeading();
+        setNeutralMode(NeutralMode.Coast);
     }
 }
