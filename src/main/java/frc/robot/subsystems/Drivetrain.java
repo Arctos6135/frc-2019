@@ -195,7 +195,7 @@ public class Drivetrain extends Subsystem {
      * @return The yaw of the robot
      */
     public double getHeading() {
-        return constrainAngle(RobotMap.ahrs.getFusedHeading());
+        return constrainAngle(RobotMap.ahrs.getAngle());
     }
     /**
      * Resets the heading (yaw) of the robot.
