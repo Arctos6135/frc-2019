@@ -33,8 +33,7 @@ public class RobotMap {
 
     public static final PowerDistributionPanel pdp = new PowerDistributionPanel();
 
-    public static final DoubleSolenoid hankSolenoidA = new DoubleSolenoid(2, 3);
-    public static final DoubleSolenoid hankSolenoidB = new DoubleSolenoid(4, 5);
+    public static final DoubleSolenoid hankSolenoid = new DoubleSolenoid(2, 3);
     // Drive motors
     public static final VictorSPX lVictor = new VictorSPX(0);
     public static final TalonSRX lTalon1 = new TalonSRX(1);
