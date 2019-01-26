@@ -14,6 +14,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.misc.FollowTrajectory;
 import frc.robot.subsystems.Drivetrain;
+import robot.pathfinder.core.RobotSpecs;
+import robot.pathfinder.core.TrajectoryParams;
+import robot.pathfinder.core.Waypoint;
+import robot.pathfinder.core.path.PathType;
+import robot.pathfinder.core.trajectory.TankDriveTrajectory;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -41,9 +46,21 @@ public class Robot extends TimedRobot {
         drivetrain = new Drivetrain();
         oi = new OI();
 
-        // chooser.setDefaultOption("Default Auto", new ExampleCommand());
-        // chooser.addOption("My Auto", new MyAutoCommand());
-        // SmartDashboard.putData("Auto mode", m_chooser);
+        chooser.setDefaultOption("None", null);
+
+        TrajectoryParams params = new TrajectoryParams();
+        params.waypoints = new Waypoint[] {
+            new Waypoint(0.0, 0.0, Math.PI / 2),
+            new Waypoint(60.0, 120.0, Math.PI / 2),
+        };
+        params.alpha = 150.0;
+        params.segmentCount = 500;
+        params.isTank = true;
+        params.pathType = PathType.QUINTIC_HERMITE;
+        TankDriveTrajectory trajectory = new TankDriveTrajectory(RobotMap.specs, params);
+
+        chooser.addOption("Debug Auto", new FollowTrajectory(trajectory));
+        SmartDashboard.putData("Auto Mode", chooser);
 
         if(isInDebugMode) {
             putTuningEntries();
