@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.misc.FollowTrajectory;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -28,6 +29,8 @@ public class Robot extends TimedRobot {
     Command autoCommand;
     SendableChooser<Command> chooser = new SendableChooser<>();
 
+    public static boolean isInDebugMode = false;
+
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -41,6 +44,31 @@ public class Robot extends TimedRobot {
         // chooser.setDefaultOption("Default Auto", new ExampleCommand());
         // chooser.addOption("My Auto", new MyAutoCommand());
         // SmartDashboard.putData("Auto mode", m_chooser);
+
+        if(isInDebugMode) {
+            putTuningEntries();
+        }
+    }
+
+    /**
+     * Puts a bunch of tunable values to SmartDashboard for tuning.
+     */
+    public void putTuningEntries() {
+        SmartDashboard.putNumber("Follower kP", FollowTrajectory.kP);
+        SmartDashboard.putNumber("Follower kD", FollowTrajectory.kD);
+        SmartDashboard.putNumber("Follower kV", FollowTrajectory.kV);
+        SmartDashboard.putNumber("Follower kA", FollowTrajectory.kA);
+        SmartDashboard.putNumber("Follower kDP", FollowTrajectory.kDP);
+    }
+    /**
+     * Updates a bunch of tunable values based on new values from SmartDashboard.
+     */
+    public void getTuningEntries() {
+        FollowTrajectory.kP = SmartDashboard.getNumber("Follower kP", FollowTrajectory.kP);
+        FollowTrajectory.kD = SmartDashboard.getNumber("Follower kD", FollowTrajectory.kD);
+        FollowTrajectory.kV = SmartDashboard.getNumber("Follower kV", FollowTrajectory.kV);
+        FollowTrajectory.kA = SmartDashboard.getNumber("Follower kA", FollowTrajectory.kA);
+        FollowTrajectory.kDP = SmartDashboard.getNumber("Follower kDP", FollowTrajectory.kDP);
     }
 
     /**
@@ -53,7 +81,16 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
-        SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
+        if(isInDebugMode) {
+            SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
+            SmartDashboard.putNumber("Left Distance", drivetrain.getLeftDistance());
+            SmartDashboard.putNumber("Right Distance", drivetrain.getRightDistance());
+            SmartDashboard.putNumber("Left Velocity", drivetrain.getLeftSpeed());
+            SmartDashboard.putNumber("Right Velocity", drivetrain.getRightSpeed());
+            var accelerations = drivetrain.getAccelerations();
+            SmartDashboard.putNumber("Left Acceleration", accelerations[0]);
+            SmartDashboard.putNumber("Right Acceleration", accelerations[1]);
+        }
     }
 
     /**
@@ -113,6 +150,10 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
+        if(isInDebugMode) {
+            getTuningEntries();
+            putTuningEntries();
+        }
     }
 
     @Override
