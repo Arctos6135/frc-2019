@@ -11,8 +11,10 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import frc.robot.drivers.VisiSight;
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
@@ -42,6 +44,7 @@ public class RobotMap {
     public static final TalonSRX rTalon2 = new TalonSRX(5);
 
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
+    public static final VisiSight visisight = new VisiSight(new DigitalInput(4));
   
     public static void init() {
         // Invert victors due to gearbox config
