@@ -7,13 +7,13 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
 /**
  * Operates Hank.
  */
-public class OperateHank extends InstantCommand {
+public class OperateHank extends Command {
 
     /**
      * Toggles Hank.
@@ -28,7 +28,25 @@ public class OperateHank extends InstantCommand {
     // Called once when the command executes
     @Override
     protected void initialize() {
-        Robot.hank.toggle();
+        Robot.hank.pushOut();
     }
 
+    @Override
+    protected void execute() {
+    }
+
+    @Override
+    protected boolean isFinished() {
+        return timeSinceInitialized() > 0.6;
+    }
+
+    @Override
+    protected void end() {
+        Robot.hank.retract();
+    }
+
+    @Override
+    protected void interrupted() {
+        Robot.hank.retract();
+    }
 }
