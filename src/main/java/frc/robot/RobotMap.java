@@ -14,6 +14,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.VictorSP;
 import frc.robot.drivers.VisiSight;
 
 /**
@@ -42,6 +43,10 @@ public class RobotMap {
     public static final VictorSPX rVictor = new VictorSPX(3);
     public static final TalonSRX rTalon1 = new TalonSRX(4);
     public static final TalonSRX rTalon2 = new TalonSRX(5);
+
+    // Essie motors
+    public static final VictorSP essieMotorLowUnprotected = new VictorSP(0);
+    public static final VictorSP essieMotorHighUnprotected = new VictorSP(1);
 
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
     public static final VisiSight visisight = new VisiSight(new DigitalInput(4));
