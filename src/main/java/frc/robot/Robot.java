@@ -54,6 +54,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         SmartDashboard.putBoolean("VisiSight", RobotMap.visisight.isBlocked());
+        SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
     }
 
     /**
