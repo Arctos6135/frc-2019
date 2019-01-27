@@ -183,6 +183,8 @@ public class Drivetrain extends Subsystem {
     public enum Gear {
         LOW, HIGH;
     }
+
+    private Gear gear;
     /**
      * Sets the drivetrain gearboxes to be in either low or high gear.
      * 
@@ -196,6 +198,16 @@ public class Drivetrain extends Subsystem {
         else {
             RobotMap.gearShifter.set(DoubleSolenoid.Value.kReverse);
         }
+        this.gear = gear;
+    }
+    /**
+     * Gets the gear the drivetrain gearboxes are in.
+     * 
+     * Note that the low and high gear values may be switched depending on how the pneumatics are wired!
+     * @return The gear, {@link Gear#LOW} or {@link Gear#HIGH}.
+     */
+    public Gear getGear() {
+        return gear;
     }
 
     /**

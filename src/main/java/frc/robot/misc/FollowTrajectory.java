@@ -11,13 +11,13 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
-
-import robot.pathfinder.follower.Follower.Motor;
+import frc.robot.subsystems.Drivetrain;
 import robot.pathfinder.core.trajectory.TankDriveTrajectory;
-import robot.pathfinder.follower.TankFollower;
 import robot.pathfinder.follower.Follower.DirectionSource;
-import robot.pathfinder.follower.Follower.TimestampSource;
 import robot.pathfinder.follower.Follower.DistanceSource;
+import robot.pathfinder.follower.Follower.Motor;
+import robot.pathfinder.follower.Follower.TimestampSource;
+import robot.pathfinder.follower.TankFollower;
 
 public class FollowTrajectory extends Command {
 
@@ -40,21 +40,31 @@ public class FollowTrajectory extends Command {
         return Timer.getFPGATimestamp();
     };
 
-    public static double kP = 0, kD = 0, kV = 0, kA = 0, kDP = 0;
+    public static double kP_l = 0, kD_l = 0, kV_l = 0, kA_l = 0, kDP_l = 0;
+    public static double kP_h = 0, kD_h = 0, kV_h = 0, kA_h = 0, kDP_h = 0;
 
-    final TankFollower follower;
+    private final TankDriveTrajectory trajectory;
+    private TankFollower follower;
 
     public FollowTrajectory(TankDriveTrajectory trajectory) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
         requires(Robot.drivetrain);
-        follower = new TankFollower(trajectory, L_MOTOR, R_MOTOR, L_DISTANCE_SOURCE, R_DISTANCE_SOURCE, TIMESTAMP_SOURCE, 
-                GYRO, kV, kA, kP, kD, kDP);
+        this.trajectory = trajectory;
     }
 
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
+        if(Robot.drivetrain.getGear() == Drivetrain.Gear.HIGH) {
+            follower = new TankFollower(trajectory, L_MOTOR, R_MOTOR, L_DISTANCE_SOURCE, R_DISTANCE_SOURCE, TIMESTAMP_SOURCE, 
+                    GYRO, kV_h, kA_h, kP_h, kD_h, kDP_h);
+        }
+        else {
+            follower = new TankFollower(trajectory, L_MOTOR, R_MOTOR, L_DISTANCE_SOURCE, R_DISTANCE_SOURCE, TIMESTAMP_SOURCE, 
+                    GYRO, kV_l, kA_l, kP_l, kD_l, kDP_l);
+        }
+
         follower.initialize();
     }
 

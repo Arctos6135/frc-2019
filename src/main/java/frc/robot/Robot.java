@@ -71,21 +71,33 @@ public class Robot extends TimedRobot {
      * Puts a bunch of tunable values to SmartDashboard for tuning.
      */
     public void putTuningEntries() {
-        SmartDashboard.putNumber("Follower kP", FollowTrajectory.kP);
-        SmartDashboard.putNumber("Follower kD", FollowTrajectory.kD);
-        SmartDashboard.putNumber("Follower kV", FollowTrajectory.kV);
-        SmartDashboard.putNumber("Follower kA", FollowTrajectory.kA);
-        SmartDashboard.putNumber("Follower kDP", FollowTrajectory.kDP);
+        SmartDashboard.putNumber("Follower kP (High Gear)", FollowTrajectory.kP_h);
+        SmartDashboard.putNumber("Follower kD (High Gear)", FollowTrajectory.kD_h);
+        SmartDashboard.putNumber("Follower kV (High Gear)", FollowTrajectory.kV_h);
+        SmartDashboard.putNumber("Follower kA (High Gear)", FollowTrajectory.kA_h);
+        SmartDashboard.putNumber("Follower kDP (High Gear)", FollowTrajectory.kDP_h);
+
+        SmartDashboard.putNumber("Follower kP (Low Gear)", FollowTrajectory.kP_l);
+        SmartDashboard.putNumber("Follower kD (Low Gear)", FollowTrajectory.kD_l);
+        SmartDashboard.putNumber("Follower kV (Low Gear)", FollowTrajectory.kV_l);
+        SmartDashboard.putNumber("Follower kA (Low Gear)", FollowTrajectory.kA_l);
+        SmartDashboard.putNumber("Follower kDP (Low Gear)", FollowTrajectory.kDP_l);
     }
     /**
      * Updates a bunch of tunable values based on new values from SmartDashboard.
      */
     public void getTuningEntries() {
-        FollowTrajectory.kP = SmartDashboard.getNumber("Follower kP", FollowTrajectory.kP);
-        FollowTrajectory.kD = SmartDashboard.getNumber("Follower kD", FollowTrajectory.kD);
-        FollowTrajectory.kV = SmartDashboard.getNumber("Follower kV", FollowTrajectory.kV);
-        FollowTrajectory.kA = SmartDashboard.getNumber("Follower kA", FollowTrajectory.kA);
-        FollowTrajectory.kDP = SmartDashboard.getNumber("Follower kDP", FollowTrajectory.kDP);
+        FollowTrajectory.kP_h = SmartDashboard.getNumber("Follower kP (High Gear)", FollowTrajectory.kP_h);
+        FollowTrajectory.kD_h = SmartDashboard.getNumber("Follower kD (High Gear)", FollowTrajectory.kD_h);
+        FollowTrajectory.kV_h = SmartDashboard.getNumber("Follower kV (High Gear)", FollowTrajectory.kV_h);
+        FollowTrajectory.kA_h = SmartDashboard.getNumber("Follower kA (High Gear)", FollowTrajectory.kA_h);
+        FollowTrajectory.kDP_h = SmartDashboard.getNumber("Follower kDP (High Gear)", FollowTrajectory.kDP_h);
+
+        FollowTrajectory.kP_l = SmartDashboard.getNumber("Follower kP (Low Gear)", FollowTrajectory.kP_l);
+        FollowTrajectory.kD_l = SmartDashboard.getNumber("Follower kD (Low Gear)", FollowTrajectory.kD_l);
+        FollowTrajectory.kV_l = SmartDashboard.getNumber("Follower kV (Low Gear)", FollowTrajectory.kV_l);
+        FollowTrajectory.kA_l = SmartDashboard.getNumber("Follower kA (Low Gear)", FollowTrajectory.kA_l);
+        FollowTrajectory.kDP_l = SmartDashboard.getNumber("Follower kDP (Low Gear)", FollowTrajectory.kDP_l);
     }
 
     /**
@@ -100,6 +112,7 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         if(isInDebugMode) {
             SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
+            SmartDashboard.putString("Drivetrain Gear", drivetrain.getGear() == Drivetrain.Gear.HIGH ? "HIGH" : "LOW");
             SmartDashboard.putNumber("Left Distance", drivetrain.getLeftDistance());
             SmartDashboard.putNumber("Right Distance", drivetrain.getRightDistance());
             SmartDashboard.putNumber("Left Velocity", drivetrain.getLeftSpeed());
