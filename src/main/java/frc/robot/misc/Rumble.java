@@ -82,15 +82,15 @@ public class Rumble implements Runnable {
 		synchronized(this.controller) {
             try { // run() can't throw errors and Thread.sleep() can throw InterruptedException
                 for(int i = 0; i < repeatCount; i ++) {
-                    if (side.equals("right"))  {
+                    if (side.equals(SIDE_RIGHT))  {
                         controller.setRumble(RumbleType.kRightRumble, intensity);
                         Thread.sleep(sleepTime);
                         controller.setRumble(RumbleType.kRightRumble, 0.0);
-                    } else if (side.equals("left")) {
+                    } else if (side.equals(SIDE_LEFT)) {
                         controller.setRumble(RumbleType.kLeftRumble, intensity);
                         Thread.sleep(sleepTime);
                         controller.setRumble(RumbleType.kLeftRumble, 0.0);
-                    } else if (side.equals("both")) {
+                    } else if (side.equals(SIDE_BOTH)) {
                         controller.setRumble(RumbleType.kRightRumble, intensity);
                         controller.setRumble(RumbleType.kLeftRumble, intensity);
                         Thread.sleep(sleepTime);
