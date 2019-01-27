@@ -1,5 +1,5 @@
 package frc.robot.misc;
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,7 +22,7 @@ public class Rumble implements Runnable {
 
     private final int sleepTime;
     private final int repeatCount;
-	private final XboxController controller;
+	private final GenericHID controller;
 	private final String side;
 	private final double intensity;
 	
@@ -34,11 +34,11 @@ public class Rumble implements Runnable {
 
 	/**
      * Creates a new Rumble. It will last 300ms and will not repeat.
-	 * @param controller The XboxController object that you're rumbling on
+	 * @param controller The GenericHID object that you're rumbling on
 	 * @param side A string value that details the side to rumble: "left", "right", or "both"
 	 * @param intensity The intensity to rumble at between 0 and 1
 	 */
-	public Rumble (XboxController controller, String side, double intensity) {
+	public Rumble (GenericHID controller, String side, double intensity) {
 		this.controller = controller;
 		this.side = side;
         this.intensity = intensity;
@@ -48,12 +48,12 @@ public class Rumble implements Runnable {
     }
     /**
      * Creates a new Rumble. It will not repeat.
-     * @param controller The XboxController object that you're rumbling on
+     * @param controller The GenericHID object that you're rumbling on
      * @param side A string value that details the side to rumble: "left", "right", or "both"
      * @param intensity The intensity to rumble at between 0 and 1
      * @param duration The duration, in milliseconds, to rumble for
      */
-    public Rumble (XboxController controller, String side, double intensity, int duration) {
+    public Rumble (GenericHID controller, String side, double intensity, int duration) {
         this.controller = controller;
         this.side = side;
         this.intensity = intensity;
@@ -63,13 +63,13 @@ public class Rumble implements Runnable {
     }
     /**
      * Creates a new Rumble.
-     * @param controller The XboxController object that you're rumbling on
+     * @param controller The GenericHID object that you're rumbling on
      * @param side A string value that details the side to rumble: "left", "right", or "both"
      * @param intensity The intensity to rumble at between 0 and 1
      * @param duration The duration, in milliseconds, to rumble for
      * @param repeatCount The number of times to repeat this rumble
      */
-    public Rumble (XboxController controller, String side, double intensity, int duration, int repeatCount) {
+    public Rumble (GenericHID controller, String side, double intensity, int duration, int repeatCount) {
         this.controller = controller;
         this.side = side;
         this.intensity = intensity;
