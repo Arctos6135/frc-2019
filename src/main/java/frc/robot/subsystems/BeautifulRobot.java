@@ -72,8 +72,8 @@ public class BeautifulRobot extends Subsystem {
     public void init() {
         // Set brightness to 20%
         writeCommand(Operation.BRIGHTNESS, (byte) 20);
-        // Set mode to pulsating colour
-        writeCommand(Operation.MODE, (byte) 1);
+        // Set mode to solid colour
+        writeCommand(Operation.MODE, (byte) 0);
     }
     /**
      * Sets the BeautifulRobot&#8482;'s colour to the colour of an alliance.
@@ -108,7 +108,7 @@ public class BeautifulRobot extends Subsystem {
      * All the different patterns the BeautifulRobot&#8482; has.
      */
     public enum Pattern {
-        SOLID((byte) 0), PULSATING((byte) 1), RAINBOW((byte) 2), MOVING_PULSE((byte) 3);
+        SOLID((byte) 0), PULSATING((byte) 1), RAINBOW((byte) 2), MOVING_PULSE((byte) 3), PROGRESS_BAR((byte) 4);
 
         private byte value;
         Pattern(byte value) {
@@ -123,7 +123,7 @@ public class BeautifulRobot extends Subsystem {
      * 
      * @param pattern The pattern to display
      */
-    void setPattern(Pattern pattern) {
+    public void setPattern(Pattern pattern) {
         writeCommand(Operation.MODE, pattern.getValue());
     }
 
