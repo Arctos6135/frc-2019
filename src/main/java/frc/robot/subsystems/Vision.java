@@ -47,6 +47,7 @@ public class Vision extends Subsystem {
     NetworkTable table;
     
     NetworkTableEntry visionOnline, visionEnabled, visionEnableSuccess, visionResult;
+    NetworkTableEntry angleOffset, xOffset, yOffset;
 
     /**
      * Creates a new vision subsystem.
@@ -61,6 +62,10 @@ public class Vision extends Subsystem {
         visionEnabled = table.getEntry("vision-enable");
         visionEnableSuccess = table.getEntry("enable-success");
         visionResult = table.getEntry("horizontal-angle");
+
+        angleOffset = table.getEntry("angle-offset");
+        xOffset = table.getEntry("x-offset");
+        yOffset = table.getEntry("y-offset");
     }
     /**
      * Creates a new vision subsystem.
@@ -77,6 +82,10 @@ public class Vision extends Subsystem {
         visionEnabled = table.getEntry("vision-enable");
         visionEnableSuccess = table.getEntry("enable-success");
         visionResult = table.getEntry("horizontal-angle");
+
+        angleOffset = table.getEntry("angle-offset");
+        xOffset = table.getEntry("x-offset");
+        yOffset = table.getEntry("y-offset");
     }
 
     /**
@@ -201,7 +210,43 @@ public class Vision extends Subsystem {
 
         return visionResult.getDouble(Double.NaN);
     }
+    /**
+     * Returns the orientation of the target, with respect to the robot.
+     * @return The angle offset of the target
+     * @throws VisionException If vision is not ready
+     */
+    public double getTargetAngleOffset() throws VisionException {
+        if(!ready()) {
+            throw new VisionException("Vision is offline!");
+        }
 
+        return angleOffset.getDouble(Double.NaN);
+    }
+    /**
+     * Returns the X coordinate of the centre of the target, with respect to the robot.
+     * @return The X coordinate offset of the target
+     * @throws VisionException If vision is not ready
+     */
+    public double getTargetXOffset() throws VisionException {
+        if(!ready()) {
+            throw new VisionException("Vision is offline!");
+        }
+
+        return xOffset.getDouble(Double.NaN);
+    }
+    /**
+     * Returns the Y coordinate of the centre of the target, with respect to the robot.
+     * @return The Y coordinate offset of the target
+     * @throws VisionException If vision is not ready
+     */
+    public double getTargetYOffset() throws VisionException {
+        if(!ready()) {
+            throw new VisionException("Vision is offline!");
+        }
+
+        return yOffset.getDouble(Double.NaN);
+    }
+ 
     /**
      * Adds a callback function to be called whenever there's a new vision tracking result.
      * @param callback The callback
