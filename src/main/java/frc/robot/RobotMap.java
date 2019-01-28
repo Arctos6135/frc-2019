@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import robot.pathfinder.core.RobotSpecs;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.I2C;
@@ -60,8 +61,10 @@ public class RobotMap {
 
     // navX
     public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
-	public static Encoder rightEncoder = new Encoder(2, 3, false, EncodingType.k4X);
-	public static Encoder leftEncoder = new Encoder(0, 1, true, EncodingType.k4X);
+	public static final Encoder rightEncoder = new Encoder(2, 3, false, EncodingType.k4X);
+	public static final Encoder leftEncoder = new Encoder(0, 1, true, EncodingType.k4X);
+    
+    public static final RobotSpecs specs = new RobotSpecs(120, 80, BASEPLATE_WIDTH);
   
     public static void init() {
         // Set the motors to follow
