@@ -9,11 +9,11 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.Trigger;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.misc.Rumble;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import edu.wpi.first.wpilibj.command.InstantCommand;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -90,6 +90,7 @@ public class OI {
     public static final Rumble errorRumbleDriver = new Rumble(driverController, "both", 0.75);
     public static final Rumble errorRumbleOperator = new Rumble(operatorController, "both", 0.75);
 
+    @SuppressWarnings("resource")
     public OI() {
 
         // User button on the rio shuts down the Jetson

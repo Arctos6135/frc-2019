@@ -13,11 +13,9 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ShutdownJetson;
-import frc.robot.subsystems.Drivetrain;
-import frc.robot.subsystems.Vision;
 import frc.robot.misc.FollowTrajectory;
 import frc.robot.subsystems.Drivetrain;
-import robot.pathfinder.core.RobotSpecs;
+import frc.robot.subsystems.Vision;
 import robot.pathfinder.core.TrajectoryParams;
 import robot.pathfinder.core.Waypoint;
 import robot.pathfinder.core.path.PathType;
@@ -145,9 +143,9 @@ public class Robot extends TimedRobot {
         // Vision status is outputted regardless of current state
         SmartDashboard.putBoolean("Vision Status", vision.ready());
         if(isInDebugMode) {
+            SmartDashboard.putBoolean("VisiSight", RobotMap.visisight.isBlocked());
             SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
 
-            SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
             SmartDashboard.putString("Drivetrain Gear", drivetrain.getGear() == Drivetrain.Gear.HIGH ? "HIGH" : "LOW");
             SmartDashboard.putNumber("Left Distance", drivetrain.getLeftDistance());
             SmartDashboard.putNumber("Right Distance", drivetrain.getRightDistance());
