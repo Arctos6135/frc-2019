@@ -15,6 +15,7 @@ import frc.robot.commands.AutoCargoIntake;
 import frc.robot.commands.HighCargoOuttake;
 import frc.robot.commands.LowCargoOuttake;
 import frc.robot.misc.Rumble;
+import frc.robot.commands.OperateHank;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -91,6 +92,7 @@ public class OI {
         public static final int CANCEL = ControllerMap.BUTTON_B;
 
         public static final int OVERRIDE_MOTOR_BLACKLIST = ControllerMap.BUTTON_BACK;
+        public static final int OPERATE_HANK = ControllerMap.BUTTON_A;
     }
 
     public static final XboxController driverController = new XboxController(0);
@@ -108,6 +110,7 @@ public class OI {
         JoystickButton cancel = new JoystickButton(operatorController, Controls.CANCEL);
         JoystickButton essieOuttakeLow = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_LOW);
         JoystickButton essieOuttakeHigh = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH);
+        JoystickButton operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand() {
             @Override
@@ -135,5 +138,6 @@ public class OI {
                 }
             }
         });
+        operateHank.whenActive(new OperateHank());
     }
 }

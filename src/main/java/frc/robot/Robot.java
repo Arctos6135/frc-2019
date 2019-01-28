@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.Hank;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Essie;
 
@@ -23,6 +24,7 @@ import frc.robot.subsystems.Essie;
  * project.
  */
 public class Robot extends TimedRobot {
+    public static Hank hank;
     public static Drivetrain drivetrain;
     public static Essie essie;
     public static OI oi;
@@ -37,6 +39,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         RobotMap.init();
+        hank = new Hank();
         drivetrain = new Drivetrain();
         essie = new Essie();
         oi = new OI();

@@ -49,6 +49,7 @@ public class RobotMap {
     // Drivetrain parameters
     public static final double BASEPLATE_WIDTH = 25.716;
 
+    public static final DoubleSolenoid hankSolenoid = new DoubleSolenoid(2, 3);
     // Drive motors
     public static final VictorSPX lVictor = new VictorSPX(0);
     public static final TalonSRX lTalon1 = new TalonSRX(1);
