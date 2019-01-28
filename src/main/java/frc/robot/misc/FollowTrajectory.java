@@ -21,24 +21,12 @@ import robot.pathfinder.follower.TankFollower;
 
 public class FollowTrajectory extends Command {
 
-    public static final Motor L_MOTOR = (speed) -> {
-        Robot.drivetrain.setLeftMotor(speed);
-    };
-    public static final Motor R_MOTOR = (speed) -> {
-        Robot.drivetrain.setRightMotor(speed);
-    };
-    public static final DirectionSource GYRO = () -> {
-        return Robot.drivetrain.getHeading();
-    };
-    public static final DistanceSource L_DISTANCE_SOURCE = () -> {
-        return Robot.drivetrain.getLeftDistance();
-    };
-    public static final DistanceSource R_DISTANCE_SOURCE = () -> {
-        return Robot.drivetrain.getRightDistance();
-    };
-    public static final TimestampSource TIMESTAMP_SOURCE = () -> {
-        return Timer.getFPGATimestamp();
-    };
+    public static final Motor L_MOTOR = Robot.drivetrain::setLeftMotor;
+    public static final Motor R_MOTOR = Robot.drivetrain::setRightMotor;
+    public static final DirectionSource GYRO = Robot.drivetrain::getHeading;
+    public static final DistanceSource L_DISTANCE_SOURCE = Robot.drivetrain::getLeftDistance;
+    public static final DistanceSource R_DISTANCE_SOURCE = Robot.drivetrain::getRightDistance;
+    public static final TimestampSource TIMESTAMP_SOURCE = Timer::getFPGATimestamp;
 
     public static double kP_l = 0, kD_l = 0, kV_l = 0, kA_l = 0, kDP_l = 0;
     public static double kP_h = 0, kD_h = 0, kV_h = 0, kA_h = 0, kDP_h = 0;
