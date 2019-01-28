@@ -8,6 +8,8 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -74,8 +76,20 @@ public class OI {
 
         public static final int GEARSHIFT_LOW = ControllerMap.LBUMPER;
         public static final int GEARSHIFT_HIGH = ControllerMap.RBUMPER;
+
+        public static final int DEBUG = ControllerMap.BUTTON_START;
     }
 
     public static final XboxController driverController = new XboxController(0);
     public static final XboxController operatorController = new XboxController(1);
+
+    public OI() {
+        JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
+        debug.whenActive(new InstantCommand() {
+            @Override
+            protected void initialize() {
+                Robot.isInDebugMode = !Robot.isInDebugMode;
+            }
+        });
+    }
 }
