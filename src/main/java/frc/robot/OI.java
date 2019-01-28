@@ -9,7 +9,9 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.robot.commands.AutoCargoIntake;
 import frc.robot.misc.Rumble;
 
 /**
@@ -79,7 +81,10 @@ public class OI {
         public static final int GEARSHIFT_HIGH = ControllerMap.RBUMPER;
 
         public static final int ESSIE_AUTOPICKUP = ControllerMap.BUTTON_X;
-        public static final int ESSIE_CANCE_AUTOPICKUP = ControllerMap.BUTTON_B;
+
+        // This will cancel Essie's auto intake
+        // If auto vision align is used it will cancel that as well
+        public static final int CANCEL = ControllerMap.BUTTON_B;
 
         public static final int OVERRIDE_MOTOR_BLACKLIST = ControllerMap.BUTTON_BACK;
     }
@@ -95,6 +100,8 @@ public class OI {
     public OI() {
         JoystickButton overrideMotorBlacklist1 = new JoystickButton(driverController, Controls.OVERRIDE_MOTOR_BLACKLIST);
         JoystickButton overrideMotorBlacklist2 = new JoystickButton(operatorController, Controls.OVERRIDE_MOTOR_BLACKLIST);
+        JoystickButton essieAutoIntake = new JoystickButton(operatorController, Controls.ESSIE_AUTOPICKUP);
+        JoystickButton cancel = new JoystickButton(operatorController, Controls.CANCEL);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand() {
             @Override
@@ -108,6 +115,16 @@ public class OI {
             protected void initialize() {
                 RobotMap.essieMotorHigh.overrideBlacklist();
                 RobotMap.essieMotorLow.overrideBlacklist();
+            }
+        });
+        essieAutoIntake.whenPressed(new AutoCargoIntake());
+        cancel.whenActive(new InstantCommand() {
+            @Override
+            public void initialize() {
+                Command essieCommand = Robot.essie.getCurrentCommand();
+                if(essieCommand != null && essieCommand instanceof AutoCargoIntake) {
+                    essieCommand.cancel();
+                }
             }
         });
     }
