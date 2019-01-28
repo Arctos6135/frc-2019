@@ -11,14 +11,15 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.VictorSP;
 import frc.robot.drivers.VisiSight;
+import frc.robot.misc.protectedmotor.ProtectedMotor;
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
@@ -59,6 +60,16 @@ public class RobotMap {
     // Essie motors
     public static final VictorSP essieMotorLowUnprotected = new VictorSP(0);
     public static final VictorSP essieMotorHighUnprotected = new VictorSP(1);
+    public static final ProtectedMotor essieMotorLow = new ProtectedMotor((speed) -> {
+        essieMotorLowUnprotected.set(speed);
+    }, 4, 30, 0.5, () -> {
+        OI.errorRumbleOperator.execute();
+    });
+    public static final ProtectedMotor essieMotorHigh = new ProtectedMotor((speed) -> {
+        essieMotorHighUnprotected.set(speed);
+    }, 5, 30, 0.5, () -> {
+        OI.errorRumbleOperator.execute();
+    });
 
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
     public static final VisiSight visisight = new VisiSight(new DigitalInput(4));

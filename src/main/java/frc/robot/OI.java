@@ -8,6 +8,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.robot.misc.Rumble;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -74,8 +77,38 @@ public class OI {
 
         public static final int GEARSHIFT_LOW = ControllerMap.LBUMPER;
         public static final int GEARSHIFT_HIGH = ControllerMap.RBUMPER;
+
+        public static final int ESSIE_AUTOPICKUP = ControllerMap.BUTTON_X;
+        public static final int ESSIE_CANCE_AUTOPICKUP = ControllerMap.BUTTON_B;
+
+        public static final int OVERRIDE_MOTOR_BLACKLIST = ControllerMap.BUTTON_BACK;
     }
 
     public static final XboxController driverController = new XboxController(0);
     public static final XboxController operatorController = new XboxController(1);
+
+    public static final Rumble errorRumbleDriver = new Rumble(driverController, Rumble.SIDE_BOTH, 1, 200, 3);
+    public static final Rumble errorRumbleOperator = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 200, 3);
+    public static final Rumble essiePickupRumble = new Rumble(operatorController, Rumble.SIDE_BOTH, 0.5, 100);
+
+    @SuppressWarnings("resource")
+    public OI() {
+        JoystickButton overrideMotorBlacklist1 = new JoystickButton(driverController, Controls.OVERRIDE_MOTOR_BLACKLIST);
+        JoystickButton overrideMotorBlacklist2 = new JoystickButton(operatorController, Controls.OVERRIDE_MOTOR_BLACKLIST);
+
+        overrideMotorBlacklist1.whenActive(new InstantCommand() {
+            @Override
+            protected void initialize() {
+                RobotMap.essieMotorHigh.overrideBlacklist();
+                RobotMap.essieMotorLow.overrideBlacklist();
+            }
+        });
+        overrideMotorBlacklist2.whenActive(new InstantCommand() {
+            @Override
+            protected void initialize() {
+                RobotMap.essieMotorHigh.overrideBlacklist();
+                RobotMap.essieMotorLow.overrideBlacklist();
+            }
+        });
+    }
 }
