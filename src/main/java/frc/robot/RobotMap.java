@@ -60,7 +60,7 @@ public class RobotMap {
 
     //elevator motor
     public static final VictorSPX elevatorVictor = new VictorSPX(6);
-    public static final VisiSight visisight = new VisiSight(new DigitalInput(4));
+    public static final VisiSight clawVisiSight = new VisiSight(4);
 
     // navX
     public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
