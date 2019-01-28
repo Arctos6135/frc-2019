@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.misc.FollowTrajectory;
 import frc.robot.subsystems.Drivetrain;
-import robot.pathfinder.core.RobotSpecs;
 import robot.pathfinder.core.TrajectoryParams;
 import robot.pathfinder.core.Waypoint;
 import robot.pathfinder.core.path.PathType;
@@ -110,9 +109,9 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
-        SmartDashboard.putBoolean("VisiSight", RobotMap.visisight.isBlocked());
-        SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
+        
         if(isInDebugMode) {
+            SmartDashboard.putBoolean("VisiSight", RobotMap.visisight.isBlocked());
             SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
             SmartDashboard.putString("Drivetrain Gear", drivetrain.getGear() == Drivetrain.Gear.HIGH ? "HIGH" : "LOW");
             SmartDashboard.putNumber("Left Distance", drivetrain.getLeftDistance());
