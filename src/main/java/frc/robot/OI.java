@@ -88,6 +88,7 @@ public class OI {
     public static final XboxController driverController = new XboxController(0);
     public static final XboxController operatorController = new XboxController(1);
 
+    @SuppressWarnings("resource")
     public OI() {
         JoystickButton toggleClaw = new JoystickButton(operatorController, Controls.TOGGLE_CLAW);
         JoystickButton openClaw = new JoystickButton(operatorController, Controls.OPEN_CLAW);
