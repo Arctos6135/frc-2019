@@ -15,6 +15,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
+import frc.robot.misc.FollowTrajectory;
+import frc.robot.subsystems.Drivetrain;
+import robot.pathfinder.core.RobotSpecs;
+import robot.pathfinder.core.TrajectoryParams;
+import robot.pathfinder.core.Waypoint;
+import robot.pathfinder.core.path.PathType;
+import robot.pathfinder.core.trajectory.TankDriveTrajectory;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -30,6 +37,8 @@ public class Robot extends TimedRobot {
 
     Command autoCommand;
     SendableChooser<Command> chooser = new SendableChooser<>();
+
+    public static boolean isInDebugMode = false;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -69,6 +78,58 @@ public class Robot extends TimedRobot {
             OI.errorRumbleDriver.execute();
             OI.errorRumbleOperator.execute();
         }
+        chooser.setDefaultOption("None", null);
+
+        TrajectoryParams params = new TrajectoryParams();
+        params.waypoints = new Waypoint[] {
+            new Waypoint(0.0, 0.0, Math.PI / 2),
+            new Waypoint(60.0, 120.0, Math.PI / 2),
+        };
+        params.alpha = 150.0;
+        params.segmentCount = 500;
+        params.isTank = true;
+        params.pathType = PathType.QUINTIC_HERMITE;
+        TankDriveTrajectory trajectory = new TankDriveTrajectory(RobotMap.specs, params);
+
+        chooser.addOption("Debug Auto", new FollowTrajectory(trajectory));
+        SmartDashboard.putData("Auto Mode", chooser);
+
+        if(isInDebugMode) {
+            putTuningEntries();
+        }
+    }
+
+    /**
+     * Puts a bunch of tunable values to SmartDashboard for tuning.
+     */
+    public void putTuningEntries() {
+        SmartDashboard.putNumber("Follower kP (High Gear)", FollowTrajectory.kP_h);
+        SmartDashboard.putNumber("Follower kD (High Gear)", FollowTrajectory.kD_h);
+        SmartDashboard.putNumber("Follower kV (High Gear)", FollowTrajectory.kV_h);
+        SmartDashboard.putNumber("Follower kA (High Gear)", FollowTrajectory.kA_h);
+        SmartDashboard.putNumber("Follower kDP (High Gear)", FollowTrajectory.kDP_h);
+
+        SmartDashboard.putNumber("Follower kP (Low Gear)", FollowTrajectory.kP_l);
+        SmartDashboard.putNumber("Follower kD (Low Gear)", FollowTrajectory.kD_l);
+        SmartDashboard.putNumber("Follower kV (Low Gear)", FollowTrajectory.kV_l);
+        SmartDashboard.putNumber("Follower kA (Low Gear)", FollowTrajectory.kA_l);
+        SmartDashboard.putNumber("Follower kDP (Low Gear)", FollowTrajectory.kDP_l);
+    }
+    /**
+     * Updates a bunch of tunable values based on new values from SmartDashboard.
+     */
+    public void getTuningEntries() {
+        FollowTrajectory.kP_h = SmartDashboard.getNumber("Follower kP (High Gear)", FollowTrajectory.kP_h);
+        FollowTrajectory.kD_h = SmartDashboard.getNumber("Follower kD (High Gear)", FollowTrajectory.kD_h);
+        FollowTrajectory.kV_h = SmartDashboard.getNumber("Follower kV (High Gear)", FollowTrajectory.kV_h);
+        FollowTrajectory.kA_h = SmartDashboard.getNumber("Follower kA (High Gear)", FollowTrajectory.kA_h);
+        FollowTrajectory.kDP_h = SmartDashboard.getNumber("Follower kDP (High Gear)", FollowTrajectory.kDP_h);
+
+        FollowTrajectory.kP_l = SmartDashboard.getNumber("Follower kP (Low Gear)", FollowTrajectory.kP_l);
+        FollowTrajectory.kD_l = SmartDashboard.getNumber("Follower kD (Low Gear)", FollowTrajectory.kD_l);
+        FollowTrajectory.kV_l = SmartDashboard.getNumber("Follower kV (Low Gear)", FollowTrajectory.kV_l);
+        FollowTrajectory.kA_l = SmartDashboard.getNumber("Follower kA (Low Gear)", FollowTrajectory.kA_l);
+        FollowTrajectory.kDP_l = SmartDashboard.getNumber("Follower kDP (Low Gear)", FollowTrajectory.kDP_l);
     }
 
     /**
@@ -81,8 +142,21 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
+        // Vision status is outputted regardless of current state
         SmartDashboard.putBoolean("Vision Status", vision.ready());
-        SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
+        if(isInDebugMode) {
+            SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
+
+            SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
+            SmartDashboard.putString("Drivetrain Gear", drivetrain.getGear() == Drivetrain.Gear.HIGH ? "HIGH" : "LOW");
+            SmartDashboard.putNumber("Left Distance", drivetrain.getLeftDistance());
+            SmartDashboard.putNumber("Right Distance", drivetrain.getRightDistance());
+            SmartDashboard.putNumber("Left Velocity", drivetrain.getLeftSpeed());
+            SmartDashboard.putNumber("Right Velocity", drivetrain.getRightSpeed());
+            var accelerations = drivetrain.getAccelerations();
+            SmartDashboard.putNumber("Left Acceleration", accelerations[0]);
+            SmartDashboard.putNumber("Right Acceleration", accelerations[1]);
+        }
     }
 
     /**
@@ -142,6 +216,10 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
+        if(isInDebugMode) {
+            getTuningEntries();
+            putTuningEntries();
+        }
     }
 
     @Override
