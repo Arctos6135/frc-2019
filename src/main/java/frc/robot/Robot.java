@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.subsystems.Claw;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 
@@ -58,6 +59,8 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
+        SmartDashboard.putBoolean("VisiSight", RobotMap.visisight.isBlocked());
+        SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
     }
 
     /**

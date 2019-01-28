@@ -7,14 +7,17 @@
 
 package frc.robot;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import frc.robot.drivers.VisiSight;
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
@@ -35,10 +38,14 @@ public class RobotMap {
 
 	public static final PowerDistributionPanel pdp = new PowerDistributionPanel();
 
+    // Encoder constants
 	public static final int WHEEL_DIAMETER = 6; //INCHES
 	public static final double WHEEL_CIRCUMFRENCE = WHEEL_DIAMETER*Math.PI;
 	public static final double DRIVE_ENCODER_PPR = 256;
-	public static final double DISTANCE_PER_PULSE = WHEEL_CIRCUMFRENCE/DRIVE_ENCODER_PPR*5/48;
+    public static final double DISTANCE_PER_PULSE = WHEEL_CIRCUMFRENCE/DRIVE_ENCODER_PPR*5/48;
+    
+    // Drivetrain parameters
+    public static final double BASEPLATE_WIDTH = 25.716;
 
     // Drive motors
     public static final VictorSPX lVictor = new VictorSPX(0);
@@ -53,6 +60,10 @@ public class RobotMap {
 
     //elevator motor
     public static final VictorSPX elevatorVictor = new VictorSPX(6);
+    public static final VisiSight visisight = new VisiSight(new DigitalInput(4));
+
+    // navX
+    public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
 	public static Encoder rightEncoder = new Encoder(2, 3, false, EncodingType.k4X);
 	public static Encoder leftEncoder = new Encoder(0, 1, true, EncodingType.k4X);
 	
@@ -63,15 +74,6 @@ public class RobotMap {
         lTalon2.follow(lVictor);
         rTalon1.follow(rVictor);
         rTalon2.follow(rVictor);
-        // Set all motors into coast mode
-        lVictor.setNeutralMode(NeutralMode.Coast);
-        rVictor.setNeutralMode(NeutralMode.Coast);
-        lTalon1.setNeutralMode(NeutralMode.Coast);
-        lTalon2.setNeutralMode(NeutralMode.Coast);
-        rTalon1.setNeutralMode(NeutralMode.Coast);
-        rTalon2.setNeutralMode(NeutralMode.Coast); 
-
-        elevatorVictor.setNeutralMode(NeutralMode.Coast);
 		
 		leftEncoder.setDistancePerPulse(DISTANCE_PER_PULSE);
 		rightEncoder.setDistancePerPulse(DISTANCE_PER_PULSE);
