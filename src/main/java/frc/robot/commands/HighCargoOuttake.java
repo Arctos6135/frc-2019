@@ -8,15 +8,15 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.robot.OI;
 import frc.robot.Robot;
 
 /**
- * Runs Essie to intake cargo until the sensor inside it is activated.
- * Note that if there is no cargo, this command will never terminate.
+ * Runs Essie so that the motors spin to shoot the cargo through the high exit (Cargo ship).
+ * 
+ * Note that this command will never terminate!!
  */
-public class AutoCargoIntake extends Command {
-    public AutoCargoIntake() {
+public class HighCargoOuttake extends Command {
+    public HighCargoOuttake() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
         requires(Robot.essie);
@@ -25,7 +25,7 @@ public class AutoCargoIntake extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        Robot.essie.startIntake();
+        Robot.essie.startOuttakeHigh();
     }
 
     // Called repeatedly when this Command is scheduled to run
@@ -36,13 +36,7 @@ public class AutoCargoIntake extends Command {
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        if(Robot.essie.hasCargo()) {
-            OI.essiePickupRumble.execute();
-            return true;
-        }
-        else {
-            return false;
-        }
+        return false;
     }
 
     // Called once after isFinished returns true

@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.AutoCargoIntake;
+import frc.robot.commands.HighCargoOuttake;
+import frc.robot.commands.LowCargoOuttake;
 import frc.robot.misc.Rumble;
 
 /**
@@ -81,6 +83,8 @@ public class OI {
         public static final int GEARSHIFT_HIGH = ControllerMap.RBUMPER;
 
         public static final int ESSIE_AUTOPICKUP = ControllerMap.BUTTON_X;
+        public static final int ESSIE_OUTTAKE_LOW = ControllerMap.LBUMPER;
+        public static final int ESSIE_OUTTAKE_HIGH = ControllerMap.RBUMPER;
 
         // This will cancel Essie's auto intake
         // If auto vision align is used it will cancel that as well
@@ -102,6 +106,8 @@ public class OI {
         JoystickButton overrideMotorBlacklist2 = new JoystickButton(operatorController, Controls.OVERRIDE_MOTOR_BLACKLIST);
         JoystickButton essieAutoIntake = new JoystickButton(operatorController, Controls.ESSIE_AUTOPICKUP);
         JoystickButton cancel = new JoystickButton(operatorController, Controls.CANCEL);
+        JoystickButton essieOuttakeLow = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_LOW);
+        JoystickButton essieOuttakeHigh = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand() {
             @Override
@@ -118,6 +124,8 @@ public class OI {
             }
         });
         essieAutoIntake.whenPressed(new AutoCargoIntake());
+        essieOuttakeHigh.whileHeld(new HighCargoOuttake());
+        essieOuttakeLow.whileHeld(new LowCargoOuttake());
         cancel.whenActive(new InstantCommand() {
             @Override
             public void initialize() {
