@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Essie;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -23,6 +24,7 @@ import frc.robot.subsystems.Drivetrain;
  */
 public class Robot extends TimedRobot {
     public static Drivetrain drivetrain;
+    public static Essie essie;
     public static OI oi;
 
     Command autoCommand;
@@ -36,6 +38,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         RobotMap.init();
         drivetrain = new Drivetrain();
+        essie = new Essie();
         oi = new OI();
 
         // chooser.setDefaultOption("Default Auto", new ExampleCommand());
@@ -53,7 +56,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
-        SmartDashboard.putBoolean("VisiSight", RobotMap.visisight.isBlocked());
+        SmartDashboard.putBoolean("VisiSight", RobotMap.essieVisisight.isBlocked());
         SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
     }
 

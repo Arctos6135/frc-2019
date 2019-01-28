@@ -62,17 +62,17 @@ public class RobotMap {
     public static final VictorSP essieMotorHighUnprotected = new VictorSP(1);
     public static final ProtectedMotor essieMotorLow = new ProtectedMotor((speed) -> {
         essieMotorLowUnprotected.set(speed);
-    }, 4, 30, 0.5, () -> {
+    }, 4, 25, 1, () -> {
         OI.errorRumbleOperator.execute();
     });
     public static final ProtectedMotor essieMotorHigh = new ProtectedMotor((speed) -> {
         essieMotorHighUnprotected.set(speed);
-    }, 5, 30, 0.5, () -> {
+    }, 5, 25, 1, () -> {
         OI.errorRumbleOperator.execute();
     });
 
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
-    public static final VisiSight visisight = new VisiSight(new DigitalInput(4));
+    public static final VisiSight essieVisisight = new VisiSight(new DigitalInput(4));
 
     // navX
     public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
