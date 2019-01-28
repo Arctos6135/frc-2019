@@ -110,6 +110,8 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
+        SmartDashboard.putBoolean("VisiSight", RobotMap.visisight.isBlocked());
+        SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
         if(isInDebugMode) {
             SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
             SmartDashboard.putString("Drivetrain Gear", drivetrain.getGear() == Drivetrain.Gear.HIGH ? "HIGH" : "LOW");
