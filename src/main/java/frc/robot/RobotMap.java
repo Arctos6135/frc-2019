@@ -56,7 +56,7 @@ public class RobotMap {
 	public static final TalonSRX rTalon2 = new TalonSRX(5);
 
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
-    public static final VisiSight visisight = new VisiSight(new DigitalInput(4));
+    public static final VisiSight visisight = new VisiSight(4);
 
     // navX
     public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
