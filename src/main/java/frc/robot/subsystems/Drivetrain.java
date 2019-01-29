@@ -84,7 +84,16 @@ public class Drivetrain extends Subsystem {
         RobotMap.lVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, left * speedMultiplier)));
         // Invert right side
         RobotMap.rVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, -right * speedMultiplier)));
-	}
+    }
+    
+    public void setLeftMotor(double output) {
+        prevLeft = output;
+        RobotMap.lVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, output * speedMultiplier)));
+    }
+    public void setRightMotor(double output) {
+        prevRight = output;
+        RobotMap.rVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, -output * speedMultiplier)));
+    }
 	
 	// Encoders
 	/** 
@@ -174,6 +183,8 @@ public class Drivetrain extends Subsystem {
     public enum Gear {
         LOW, HIGH;
     }
+
+    private Gear gear;
     /**
      * Sets the drivetrain gearboxes to be in either low or high gear.
      * 
@@ -187,6 +198,16 @@ public class Drivetrain extends Subsystem {
         else {
             RobotMap.gearShifter.set(DoubleSolenoid.Value.kReverse);
         }
+        this.gear = gear;
+    }
+    /**
+     * Gets the gear the drivetrain gearboxes are in.
+     * 
+     * Note that the low and high gear values may be switched depending on how the pneumatics are wired!
+     * @return The gear, {@link Gear#LOW} or {@link Gear#HIGH}.
+     */
+    public Gear getGear() {
+        return gear;
     }
 
     /**
@@ -195,7 +216,7 @@ public class Drivetrain extends Subsystem {
      * @return The yaw of the robot
      */
     public double getHeading() {
-        return constrainAngle(RobotMap.ahrs.getFusedHeading());
+        return constrainAngle(RobotMap.ahrs.getAngle());
     }
     /**
      * Resets the heading (yaw) of the robot.

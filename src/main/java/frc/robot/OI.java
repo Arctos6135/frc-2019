@@ -11,9 +11,9 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.Trigger;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.VisionAlign;
-import frc.robot.misc.Rumble;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -82,15 +82,23 @@ public class OI {
         public static final int GEARSHIFT_HIGH = ControllerMap.RBUMPER;
 
         public static final int VISION_ALIGN = ControllerMap.BUTTON_A;
+        public static final int DEBUG = ControllerMap.BUTTON_START;
     }
 
     public static final XboxController driverController = new XboxController(0);
     public static final XboxController operatorController = new XboxController(1);
 
-    public static final Rumble errorRumbleDriver = new Rumble(driverController, "both", 0.75);
-    public static final Rumble errorRumbleOperator = new Rumble(operatorController, "both", 0.75);
-
+    @SuppressWarnings("resource")
     public OI() {
+        JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
+        JoystickButton visionAlign = new JoystickButton(driverController, Controls.VISION_ALIGN);
+
+        debug.whenActive(new InstantCommand() {
+            @Override
+            protected void initialize() {
+                Robot.isInDebugMode = !Robot.isInDebugMode;
+            }
+        });
 
         // User button on the rio shuts down the Jetson
         Trigger shutdownJetson = new Trigger() {
@@ -101,7 +109,6 @@ public class OI {
         };
         shutdownJetson.whenActive(new ShutdownJetson());
 
-        JoystickButton visionAlign = new JoystickButton(driverController, Controls.VISION_ALIGN);
         visionAlign.whenPressed(new VisionAlign());
     }
 }
