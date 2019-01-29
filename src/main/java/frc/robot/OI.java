@@ -83,6 +83,7 @@ public class OI {
     public static final XboxController driverController = new XboxController(0);
     public static final XboxController operatorController = new XboxController(1);
 
+    @SuppressWarnings("resource")
     public OI() {
         JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
         debug.whenActive(new InstantCommand() {
