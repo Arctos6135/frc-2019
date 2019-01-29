@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.FollowTrajectory;
 import frc.robot.commands.ShutdownJetson;
-import frc.robot.misc.FollowTrajectory;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
 import robot.pathfinder.core.TrajectoryParams;
@@ -142,6 +142,7 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         // Vision status is outputted regardless of current state
         SmartDashboard.putBoolean("Vision Status", vision.ready());
+        
         if(isInDebugMode) {
             SmartDashboard.putBoolean("VisiSight", RobotMap.visisight.isBlocked());
             SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());

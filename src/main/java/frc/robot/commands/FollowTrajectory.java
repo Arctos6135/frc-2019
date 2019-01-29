@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.misc;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
@@ -82,8 +82,9 @@ public class FollowTrajectory extends Command {
     }
 
     // Make this return true when this Command no longer needs to run execute()
+    // Note we made this method public! This is so that Commands that wrap around this one have an easier time.
     @Override
-    protected boolean isFinished() {
+    public boolean isFinished() {
         return !follower.isRunning();
     }
 
