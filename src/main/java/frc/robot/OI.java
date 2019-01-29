@@ -82,7 +82,7 @@ public class OI {
         public static final int GEARSHIFT_LOW = ControllerMap.LBUMPER;
         public static final int GEARSHIFT_HIGH = ControllerMap.RBUMPER;
 
-        public static final int VISION_ALIGN = ControllerMap.BUTTON_A;
+        public static final int VISION_ALIGN = ControllerMap.BUTTON_Y;
         public static final int DEBUG = ControllerMap.BUTTON_START;
     }
 
