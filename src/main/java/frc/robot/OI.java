@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.Trigger;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.VisionAlign;
@@ -97,13 +98,6 @@ public class OI {
         JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
         JoystickButton visionAlign = new JoystickButton(driverController, Controls.VISION_ALIGN);
 
-        debug.whenActive(new InstantCommand() {
-            @Override
-            protected void initialize() {
-                Robot.isInDebugMode = !Robot.isInDebugMode;
-            }
-        });
-
         // User button on the rio shuts down the Jetson
         Trigger shutdownJetson = new Trigger() {
             @Override
@@ -114,5 +108,14 @@ public class OI {
         shutdownJetson.whenActive(new ShutdownJetson());
 
         visionAlign.whenPressed(new VisionAlign());
+        
+        Command debugCmd = new InstantCommand() {
+            @Override
+            protected void initialize() {
+                Robot.isInDebugMode = !Robot.isInDebugMode;
+            }
+        };
+        debugCmd.setRunWhenDisabled(true);
+        debug.whenPressed(debugCmd);
     }
 }

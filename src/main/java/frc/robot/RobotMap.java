@@ -16,7 +16,9 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.SerialPort.Port;
 import frc.robot.drivers.VisiSight;
+import frc.robot.misc.BeautifulRobotDriver;
 import robot.pathfinder.core.RobotSpecs;
 
 /**
@@ -35,9 +37,9 @@ public class RobotMap {
     // number and the module. For example you with a rangefinder:
     // public static int rangefinderPort = 1;
     // public static int rangefinderModule = 1;
-
+    
 	public static final PowerDistributionPanel pdp = new PowerDistributionPanel();
-
+    
     // Encoder constants
 	public static final int WHEEL_DIAMETER = 6; //INCHES
 	public static final double WHEEL_CIRCUMFRENCE = WHEEL_DIAMETER*Math.PI;
@@ -46,7 +48,9 @@ public class RobotMap {
     
     // Drivetrain parameters
     public static final double BASEPLATE_WIDTH = 25.716;
-
+    
+    public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
+    
     // Drive motors
     public static final VictorSPX lVictor = new VictorSPX(0);
     public static final TalonSRX lTalon1 = new TalonSRX(1);
@@ -54,17 +58,18 @@ public class RobotMap {
     public static final VictorSPX rVictor = new VictorSPX(3);
     public static final TalonSRX rTalon1 = new TalonSRX(4);
 	public static final TalonSRX rTalon2 = new TalonSRX(5);
-
+    
 	public static Encoder rightEncoder = new Encoder(2, 3, false, EncodingType.k4X);
-	public static Encoder leftEncoder = new Encoder(0, 1, true, EncodingType.k4X);
-
+    public static Encoder leftEncoder = new Encoder(0, 1, true, EncodingType.k4X);
+    
+    public static final BeautifulRobotDriver beautifulRobotDriver = new BeautifulRobotDriver(Port.kOnboard);
+    
     // navX
     public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
-    public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
     public static final VisiSight visisight = new VisiSight(4);
     
     public static final RobotSpecs specs = new RobotSpecs(120, 80, BASEPLATE_WIDTH);
-  
+    
     public static void init() {
         // Set the motors to follow
         lTalon1.follow(lVictor);
