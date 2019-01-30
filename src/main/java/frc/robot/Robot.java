@@ -7,12 +7,20 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.subsystems.Hank;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.FollowTrajectory;
+import frc.robot.subsystems.BeautifulRobot;
 import frc.robot.subsystems.Drivetrain;
+import robot.pathfinder.core.TrajectoryParams;
+import robot.pathfinder.core.Waypoint;
+import robot.pathfinder.core.path.PathType;
+import robot.pathfinder.core.trajectory.TankDriveTrajectory;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -24,10 +32,13 @@ import frc.robot.subsystems.Drivetrain;
 public class Robot extends TimedRobot {
     public static Hank hank;
     public static Drivetrain drivetrain;
+    public static BeautifulRobot beautifulRobot;
     public static OI oi;
 
     Command autoCommand;
     SendableChooser<Command> chooser = new SendableChooser<>();
+
+    public static boolean isInDebugMode = false;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -38,11 +49,68 @@ public class Robot extends TimedRobot {
         RobotMap.init();
         hank = new Hank();
         drivetrain = new Drivetrain();
+        beautifulRobot = new BeautifulRobot();
         oi = new OI();
 
         // chooser.setDefaultOption("Default Auto", new ExampleCommand());
         // chooser.addOption("My Auto", new MyAutoCommand());
         // SmartDashboard.putData("Auto mode", m_chooser);
+        beautifulRobot.init();
+        beautifulRobot.setEnabled(true);
+        beautifulRobot.setColor(DriverStation.getInstance().getAlliance());
+        beautifulRobot.turnOn();
+        chooser.setDefaultOption("None", null);
+
+        TrajectoryParams params = new TrajectoryParams();
+        params.waypoints = new Waypoint[] {
+            new Waypoint(0.0, 0.0, Math.PI / 2),
+            new Waypoint(60.0, 120.0, Math.PI / 2),
+        };
+        params.alpha = 150.0;
+        params.segmentCount = 500;
+        params.isTank = true;
+        params.pathType = PathType.QUINTIC_HERMITE;
+        TankDriveTrajectory trajectory = new TankDriveTrajectory(RobotMap.specs, params);
+
+        chooser.addOption("Debug Auto", new FollowTrajectory(trajectory));
+        SmartDashboard.putData("Auto Mode", chooser);
+
+        if(isInDebugMode) {
+            putTuningEntries();
+        }
+    }
+
+    /**
+     * Puts a bunch of tunable values to SmartDashboard for tuning.
+     */
+    public void putTuningEntries() {
+        SmartDashboard.putNumber("Follower kP (High Gear)", FollowTrajectory.kP_h);
+        SmartDashboard.putNumber("Follower kD (High Gear)", FollowTrajectory.kD_h);
+        SmartDashboard.putNumber("Follower kV (High Gear)", FollowTrajectory.kV_h);
+        SmartDashboard.putNumber("Follower kA (High Gear)", FollowTrajectory.kA_h);
+        SmartDashboard.putNumber("Follower kDP (High Gear)", FollowTrajectory.kDP_h);
+
+        SmartDashboard.putNumber("Follower kP (Low Gear)", FollowTrajectory.kP_l);
+        SmartDashboard.putNumber("Follower kD (Low Gear)", FollowTrajectory.kD_l);
+        SmartDashboard.putNumber("Follower kV (Low Gear)", FollowTrajectory.kV_l);
+        SmartDashboard.putNumber("Follower kA (Low Gear)", FollowTrajectory.kA_l);
+        SmartDashboard.putNumber("Follower kDP (Low Gear)", FollowTrajectory.kDP_l);
+    }
+    /**
+     * Updates a bunch of tunable values based on new values from SmartDashboard.
+     */
+    public void getTuningEntries() {
+        FollowTrajectory.kP_h = SmartDashboard.getNumber("Follower kP (High Gear)", FollowTrajectory.kP_h);
+        FollowTrajectory.kD_h = SmartDashboard.getNumber("Follower kD (High Gear)", FollowTrajectory.kD_h);
+        FollowTrajectory.kV_h = SmartDashboard.getNumber("Follower kV (High Gear)", FollowTrajectory.kV_h);
+        FollowTrajectory.kA_h = SmartDashboard.getNumber("Follower kA (High Gear)", FollowTrajectory.kA_h);
+        FollowTrajectory.kDP_h = SmartDashboard.getNumber("Follower kDP (High Gear)", FollowTrajectory.kDP_h);
+
+        FollowTrajectory.kP_l = SmartDashboard.getNumber("Follower kP (Low Gear)", FollowTrajectory.kP_l);
+        FollowTrajectory.kD_l = SmartDashboard.getNumber("Follower kD (Low Gear)", FollowTrajectory.kD_l);
+        FollowTrajectory.kV_l = SmartDashboard.getNumber("Follower kV (Low Gear)", FollowTrajectory.kV_l);
+        FollowTrajectory.kA_l = SmartDashboard.getNumber("Follower kA (Low Gear)", FollowTrajectory.kA_l);
+        FollowTrajectory.kDP_l = SmartDashboard.getNumber("Follower kDP (Low Gear)", FollowTrajectory.kDP_l);
     }
 
     /**
@@ -55,6 +123,19 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
+        
+        if(isInDebugMode) {
+            SmartDashboard.putBoolean("VisiSight", RobotMap.visisight.isBlocked());
+            SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
+            SmartDashboard.putString("Drivetrain Gear", drivetrain.getGear() == Drivetrain.Gear.HIGH ? "HIGH" : "LOW");
+            SmartDashboard.putNumber("Left Distance", drivetrain.getLeftDistance());
+            SmartDashboard.putNumber("Right Distance", drivetrain.getRightDistance());
+            SmartDashboard.putNumber("Left Velocity", drivetrain.getLeftSpeed());
+            SmartDashboard.putNumber("Right Velocity", drivetrain.getRightSpeed());
+            var accelerations = drivetrain.getAccelerations();
+            SmartDashboard.putNumber("Left Acceleration", accelerations[0]);
+            SmartDashboard.putNumber("Right Acceleration", accelerations[1]);
+        }
     }
 
     /**
@@ -67,6 +148,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
+        beautifulRobot.setPattern(BeautifulRobot.Pattern.PULSATING);
         autoCommand = chooser.getSelected();
 
         // schedule the autonomous command (example)
@@ -90,6 +172,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        beautifulRobot.setPattern(BeautifulRobot.Pattern.RAINBOW);
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
@@ -114,6 +197,11 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
+        beautifulRobot.setPattern(BeautifulRobot.Pattern.SOLID);
+        if(isInDebugMode) {
+            getTuningEntries();
+            putTuningEntries();
+        }
     }
 
     @Override

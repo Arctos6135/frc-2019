@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.OperateHank;
 
 /**
@@ -78,6 +79,7 @@ public class OI {
         public static final int GEARSHIFT_HIGH = ControllerMap.RBUMPER;
 
         public static final int OPERATE_HANK = ControllerMap.BUTTON_A;
+        public static final int DEBUG = ControllerMap.BUTTON_START;
     }
 
     public static final XboxController driverController = new XboxController(0);
@@ -85,6 +87,15 @@ public class OI {
 
     @SuppressWarnings("resource")
     public OI() {
-        new JoystickButton(operatorController, Controls.OPERATE_HANK).whenPressed(new OperateHank());
+        JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
+        JoystickButton operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
+
+        debug.whenActive(new InstantCommand() {
+            @Override
+            protected void initialize() {
+                Robot.isInDebugMode = !Robot.isInDebugMode;
+            }
+        });
+        operateHank.whenPressed(new OperateHank());
     }
 }
