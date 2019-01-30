@@ -7,13 +7,15 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.FollowTrajectory;
 import frc.robot.commands.ShutdownJetson;
-import frc.robot.misc.FollowTrajectory;
+import frc.robot.subsystems.BeautifulRobot;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Vision;
 import robot.pathfinder.core.TrajectoryParams;
@@ -31,6 +33,7 @@ import robot.pathfinder.core.trajectory.TankDriveTrajectory;
 public class Robot extends TimedRobot {
     public static Drivetrain drivetrain;
     public static Vision vision;
+    public static BeautifulRobot beautifulRobot;
     public static OI oi;
 
     Command autoCommand;
@@ -45,9 +48,15 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         RobotMap.init();
-        drivetrain = new Drivetrain("Drivetrain");
         vision = new Vision("Vision");
+        drivetrain = new Drivetrain();
+        beautifulRobot = new BeautifulRobot();
         oi = new OI();
+
+        beautifulRobot.init();
+        beautifulRobot.setEnabled(true);
+        beautifulRobot.setColor(DriverStation.getInstance().getAlliance());
+        beautifulRobot.turnOn();
 
         // chooser.setDefaultOption("Default Auto", new ExampleCommand());
         // chooser.addOption("My Auto", new MyAutoCommand());
@@ -76,6 +85,7 @@ public class Robot extends TimedRobot {
             OI.errorRumbleDriver.execute();
             OI.errorRumbleOperator.execute();
         }
+        
         chooser.setDefaultOption("None", null);
 
         TrajectoryParams params = new TrajectoryParams();
@@ -142,6 +152,7 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         // Vision status is outputted regardless of current state
         SmartDashboard.putBoolean("Vision Status", vision.ready());
+        
         if(isInDebugMode) {
             SmartDashboard.putBoolean("VisiSight", RobotMap.visisight.isBlocked());
             SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
@@ -167,6 +178,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
+        beautifulRobot.setPattern(BeautifulRobot.Pattern.PULSATING);
         autoCommand = chooser.getSelected();
 
         // schedule the autonomous command (example)
@@ -190,6 +202,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        beautifulRobot.setPattern(BeautifulRobot.Pattern.RAINBOW);
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
@@ -214,6 +227,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
+        beautifulRobot.setPattern(BeautifulRobot.Pattern.SOLID);
         if(isInDebugMode) {
             getTuningEntries();
             putTuningEntries();

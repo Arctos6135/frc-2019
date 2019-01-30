@@ -16,7 +16,9 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.SerialPort.Port;
 import frc.robot.drivers.VisiSight;
+import frc.robot.misc.BeautifulRobotDriver;
 import robot.pathfinder.core.RobotSpecs;
 
 /**
@@ -55,6 +57,7 @@ public class RobotMap {
     public static final TalonSRX rTalon1 = new TalonSRX(4);
 	public static final TalonSRX rTalon2 = new TalonSRX(5);
 
+    public static final BeautifulRobotDriver beautifulRobotDriver = new BeautifulRobotDriver(Port.kOnboard);
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
     public static final VisiSight visisight = new VisiSight(4);
 
