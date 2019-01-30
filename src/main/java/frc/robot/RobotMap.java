@@ -12,13 +12,14 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
-import robot.pathfinder.core.RobotSpecs;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import frc.robot.misc.BeautifulRobotDriver;
+import frc.robot.drivers.VisiSight;
+import robot.pathfinder.core.RobotSpecs;
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
@@ -58,6 +59,7 @@ public class RobotMap {
 
     public static final BeautifulRobotDriver beautifulRobotDriver = new BeautifulRobotDriver(Port.kOnboard);
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
+    public static final VisiSight visisight = new VisiSight(4);
 
     // navX
     public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
