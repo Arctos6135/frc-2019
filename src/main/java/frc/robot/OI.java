@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import frc.robot.commands.OperateClaw;
 import frc.robot.subsystems.Claw;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -83,6 +85,7 @@ public class OI {
         public static final int TOGGLE_CLAW = ControllerMap.BUTTON_X;
         public static final int OPEN_CLAW = ControllerMap.LBUMPER;
         public static final int CLOSE_CLAW = ControllerMap.RBUMPER;
+        public static final int DEBUG = ControllerMap.BUTTON_START;
     }
 
     public static final XboxController driverController = new XboxController(0);
@@ -93,9 +96,19 @@ public class OI {
         JoystickButton toggleClaw = new JoystickButton(operatorController, Controls.TOGGLE_CLAW);
         JoystickButton openClaw = new JoystickButton(operatorController, Controls.OPEN_CLAW);
         JoystickButton closeClaw = new JoystickButton(operatorController, Controls.CLOSE_CLAW);
+        JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
 
         toggleClaw.whenActive(new OperateClaw());
         openClaw.whenActive(new OperateClaw(Claw.State.OPEN));
         closeClaw.whenActive(new OperateClaw(Claw.State.CLOSED));
+        
+        Command debugCmd = new InstantCommand() {
+            @Override
+            protected void initialize() {
+                Robot.isInDebugMode = !Robot.isInDebugMode;
+            }
+        };
+        debugCmd.setRunWhenDisabled(true);
+        debug.whenPressed(debugCmd);
     }
 }

@@ -16,7 +16,10 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
+import edu.wpi.first.wpilibj.SerialPort.Port;
 import frc.robot.drivers.VisiSight;
+import frc.robot.misc.BeautifulRobotDriver;
+import robot.pathfinder.core.RobotSpecs;
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
@@ -54,6 +57,7 @@ public class RobotMap {
     public static final TalonSRX rTalon1 = new TalonSRX(4);
 	public static final TalonSRX rTalon2 = new TalonSRX(5);
 
+    public static final BeautifulRobotDriver beautifulRobotDriver = new BeautifulRobotDriver(Port.kOnboard);
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
     public static final DoubleSolenoid clawSolenoid = new DoubleSolenoid(2, 3);
 
@@ -63,9 +67,10 @@ public class RobotMap {
 
     // navX
     public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
-	public static Encoder rightEncoder = new Encoder(2, 3, false, EncodingType.k4X);
-	public static Encoder leftEncoder = new Encoder(0, 1, true, EncodingType.k4X);
-	
+	public static final Encoder rightEncoder = new Encoder(2, 3, false, EncodingType.k4X);
+	public static final Encoder leftEncoder = new Encoder(0, 1, true, EncodingType.k4X);
+    
+    public static final RobotSpecs specs = new RobotSpecs(120, 80, BASEPLATE_WIDTH);
   
     public static void init() {
         // Set the motors to follow
