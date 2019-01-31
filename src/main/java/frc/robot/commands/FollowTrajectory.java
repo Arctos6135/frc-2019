@@ -42,8 +42,9 @@ public class FollowTrajectory extends Command {
     }
 
     // Called just before this Command runs the first time
+    // Note we made this method public! This is so that Commands that wrap around this one have an easier time.
     @Override
-    protected void initialize() {
+    public void initialize() {
         if(Robot.drivetrain.getGear() == Drivetrain.Gear.HIGH) {
             follower = new TankFollower(trajectory, L_MOTOR, R_MOTOR, L_DISTANCE_SOURCE, R_DISTANCE_SOURCE, TIMESTAMP_SOURCE, 
                     GYRO, kV_h, kA_h, kP_h, kD_h, kDP_h);
@@ -58,7 +59,7 @@ public class FollowTrajectory extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     @Override
-    protected void execute() {
+    public void execute() {
         follower.run();
 
         if(Robot.isInDebugMode) {
@@ -82,7 +83,6 @@ public class FollowTrajectory extends Command {
     }
 
     // Make this return true when this Command no longer needs to run execute()
-    // Note we made this method public! This is so that Commands that wrap around this one have an easier time.
     @Override
     public boolean isFinished() {
         return !follower.isRunning();
@@ -90,7 +90,7 @@ public class FollowTrajectory extends Command {
 
     // Called once after isFinished returns true
     @Override
-    protected void end() {
+    public void end() {
         follower.stop();
         Robot.drivetrain.setMotors(0, 0);
     }
@@ -98,7 +98,7 @@ public class FollowTrajectory extends Command {
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     @Override
-    protected void interrupted() {
+    public void interrupted() {
         follower.stop();
         Robot.drivetrain.setMotors(0, 0);
     }
