@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.AutoCargoIntake;
 import frc.robot.commands.HighCargoOuttake;
 import frc.robot.commands.LowCargoOuttake;
-import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.OperateHank;
 import frc.robot.misc.Rumble;
 
@@ -148,11 +147,13 @@ public class OI {
 
         operateHank.whenPressed(new OperateHank());
 
-        debug.whenActive(new InstantCommand() {
+        Command debugCmd = new InstantCommand() {
             @Override
             protected void initialize() {
                 Robot.isInDebugMode = !Robot.isInDebugMode;
             }
-        });
+        };
+        debugCmd.setRunWhenDisabled(true);
+        debug.whenPressed(debugCmd);
     }
 }
