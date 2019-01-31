@@ -68,12 +68,12 @@ public class RobotMap {
     public static final ProtectedMotor essieMotorLow = new ProtectedMotor((speed) -> {
         essieMotorLowUnprotected.set(speed);
     }, 4, 25, 1, () -> {
-        OI.errorRumbleOperator.execute();
+        OI.errorRumbleOperatorMajor.execute();
     });
     public static final ProtectedMotor essieMotorHigh = new ProtectedMotor((speed) -> {
         essieMotorHighUnprotected.set(speed);
     }, 5, 25, 1, () -> {
-        OI.errorRumbleOperator.execute();
+        OI.errorRumbleOperatorMajor.execute();
     });
     public static final VisiSight essieVisisight = new VisiSight(4);
 
