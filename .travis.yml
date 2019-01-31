@@ -3,6 +3,11 @@ language: java
 jdk:
   - oraclejdk11
 
+# The encrypted webhook URL
+env:
+  global:
+    secure: "d9dPzKE9lpC7VzLMANlAzZPnPRPtqWCaMJFW5+ItubcieqgTq0QgqMwhEkkXA9xjmK4ueTtXPkKsv3X532AUD7etDvhV7ht0HBXV4PwYz8qbO7twDiCbXmcCj1hOlCD6oiAETYAIMgVchCNdNWjOMo7uUBHIXZ7RCbkRVTcnScIo2yyu1PSeF5XxY8G4hPSgWveiO4mCNM1T4xUtDZTNXDaC/D1KOZwcWbewnA1TNp/sgMMHAQHqoB/zQ3nQUgzTXWthD3gpNhBQkcFQ5RuYHWzeBs+waV3gy+ktXKnPmATfa3HiMWdFOBptgkbjo9Zi+tDapf7To4Rg5yO8pQhqrSYcbT+azEkzeckYwqcys1uv45HY4+YvOLbX+KQD9dend6r6277nIXHeaALqe9oZCikETU/YtIrNytgxOQZSVALyH7xNR4T43oZRbADoBO7G7gtd7qFRVucWvjw7OUM/x306hYh7UwOc61D31U1LBrHeYXyFxS+lRfw7za3RFHxkUNk7W2LKvWWy8EROA+2CR0VtDPjwwhnqq9E79rF7YdSdQ1AJGD5fXmdFRAPoh6qbBKPfsqLJPaxrEeaA+c8ic+tfBk9VtX/wAAWrIm132G/oXajGVExHF6iHj/f3WiDA4nTqSiz6p0y4msewa6Thev75zAmv5RyVeu8myJFjZyg="
+
 install: 
   # chmod the wrapper to be executable
   - sudo chmod +x ./gradlew
@@ -27,11 +32,11 @@ after_success:
     curl --request 'POST' 
     --header 'Content-Type: text/plain; charset=utf-8' 
     --data "&#9989; The latest commit pushed to **frc-2019** (commit *$SHORT_COMMIT* on branch *$TRAVIS_BRANCH*) has **passed** CI checks on **$TRAVIS_JDK_VERSION**!"
-    https://arctos6135.ryver.com/application/webhook/2EnmZwoD1TCAySR
+    $WEBHOOK_URL
 after_failure:
   - export SHORT_COMMIT=${TRAVIS_COMMIT:0:7}
   - >
     curl --request 'POST' 
     --header 'Content-Type: text/plain; charset=utf-8' 
     --data "&#10060; The latest commit pushed to **frc-2019** (commit *$SHORT_COMMIT* on branch *$TRAVIS_BRANCH*) has **failed** CI checks on **$TRAVIS_JDK_VERSION**!" 
-    https://arctos6135.ryver.com/application/webhook/2EnmZwoD1TCAySR
+    $WEBHOOK_URL
