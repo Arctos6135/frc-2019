@@ -88,8 +88,10 @@ public class OI {
     public static final XboxController driverController = new XboxController(0);
     public static final XboxController operatorController = new XboxController(1);
 
-    public static final Rumble errorRumbleDriver = new Rumble(driverController, "both", 0.75);
-    public static final Rumble errorRumbleOperator = new Rumble(operatorController, "both", 0.75);
+    public static final Rumble errorRumbleDriverMajor = new Rumble(driverController, Rumble.SIDE_BOTH, 1, 200, 3);
+    public static final Rumble errorRumbleOperatorMajor = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 200, 3);
+    public static final Rumble errorRumbleDriverMinor = new Rumble(driverController, Rumble.SIDE_BOTH, 0.75, 200, 2);
+    public static final Rumble errorRumbleOperatorMinor = new Rumble(operatorController, Rumble.SIDE_BOTH, 0.75, 200, 2);
 
     @SuppressWarnings("resource")
     public OI() {

@@ -82,8 +82,8 @@ public class Robot extends TimedRobot {
 
         if(!vision.ready()) {
             SmartDashboard.putString("Last Error", "Error: Wait for vision initialization timed out.");
-            OI.errorRumbleDriver.execute();
-            OI.errorRumbleOperator.execute();
+            OI.errorRumbleDriverMajor.execute();
+            OI.errorRumbleOperatorMajor.execute();
         }
         
         chooser.setDefaultOption("None", null);
