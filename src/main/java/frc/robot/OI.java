@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.AutoCargoIntake;
 import frc.robot.commands.HighCargoOuttake;
 import frc.robot.commands.LowCargoOuttake;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.OperateHank;
 import frc.robot.misc.Rumble;
 
@@ -104,7 +105,7 @@ public class OI {
     public static final Rumble errorRumbleDriverMinor = new Rumble(driverController, Rumble.SIDE_BOTH, 0.75, 200, 2);
     public static final Rumble errorRumbleOperatorMinor = new Rumble(operatorController, Rumble.SIDE_BOTH, 0.75, 200, 2);
     public static final Rumble essiePickupRumble = new Rumble(operatorController, Rumble.SIDE_BOTH, 0.5, 100);
-
+    
     @SuppressWarnings("resource")
     public OI() {
         JoystickButton overrideMotorBlacklist1 = new JoystickButton(driverController, Controls.OVERRIDE_MOTOR_BLACKLIST);
@@ -130,9 +131,11 @@ public class OI {
                 RobotMap.essieMotorLow.overrideBlacklist();
             }
         });
+
         essieAutoIntake.whenPressed(new AutoCargoIntake());
         essieOuttakeHigh.whileHeld(new HighCargoOuttake());
         essieOuttakeLow.whileHeld(new LowCargoOuttake());
+
         cancel.whenActive(new InstantCommand() {
             @Override
             public void initialize() {
@@ -142,8 +145,9 @@ public class OI {
                 }
             }
         });
-        operateHank.whenActive(new OperateHank());
-        
+
+        operateHank.whenPressed(new OperateHank());
+
         debug.whenActive(new InstantCommand() {
             @Override
             protected void initialize() {
