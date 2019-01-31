@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
 /**
@@ -87,11 +88,13 @@ public class OI {
     @SuppressWarnings("resource")
     public OI() {
         JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
-        debug.whenActive(new InstantCommand() {
+        Command debugCmd = new InstantCommand() {
             @Override
             protected void initialize() {
                 Robot.isInDebugMode = !Robot.isInDebugMode;
             }
-        });
+        };
+        debugCmd.setRunWhenDisabled(true);
+        debug.whenPressed(debugCmd);
     }
 }
