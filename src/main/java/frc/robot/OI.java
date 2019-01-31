@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.ShutdownJetson;
+import frc.robot.commands.VisionAlign;
 import frc.robot.misc.Rumble;
 
 /**
@@ -82,6 +83,7 @@ public class OI {
         public static final int GEARSHIFT_LOW = ControllerMap.LBUMPER;
         public static final int GEARSHIFT_HIGH = ControllerMap.RBUMPER;
 
+        public static final int VISION_ALIGN = ControllerMap.BUTTON_Y;
         public static final int DEBUG = ControllerMap.BUTTON_START;
     }
 
@@ -95,6 +97,8 @@ public class OI {
 
     @SuppressWarnings("resource")
     public OI() {
+        JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
+        JoystickButton visionAlign = new JoystickButton(driverController, Controls.VISION_ALIGN);
 
         // User button on the rio shuts down the Jetson
         Trigger shutdownJetson = new Trigger() {
@@ -105,7 +109,8 @@ public class OI {
         };
         shutdownJetson.whenActive(new ShutdownJetson());
 
-        JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
+        visionAlign.whenPressed(new VisionAlign());
+        
         Command debugCmd = new InstantCommand() {
             @Override
             protected void initialize() {
