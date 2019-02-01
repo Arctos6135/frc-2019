@@ -48,12 +48,15 @@ public class RotateToAngle extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        followerCommand.start();
+        // We cannot actually start the FollowTrajectory command, as it also requires drivetrain and will interrupt this command.
+        // Therefore we must call its methods manually without handing control to WPILib.
+        followerCommand.initialize();
     }
 
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
+        followerCommand.execute();
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -65,11 +68,13 @@ public class RotateToAngle extends Command {
     // Called once after isFinished returns true
     @Override
     protected void end() {
+        followerCommand.end();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     @Override
     protected void interrupted() {
+        followerCommand.interrupted();
     }
 }
