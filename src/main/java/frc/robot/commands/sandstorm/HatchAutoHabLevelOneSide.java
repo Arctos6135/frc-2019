@@ -8,18 +8,18 @@
 package frc.robot.commands.sandstorm;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.robot.commands.AdvancedVisionAlign;
 import frc.robot.commands.FollowTrajectory;
 import frc.robot.commands.OperateHank;
 import frc.robot.misc.AutoPaths;
 
-/**
- * Hatch auto that starts from hab level 1 using vision to align.
- */
-public class HatchAutoHabLevelOneFrontVision extends CommandGroup {
+public class HatchAutoHabLevelOneSide extends CommandGroup {
 
-    public HatchAutoHabLevelOneFrontVision() {
-        addSequential(new AdvancedVisionAlign());
+    public enum Side {
+        LEFT, RIGHT;
+    }
+
+    public HatchAutoHabLevelOneSide(Side side) {
+        addSequential(new FollowTrajectory(side == Side.LEFT ? AutoPaths.hatchAutoHabLevel1SideLeft : AutoPaths.hatchAutoHabLevel1SideRight));
         addSequential(new OperateHank());
         addSequential(new FollowTrajectory(AutoPaths.driveBack));
     }

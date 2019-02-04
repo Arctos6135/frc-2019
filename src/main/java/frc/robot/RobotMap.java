@@ -89,8 +89,8 @@ public class RobotMap {
      */
     public static final class RobotDimensions {
         public static final double BASEPLATE_WIDTH = 25.716;
-        public static final double LENGTH = 0;
-        public static final double HEIGHT = 0;
+        public static final double LENGTH = 40;
+        public static final double WIDTH = 36;
     }
 
     /**
@@ -99,6 +99,8 @@ public class RobotMap {
      */
     public static final class FieldDimensions {
         public static final double HAB_LVL1_TO_CARGO_SHIP = 172.5;
+        public static final double HAB_LVL1_TO_CARGO_SHIP_SIDE = 213.2200787;
+        public static final double HAB_LVL1_EDGE_TO_CARGO_SHIP_SIDE = 42.96;
     }
   
     public static void init() {
