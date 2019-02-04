@@ -14,11 +14,13 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.FollowTrajectory;
+import frc.robot.commands.ShutdownJetson;
 import frc.robot.misc.AutoPaths;
 import frc.robot.subsystems.BeautifulRobot;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Essie;
 import frc.robot.subsystems.Hank;
+import frc.robot.subsystems.Vision;
 import robot.pathfinder.core.TrajectoryParams;
 import robot.pathfinder.core.Waypoint;
 import robot.pathfinder.core.path.PathType;
@@ -35,6 +37,7 @@ public class Robot extends TimedRobot {
     public static Hank hank;
     public static Drivetrain drivetrain;
     public static Essie essie;
+    public static Vision vision;
     public static BeautifulRobot beautifulRobot;
     public static OI oi;
 
@@ -51,6 +54,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         RobotMap.init();
         hank = new Hank();
+        vision = new Vision();
         drivetrain = new Drivetrain();
         essie = new Essie();
         beautifulRobot = new BeautifulRobot();
@@ -58,13 +62,39 @@ public class Robot extends TimedRobot {
 
         AutoPaths.generateAll();
 
-        // chooser.setDefaultOption("Default Auto", new ExampleCommand());
-        // chooser.addOption("My Auto", new MyAutoCommand());
-        // SmartDashboard.putData("Auto mode", m_chooser);
         beautifulRobot.init();
         beautifulRobot.setEnabled(true);
         beautifulRobot.setColor(DriverStation.getInstance().getAlliance());
         beautifulRobot.turnOn();
+
+        // chooser.setDefaultOption("Default Auto", new ExampleCommand());
+        // chooser.addOption("My Auto", new MyAutoCommand());
+        // SmartDashboard.putData("Auto mode", m_chooser);
+
+        SmartDashboard.putData("Shutdown Jetson", new ShutdownJetson());
+        
+        // Wait for vision to be ready if it's not already
+        SmartDashboard.putBoolean("Vision Status", false);
+        if(!vision.ready()) {
+            vision.notifyWhenReady(this);
+            try {
+                synchronized(this) {
+                    // Wait for a maximum of 1 minute before timing out
+                    wait(60000);
+                }
+            }
+            catch(InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        SmartDashboard.putBoolean("Vision Status", vision.ready());
+
+        if(!vision.ready()) {
+            SmartDashboard.putString("Last Error", "Error: Wait for vision initialization timed out.");
+            OI.errorRumbleDriverMajor.execute();
+            OI.errorRumbleOperatorMajor.execute();
+        }
+        
         chooser.setDefaultOption("None", null);
 
         TrajectoryParams params = new TrajectoryParams();
@@ -129,10 +159,13 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
+        // Vision status is outputted regardless of current state
+        SmartDashboard.putBoolean("Vision Status", vision.ready());
         
         if(isInDebugMode) {
             SmartDashboard.putBoolean("Essie Switch(es)", RobotMap.essieSwitch1.get());
             SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
+
             SmartDashboard.putString("Drivetrain Gear", drivetrain.getGear() == Drivetrain.Gear.HIGH ? "HIGH" : "LOW");
             SmartDashboard.putNumber("Left Distance", drivetrain.getLeftDistance());
             SmartDashboard.putNumber("Right Distance", drivetrain.getRightDistance());

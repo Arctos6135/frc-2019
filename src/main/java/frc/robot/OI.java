@@ -7,14 +7,18 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.robot.commands.AdvancedVisionAlign;
 import frc.robot.commands.AutoCargoIntake;
 import frc.robot.commands.HighCargoOuttake;
 import frc.robot.commands.LowCargoOuttake;
 import frc.robot.commands.OperateHank;
+import frc.robot.commands.ShutdownJetson;
 import frc.robot.misc.Rumble;
 
 /**
@@ -88,12 +92,14 @@ public class OI {
         public static final int ESSIE_OUTTAKE_HIGH = ControllerMap.RBUMPER;
 
         // This will cancel Essie's auto intake
-        // If auto vision align is used it will cancel that as well
-        public static final int CANCEL = ControllerMap.BUTTON_B;
+        public static final int CANCEL_ESSIE = ControllerMap.BUTTON_B;
 
         public static final int OVERRIDE_MOTOR_BLACKLIST = ControllerMap.BUTTON_BACK;
         public static final int OPERATE_HANK = ControllerMap.BUTTON_A;
+        public static final int VISION_ALIGN = ControllerMap.BUTTON_Y;
         public static final int DEBUG = ControllerMap.BUTTON_START;
+
+        public static final int CANCEL_ALIGN = ControllerMap.BUTTON_B;
     }
 
     public static final XboxController driverController = new XboxController(0);
@@ -110,11 +116,13 @@ public class OI {
         JoystickButton overrideMotorBlacklist1 = new JoystickButton(driverController, Controls.OVERRIDE_MOTOR_BLACKLIST);
         JoystickButton overrideMotorBlacklist2 = new JoystickButton(operatorController, Controls.OVERRIDE_MOTOR_BLACKLIST);
         JoystickButton essieAutoIntake = new JoystickButton(operatorController, Controls.ESSIE_AUTOPICKUP);
-        JoystickButton cancel = new JoystickButton(operatorController, Controls.CANCEL);
+        JoystickButton cancelEssie = new JoystickButton(operatorController, Controls.CANCEL_ESSIE);
         JoystickButton essieOuttakeLow = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_LOW);
         JoystickButton essieOuttakeHigh = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH);
         JoystickButton operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
         JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
+        JoystickButton visionAlign = new JoystickButton(driverController, Controls.VISION_ALIGN);
+        JoystickButton cancelAlign = new JoystickButton(driverController, Controls.CANCEL_ALIGN);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand() {
             @Override
@@ -135,7 +143,7 @@ public class OI {
         essieOuttakeHigh.whileHeld(new HighCargoOuttake());
         essieOuttakeLow.whileHeld(new LowCargoOuttake());
 
-        cancel.whenActive(new InstantCommand() {
+        cancelEssie.whenActive(new InstantCommand() {
             @Override
             public void initialize() {
                 Command essieCommand = Robot.essie.getCurrentCommand();
@@ -147,6 +155,25 @@ public class OI {
 
         operateHank.whenPressed(new OperateHank());
 
+        // User button on the rio shuts down the Jetson
+        Trigger shutdownJetson = new Trigger() {
+            @Override
+            public boolean get() {
+                return RobotController.getUserButton();
+            }
+        };
+        shutdownJetson.whenActive(new ShutdownJetson());
+
+        visionAlign.whenPressed(new AdvancedVisionAlign());
+        cancelAlign.whenPressed(new InstantCommand() {
+            @Override
+            protected void initialize() {
+                if(Robot.vision.getCurrentCommand() != null) {
+                    Robot.vision.getCurrentCommand().cancel();
+                }
+            }
+        });
+        
         Command debugCmd = new InstantCommand() {
             @Override
             protected void initialize() {

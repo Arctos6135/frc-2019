@@ -39,9 +39,9 @@ public class RobotMap {
     // number and the module. For example you with a rangefinder:
     // public static int rangefinderPort = 1;
     // public static int rangefinderModule = 1;
-
+    
 	public static final PowerDistributionPanel pdp = new PowerDistributionPanel();
-
+    
     // Encoder constants
 	public static final int WHEEL_DIAMETER = 6; //INCHES
 	public static final double WHEEL_CIRCUMFRENCE = WHEEL_DIAMETER*Math.PI;

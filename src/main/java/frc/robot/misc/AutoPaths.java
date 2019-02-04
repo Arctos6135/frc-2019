@@ -2,7 +2,6 @@ package frc.robot.misc;
 
 import frc.robot.RobotMap;
 import robot.pathfinder.core.trajectory.TankDriveTrajectory;
-import robot.pathfinder.core.trajectory.TrajectoryGenerationException;
 import robot.pathfinder.core.trajectory.TrajectoryGenerator;
 
 /**
