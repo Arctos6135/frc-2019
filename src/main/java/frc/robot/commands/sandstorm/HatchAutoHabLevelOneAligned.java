@@ -5,11 +5,16 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.commands;
+package frc.robot.commands.sandstorm;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.robot.commands.FollowTrajectory;
+import frc.robot.commands.OperateHank;
 import frc.robot.misc.AutoPaths;
 
+/**
+ * Hatch auto that starts from hab level 1 aligned with the cargo ship.
+ */
 public class HatchAutoHabLevelOneAligned extends CommandGroup {
     /**
      * Add your docs here.
