@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.robot.commands.AdvancedVisionAlign;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.VisionAlign;
 import frc.robot.misc.Rumble;
@@ -85,6 +86,8 @@ public class OI {
 
         public static final int VISION_ALIGN = ControllerMap.BUTTON_Y;
         public static final int DEBUG = ControllerMap.BUTTON_START;
+
+        public static final int CANCEL = ControllerMap.BUTTON_B;
     }
 
     public static final XboxController driverController = new XboxController(0);
@@ -99,6 +102,7 @@ public class OI {
     public OI() {
         JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
         JoystickButton visionAlign = new JoystickButton(driverController, Controls.VISION_ALIGN);
+        JoystickButton cancel = new JoystickButton(driverController, Controls.CANCEL);
 
         // User button on the rio shuts down the Jetson
         Trigger shutdownJetson = new Trigger() {
@@ -109,7 +113,15 @@ public class OI {
         };
         shutdownJetson.whenActive(new ShutdownJetson());
 
-        visionAlign.whenPressed(new VisionAlign());
+        visionAlign.whenPressed(new AdvancedVisionAlign());
+        cancel.whenPressed(new InstantCommand() {
+            @Override
+            protected void initialize() {
+                if(Robot.vision.getCurrentCommand() != null) {
+                    Robot.vision.getCurrentCommand().cancel();
+                }
+            }
+        });
         
         Command debugCmd = new InstantCommand() {
             @Override
