@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.FollowTrajectory;
+import frc.robot.commands.TeleopDrive;
 import frc.robot.subsystems.BeautifulRobot;
 import frc.robot.subsystems.Drivetrain;
 import robot.pathfinder.core.TrajectoryParams;
@@ -120,6 +121,8 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
+
+        SmartDashboard.putBoolean("Drive Reversed", TeleopDrive.isReversed());
         
         if(isInDebugMode) {
             SmartDashboard.putBoolean("VisiSight", RobotMap.visisight.isBlocked());
