@@ -8,17 +8,18 @@
 package frc.robot.commands.sandstorm;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.robot.commands.AdvancedVisionAlign;
 import frc.robot.commands.FollowTrajectory;
 import frc.robot.commands.OperateHank;
 import frc.robot.misc.AutoPaths;
 
 /**
- * Hatch auto that starts from hab level 1 using vision to align.
+ * Hatch auto that starts from hab level 1 aligned with the cargo ship.
  */
-public class HatchAutoHabLevelOneVision extends CommandGroup {
-
-    public HatchAutoHabLevelOneVision() {
+public class HatchAutoHabLevelOneFrontAligned extends CommandGroup {
+    /**
+     * Add your docs here.
+     */
+    public HatchAutoHabLevelOneFrontAligned() {
         // Add Commands here:
         // e.g. addSequential(new Command1());
         // addSequential(new Command2());
@@ -35,7 +36,7 @@ public class HatchAutoHabLevelOneVision extends CommandGroup {
         // e.g. if Command1 requires chassis, and Command2 requires arm,
         // a CommandGroup containing them would require both the chassis and the
         // arm.
-        addSequential(new AdvancedVisionAlign());
+        addSequential(new FollowTrajectory(AutoPaths.hatchAutoHabLevel1Aligned));
         addSequential(new OperateHank());
         addSequential(new FollowTrajectory(AutoPaths.driveBack));
     }
