@@ -17,6 +17,8 @@ import frc.robot.commands.FollowTrajectory;
 import frc.robot.misc.AutoPaths;
 import frc.robot.subsystems.BeautifulRobot;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Essie;
+import frc.robot.subsystems.Hank;
 import robot.pathfinder.core.TrajectoryParams;
 import robot.pathfinder.core.Waypoint;
 import robot.pathfinder.core.path.PathType;
@@ -30,7 +32,9 @@ import robot.pathfinder.core.trajectory.TankDriveTrajectory;
  * project.
  */
 public class Robot extends TimedRobot {
+    public static Hank hank;
     public static Drivetrain drivetrain;
+    public static Essie essie;
     public static BeautifulRobot beautifulRobot;
     public static OI oi;
 
@@ -46,7 +50,9 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         RobotMap.init();
+        hank = new Hank();
         drivetrain = new Drivetrain();
+        essie = new Essie();
         beautifulRobot = new BeautifulRobot();
         oi = new OI();
 
@@ -125,7 +131,7 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         
         if(isInDebugMode) {
-            SmartDashboard.putBoolean("VisiSight", RobotMap.visisight.isBlocked());
+            SmartDashboard.putBoolean("Essie Switch(es)", RobotMap.essieSwitch1.get());
             SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
             SmartDashboard.putString("Drivetrain Gear", drivetrain.getGear() == Drivetrain.Gear.HIGH ? "HIGH" : "LOW");
             SmartDashboard.putNumber("Left Distance", drivetrain.getLeftDistance());
