@@ -57,7 +57,7 @@ public class RobotMap {
     public static final TalonSRX rTalon1 = new TalonSRX(4);
 	public static final TalonSRX rTalon2 = new TalonSRX(5);
 
-    public static final BeautifulRobotDriver beautifulRobotDriver = new BeautifulRobotDriver(Port.kOnboard);
+    public static final BeautifulRobotDriver beautifulRobotDriver = new BeautifulRobotDriver(Port.kMXP);
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
     public static final VisiSight visisight = new VisiSight(4);
 
