@@ -29,7 +29,7 @@ public class Essie extends Subsystem {
      * @return Whether there is cargo inside of Essie
      */
     public boolean hasCargo() {
-        return RobotMap.essieVisisight.isBlocked();
+        return RobotMap.essieSwitch1.get();
     }
     /**
      * Sets Essie's motors to start intaking cargo.

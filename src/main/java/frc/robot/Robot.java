@@ -128,7 +128,7 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         
         if(isInDebugMode) {
-            SmartDashboard.putBoolean("VisiSight", RobotMap.essieVisisight.isBlocked());
+            SmartDashboard.putBoolean("Essie Switch(es)", RobotMap.essieSwitch1.get());
             SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
             SmartDashboard.putString("Drivetrain Gear", drivetrain.getGear() == Drivetrain.Gear.HIGH ? "HIGH" : "LOW");
             SmartDashboard.putNumber("Left Distance", drivetrain.getLeftDistance());

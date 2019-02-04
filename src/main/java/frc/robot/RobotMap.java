@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.I2C;
@@ -75,7 +76,7 @@ public class RobotMap {
     }, 5, 25, 1, () -> {
         OI.errorRumbleOperatorMajor.execute();
     });
-    public static final VisiSight essieVisisight = new VisiSight(4);
+    public static final DigitalInput essieSwitch1 = new DigitalInput(4);
 
     // navX
     public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
