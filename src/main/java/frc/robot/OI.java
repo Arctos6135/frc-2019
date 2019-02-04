@@ -9,8 +9,10 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.buttons.POVButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.robot.commands.FlashBeautifulRobot;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -67,6 +69,16 @@ public class OI {
         public static final int BUTTON_START = 8;
         public static final int BUTTON_LSTICK = 9;
         public static final int BUTTON_RSTICK = 10;
+
+        public static final int POV_UP = 0;
+        public static final int POV_UPPER_RIGHT = 45;
+        public static final int POV_RIGHT = 90;
+        public static final int POV_LOWER_RIGHT = 135;
+        public static final int POV_DOWN = 180;
+        public static final int POV_LOWER_LEFT = 225;
+        public static final int POV_LEFT = 270;
+        public static final int POV_UPPER_LEFT = 315;
+        public static final int POV_CENTER = -1;
     }
     /**
      * A static final class to group all the controls. From here, one can easily change the mappings of any control.
@@ -79,6 +91,9 @@ public class OI {
         public static final int GEARSHIFT_HIGH = ControllerMap.RBUMPER;
 
         public static final int DEBUG = ControllerMap.BUTTON_START;
+
+        public static final int POV_LED_FLASH_SHORT = ControllerMap.POV_UP;
+        public static final int POV_LED_FLASH_LONG = ControllerMap.POV_DOWN;
     }
 
     public static final XboxController driverController = new XboxController(0);
@@ -87,6 +102,9 @@ public class OI {
     @SuppressWarnings("resource")
     public OI() {
         JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
+        POVButton ledFlashShort = new POVButton(operatorController, Controls.POV_LED_FLASH_SHORT);
+        POVButton ledFlashLong = new POVButton(operatorController, Controls.POV_LED_FLASH_LONG);
+
         Command debugCmd = new InstantCommand() {
             @Override
             protected void initialize() {
@@ -95,5 +113,8 @@ public class OI {
         };
         debugCmd.setRunWhenDisabled(true);
         debug.whenPressed(debugCmd);
+
+        ledFlashShort.whenPressed(new FlashBeautifulRobot(3.5, 1));
+        ledFlashLong.whenPressed(new FlashBeautifulRobot(1.5, 13));
     }
 }

@@ -118,13 +118,25 @@ public class BeautifulRobot extends Subsystem {
             return value;
         }
     }
+
+    private Pattern pattern = Pattern.SOLID;
     /**
      * Sets the pattern to be displayed by the BeautifulRobot&#8482;.
      * 
      * @param pattern The pattern to display
      */
     public void setPattern(Pattern pattern) {
+        this.pattern = pattern;
         writeCommand(Operation.MODE, pattern.getValue());
+    }
+
+    /**
+     * Gets the pattern to be displayed by the BeautifulRobot&#8482;.
+     * 
+     * @return The pattern
+     */
+    public Pattern getPattern() {
+        return pattern;
     }
 
     /**
