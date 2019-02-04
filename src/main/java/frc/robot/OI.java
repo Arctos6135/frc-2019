@@ -80,6 +80,8 @@ public class OI {
         public static final int GEARSHIFT_HIGH = ControllerMap.RBUMPER;
 
         public static final int DEBUG = ControllerMap.BUTTON_START;
+
+        public static final int REVERSE_DRIVE = ControllerMap.BUTTON_LSTICK;
     }
 
     public static final XboxController driverController = new XboxController(0);
