@@ -47,9 +47,6 @@ public class RobotMap {
 	public static final double WHEEL_CIRCUMFRENCE = WHEEL_DIAMETER*Math.PI;
 	public static final double DRIVE_ENCODER_PPR = 256;
     public static final double DISTANCE_PER_PULSE = WHEEL_CIRCUMFRENCE/DRIVE_ENCODER_PPR*5/48;
-    
-    // Drivetrain parameters
-    public static final double BASEPLATE_WIDTH = 25.716;
 
     public static final DoubleSolenoid hankSolenoid = new DoubleSolenoid(2, 3);
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
@@ -85,7 +82,24 @@ public class RobotMap {
 	
     public static final BeautifulRobotDriver beautifulRobotDriver = new BeautifulRobotDriver(Port.kOnboard);
     
-    public static final RobotSpecs specs = new RobotSpecs(120, 80, BASEPLATE_WIDTH);
+    public static final RobotSpecs specs = new RobotSpecs(120, 80, RobotDimensions.BASEPLATE_WIDTH);
+
+    /**
+     * Holds robot dimensions.
+     */
+    public static final class RobotDimensions {
+        public static final double BASEPLATE_WIDTH = 25.716;
+        public static final double LENGTH = 0;
+        public static final double HEIGHT = 0;
+    }
+
+    /**
+     * Holds field dimensions (duh).
+     * All units are in inches.
+     */
+    public static final class FieldDimensions {
+        public static final double HAB_LVL1_TO_CARGO_SHIP = 172.5;
+    }
   
     public static void init() {
         // Set the motors to follow

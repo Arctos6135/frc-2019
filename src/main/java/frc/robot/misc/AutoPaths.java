@@ -1,5 +1,10 @@
 package frc.robot.misc;
 
+import frc.robot.RobotMap;
+import robot.pathfinder.core.trajectory.TankDriveTrajectory;
+import robot.pathfinder.core.trajectory.TrajectoryGenerationException;
+import robot.pathfinder.core.trajectory.TrajectoryGenerator;
+
 /**
  * This class holds all the trajectories used in auto.
  * As trajectory generation can take a while, it is not practical to do these in real-time.
@@ -8,8 +13,12 @@ package frc.robot.misc;
  */
 public final class AutoPaths {
     
+    public static TankDriveTrajectory hatchAutoHabLevel1Aligned;
+    public static TankDriveTrajectory driveBack;
     
     public static void generateAll() {
-        
+        hatchAutoHabLevel1Aligned = TrajectoryGenerator.generateStraightTank(RobotMap.specs, 
+                RobotMap.FieldDimensions.HAB_LVL1_TO_CARGO_SHIP - RobotMap.RobotDimensions.LENGTH);
+        driveBack = TrajectoryGenerator.generateStraightTank(RobotMap.specs, 40);
     }
 }
