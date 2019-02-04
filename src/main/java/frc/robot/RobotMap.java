@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.VictorSP;
-import frc.robot.drivers.VisiSight;
 import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.misc.protectedmotor.ProtectedMotor;
 import robot.pathfinder.core.RobotSpecs;
@@ -77,6 +76,7 @@ public class RobotMap {
         OI.errorRumbleOperatorMajor.execute();
     });
     public static final DigitalInput essieSwitch1 = new DigitalInput(4);
+    public static final DigitalInput essieSwitch2 = new DigitalInput(5);
 
     // navX
     public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
