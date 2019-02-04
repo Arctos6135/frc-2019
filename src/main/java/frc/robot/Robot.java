@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.FollowTrajectory;
+import frc.robot.misc.AutoPaths;
 import frc.robot.subsystems.BeautifulRobot;
 import frc.robot.subsystems.Drivetrain;
 import robot.pathfinder.core.TrajectoryParams;
@@ -48,6 +49,8 @@ public class Robot extends TimedRobot {
         drivetrain = new Drivetrain();
         beautifulRobot = new BeautifulRobot();
         oi = new OI();
+
+        AutoPaths.generateAll();
 
         // chooser.setDefaultOption("Default Auto", new ExampleCommand());
         // chooser.addOption("My Auto", new MyAutoCommand());
