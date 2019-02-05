@@ -29,7 +29,7 @@ public class Essie extends Subsystem {
      * @return Whether there is cargo inside of Essie
      */
     public boolean hasCargo() {
-        return RobotMap.essiePhotoElectric.get();
+        return !RobotMap.essiePhotoElectric.get();
     }
     /**
      * Sets Essie's motors to start intaking cargo.
@@ -50,7 +50,7 @@ public class Essie extends Subsystem {
      */
     public void startOuttakeHigh() {
         RobotMap.essieMotorHigh.set(1.0);
-        RobotMap.essieMotorHigh.set(1.0);
+        RobotMap.essieMotorLow.set(1.0);
     }
     /**
      * Stops Essie's motors.
