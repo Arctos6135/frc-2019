@@ -14,10 +14,6 @@ import frc.robot.misc.AutoPaths;
 
 public class HatchAutoHabLevelOneSide extends CommandGroup {
 
-    public enum Side {
-        LEFT, RIGHT;
-    }
-
     public HatchAutoHabLevelOneSide(Side side) {
         addSequential(new FollowTrajectory(side == Side.LEFT ? AutoPaths.hatchAutoHabLevel1SideLeft : AutoPaths.hatchAutoHabLevel1SideRight));
         addSequential(new OperateHank());
