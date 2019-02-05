@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.FollowTrajectory;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.misc.AutoPaths;
+import frc.robot.commands.TeleopDrive;
 import frc.robot.subsystems.BeautifulRobot;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Essie;
@@ -161,6 +162,7 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         // Vision status is outputted regardless of current state
         SmartDashboard.putBoolean("Vision Status", vision.ready());
+        SmartDashboard.putBoolean("Drive Reversed", TeleopDrive.isReversed());
         
         if(isInDebugMode) {
             SmartDashboard.putBoolean("Essie Switch(es)", RobotMap.essieSwitch1.get());
