@@ -82,16 +82,19 @@ public class BeautifulRobot extends Subsystem {
      */
     public void setAlliance(Alliance color) {
         if(color == Alliance.Red) {
-            writeCommand(Operation.COLOR, (byte) 0);
+            setColor(Color.RED);
         }
         else if(color == Alliance.Blue) {
-            writeCommand(Operation.COLOR, (byte) 1);
+            setColor(Color.BLUE);
         }
         else {
-            writeCommand(Operation.COLOR, (byte) 2);
+            setColor(Color.GREEN);
         }
     }
 
+    /**
+     * A colour of the BeautifulRobot&#8482;.
+     */
     public enum Color {
         RED((byte) 0), BLUE((byte) 1), GREEN((byte) 2), YELLOW((byte) 3);
 
@@ -103,8 +106,23 @@ public class BeautifulRobot extends Subsystem {
             return code;
         }
     }
+    private Color color = Color.GREEN;
+
+    /**
+     * Sets the colour of the BeautifulRobot&#8482;.
+     * 
+     * @param color The colour to set to
+     */
     public void setColor(Color color) {
+        this.color = color;
         writeCommand(Operation.COLOR, color.getCode());
+    }
+    /**
+     * Gets the colour of the BeautifulRobot&#8482;, last set by the {@link #setColor(Color)} method.
+     * @return The color
+     */
+    public Color getColor() {
+        return color;
     }
 
     /**
