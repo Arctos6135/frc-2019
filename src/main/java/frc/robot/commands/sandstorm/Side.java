@@ -1,8 +1,9 @@
 package frc.robot.commands.sandstorm;
 
 /**
- * Left or right.
+ * For auto choosing.
+ * Left, right aligned/middle or vision.
  */
 public enum Side {
-    LEFT, RIGHT;
+    LEFT, RIGHT, ALIGNED, VISION;
 }
