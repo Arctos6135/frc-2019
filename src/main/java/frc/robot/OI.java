@@ -94,6 +94,8 @@ public class OI {
         public static final int OVERRIDE_MOTOR_BLACKLIST = ControllerMap.BUTTON_BACK;
         public static final int OPERATE_HANK = ControllerMap.BUTTON_A;
         public static final int DEBUG = ControllerMap.BUTTON_START;
+
+        public static final int REVERSE_DRIVE = ControllerMap.BUTTON_LSTICK;
     }
 
     public static final XboxController driverController = new XboxController(0);

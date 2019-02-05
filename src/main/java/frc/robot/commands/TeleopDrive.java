@@ -19,6 +19,8 @@ public class TeleopDrive extends Command {
     static double rampBand = 0.07;
     static boolean rampingOn = true;
 
+    static boolean reverseDrive = false;
+
     public TeleopDrive() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
@@ -38,6 +40,16 @@ public class TeleopDrive extends Command {
         rampBand = band;
     }
 
+    public static boolean isReversed() {
+        return reverseDrive;
+    }
+    public static void setReversed(boolean reversed) {
+        reverseDrive = reversed;
+    }
+    public static void reverse() {
+        reverseDrive = !reverseDrive;
+    }
+
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
@@ -49,10 +61,10 @@ public class TeleopDrive extends Command {
         // Handle regular driving
         double x = OI.driverController.getRawAxis(OI.Controls.DRIVE_LEFT_RIGHT);
         double y = OI.driverController.getRawAxis(OI.Controls.DRIVE_FWD_REV);
-
+        
         x = Math.abs(x) > DEADZONE ? x : 0;
         y = Math.abs(y) > DEADZONE ? y : 0;
-
+        
         x = Math.copySign(x * x, x);
         y = Math.copySign(y * y, y);
 
@@ -60,6 +72,10 @@ public class TeleopDrive extends Command {
         if(rampingOn) {
             l = Math.max(Robot.drivetrain.getPrevLeft() - rampBand, Math.min(Robot.drivetrain.getPrevLeft() + rampBand, l));
             r = Math.max(Robot.drivetrain.getPrevRight() - rampBand, Math.min(Robot.drivetrain.getPrevRight() + rampBand, r));
+        }
+        if(reverseDrive) {
+            l = -l;
+            r = -r;
         }
 
         Robot.drivetrain.setMotors(l, r);
@@ -80,6 +96,10 @@ public class TeleopDrive extends Command {
         }
         else if(shiftHigh) {
             Robot.drivetrain.setGear(Drivetrain.Gear.HIGH);
+        }
+        // Check for reverse toggle
+        if(OI.driverController.getRawButton(OI.Controls.REVERSE_DRIVE)) {
+            reverse();
         }
     }
 
