@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.FollowTrajectory;
+import frc.robot.commands.TeleopDrive;
 import frc.robot.subsystems.BeautifulRobot;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Essie;
@@ -126,6 +127,8 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
+
+        SmartDashboard.putBoolean("Drive Reversed", TeleopDrive.isReversed());
         
         SmartDashboard.putBoolean("Essie Cargo", essie.hasCargo());
         if(isInDebugMode) {

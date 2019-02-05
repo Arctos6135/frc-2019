@@ -110,6 +110,8 @@ public class OI {
 
         public static final int POV_LED_FLASH_SHORT = ControllerMap.POV_UP;
         public static final int POV_LED_FLASH_LONG = ControllerMap.POV_DOWN;
+        
+        public static final int REVERSE_DRIVE = ControllerMap.BUTTON_LSTICK;
     }
 
     public static final XboxController driverController = new XboxController(0);
