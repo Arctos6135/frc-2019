@@ -54,7 +54,7 @@ public class Robot extends TimedRobot {
         // SmartDashboard.putData("Auto mode", m_chooser);
         beautifulRobot.init();
         beautifulRobot.setEnabled(true);
-        beautifulRobot.setColor(DriverStation.getInstance().getAlliance());
+        beautifulRobot.setAlliance(DriverStation.getInstance().getAlliance());
         beautifulRobot.turnOn();
         chooser.setDefaultOption("None", null);
 
