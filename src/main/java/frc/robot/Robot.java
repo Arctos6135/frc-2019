@@ -131,7 +131,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Drive Reversed", TeleopDrive.isReversed());
         
         if(isInDebugMode) {
-            SmartDashboard.putBoolean("Essie Switch(es)", RobotMap.essieSwitch1.get());
+            SmartDashboard.putBoolean("Essie Cargo", essie.hasCargo());
             SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
             SmartDashboard.putString("Drivetrain Gear", drivetrain.getGear() == Drivetrain.Gear.HIGH ? "HIGH" : "LOW");
             SmartDashboard.putNumber("Left Distance", drivetrain.getLeftDistance());
