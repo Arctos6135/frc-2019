@@ -15,23 +15,32 @@ import frc.robot.subsystems.BeautifulRobot;
 public class FlashBeautifulRobot extends TimedCommand {
 
     private final int speed;
+    private final BeautifulRobot.Color color;
 
-    public FlashBeautifulRobot(double timeout, int speed) {
+    public FlashBeautifulRobot(double timeout, int speed, BeautifulRobot.Color color) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
         super(timeout);
         requires(Robot.beautifulRobot);
 
         this.speed = speed;
+        this.color = color;
     }
 
     private BeautifulRobot.Pattern pattern;
+    private BeautifulRobot.Color initColor;
 
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
         pattern = Robot.beautifulRobot.getPattern();
-        Robot.beautifulRobot.setPattern(BeautifulRobot.Pattern.PULSATING);
+        initColor = Robot.beautifulRobot.getColor();
+        if(pattern != BeautifulRobot.Pattern.PULSATING) {
+            Robot.beautifulRobot.setPattern(BeautifulRobot.Pattern.PULSATING);
+        }
+        if(initColor != color) {
+            Robot.beautifulRobot.setColor(color);
+        }
         Robot.beautifulRobot.writeCommand(BeautifulRobotDriver.Operation.SPEED_HIGH, (byte) speed);
     }
 
@@ -44,6 +53,9 @@ public class FlashBeautifulRobot extends TimedCommand {
     @Override
     protected void end() {
         Robot.beautifulRobot.writeCommand(BeautifulRobotDriver.Operation.SPEED_HIGH, (byte) 1);
+        if(initColor != color) {
+            Robot.beautifulRobot.setColor(initColor);
+        }
         Robot.beautifulRobot.setPattern(pattern);
     }
 

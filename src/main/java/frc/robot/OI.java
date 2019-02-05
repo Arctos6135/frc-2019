@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.buttons.POVButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.FlashBeautifulRobot;
+import frc.robot.subsystems.BeautifulRobot;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -114,7 +115,7 @@ public class OI {
         debugCmd.setRunWhenDisabled(true);
         debug.whenPressed(debugCmd);
 
-        ledFlashShort.whenPressed(new FlashBeautifulRobot(3.5, 1));
-        ledFlashLong.whenPressed(new FlashBeautifulRobot(1.5, 13));
+        ledFlashShort.whenPressed(new FlashBeautifulRobot(3.5, 1, BeautifulRobot.Color.GREEN));
+        ledFlashLong.whenPressed(new FlashBeautifulRobot(1.5, 13, BeautifulRobot.Color.YELLOW));
     }
 }
