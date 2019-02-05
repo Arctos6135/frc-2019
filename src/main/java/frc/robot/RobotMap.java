@@ -12,13 +12,15 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SerialPort.Port;
+import edu.wpi.first.wpilibj.VictorSP;
 import frc.robot.misc.BeautifulRobotDriver;
-import frc.robot.drivers.VisiSight;
+import frc.robot.misc.protectedmotor.ProtectedMotor;
 import robot.pathfinder.core.RobotSpecs;
 
 /**
@@ -49,6 +51,9 @@ public class RobotMap {
     // Drivetrain parameters
     public static final double BASEPLATE_WIDTH = 25.716;
 
+    public static final DoubleSolenoid hankSolenoid = new DoubleSolenoid(2, 3);
+    public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
+
     // Drive motors
     public static final VictorSPX lVictor = new VictorSPX(0);
     public static final TalonSRX lTalon1 = new TalonSRX(1);
@@ -57,14 +62,28 @@ public class RobotMap {
     public static final TalonSRX rTalon1 = new TalonSRX(4);
 	public static final TalonSRX rTalon2 = new TalonSRX(5);
 
-    public static final BeautifulRobotDriver beautifulRobotDriver = new BeautifulRobotDriver(Port.kMXP);
-    public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
-    public static final VisiSight visisight = new VisiSight(4);
+    // Essie motors
+    public static final VictorSP essieMotorLowUnprotected = new VictorSP(0);
+    public static final VictorSP essieMotorHighUnprotected = new VictorSP(1);
+    public static final ProtectedMotor essieMotorLow = new ProtectedMotor((speed) -> {
+        essieMotorLowUnprotected.set(speed);
+    }, 4, 25, 1, () -> {
+        OI.errorRumbleOperatorMajor.execute();
+    });
+    public static final ProtectedMotor essieMotorHigh = new ProtectedMotor((speed) -> {
+        essieMotorHighUnprotected.set(speed);
+    }, 5, 25, 1, () -> {
+        OI.errorRumbleOperatorMajor.execute();
+    });
+    public static final DigitalInput essieSwitch1 = new DigitalInput(4);
+    public static final DigitalInput essieSwitch2 = new DigitalInput(5);
 
     // navX
     public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
-	public static final Encoder rightEncoder = new Encoder(2, 3, false, EncodingType.k4X);
-	public static final Encoder leftEncoder = new Encoder(0, 1, true, EncodingType.k4X);
+	public static Encoder rightEncoder = new Encoder(2, 3, false, EncodingType.k4X);
+	public static Encoder leftEncoder = new Encoder(0, 1, true, EncodingType.k4X);
+	
+    public static final BeautifulRobotDriver beautifulRobotDriver = new BeautifulRobotDriver(Port.kOnboard);
     
     public static final RobotSpecs specs = new RobotSpecs(120, 80, BASEPLATE_WIDTH);
   
