@@ -6,6 +6,22 @@ import edu.wpi.first.wpilibj.command.Command;
  * Finds the correct autonomous command based on parameters.
  */
 public final class AutoDispatcher {
+
+    /**
+     * Levels of the hab.
+     */
+    public enum HabLevel {
+        ONE, TWO, THREE;
+    }
+
+    /**
+     * For auto choosing.
+     * Left, right aligned/middle or vision.
+     */
+    public enum Side {
+        LEFT, RIGHT, ALIGNED, VISION;
+    }
+
     /**
      * This checked exception is thrown by {@link AutoDispatcher#getAuto(HabLevel, Side) } if no auto matches the options.
      */
