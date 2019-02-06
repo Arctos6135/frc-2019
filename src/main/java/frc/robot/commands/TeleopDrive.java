@@ -20,6 +20,7 @@ public class TeleopDrive extends Command {
     static boolean rampingOn = true;
 
     static boolean reverseDrive = false;
+    static boolean precisionDrive = false;
 
     public TeleopDrive() {
         // Use requires() here to declare subsystem dependencies
@@ -48,6 +49,16 @@ public class TeleopDrive extends Command {
     }
     public static void reverse() {
         reverseDrive = !reverseDrive;
+    }
+
+    public static boolean isPrecisionDrive() {
+        return precisionDrive;
+    }
+    public static void setPrecisionDrive(boolean precisionDrive) {
+        TeleopDrive.precisionDrive = precisionDrive;
+    }
+    public static void togglePrecisionDrive() {
+        precisionDrive = !precisionDrive;
     }
 
     // Called just before this Command runs the first time
@@ -79,7 +90,12 @@ public class TeleopDrive extends Command {
             r = Math.max(Robot.drivetrain.getPrevRight() - rampBand, Math.min(Robot.drivetrain.getPrevRight() + rampBand, r));
         }
 
-        Robot.drivetrain.setMotors(l, r);
+        if(precisionDrive) {
+            Robot.drivetrain.setMotors(l / 2, r / 2);
+        }
+        else {
+            Robot.drivetrain.setMotors(l, r);
+        }
 
         // Handle gear shifts
         boolean shiftLow = OI.driverController.getRawButton(OI.Controls.GEARSHIFT_LOW);

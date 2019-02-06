@@ -96,6 +96,8 @@ public class OI {
         public static final int DEBUG = ControllerMap.BUTTON_START;
 
         public static final int REVERSE_DRIVE = ControllerMap.BUTTON_LSTICK;
+
+        public static final int PRECISION_DRIVE = ControllerMap.BUTTON_X;
     }
 
     public static final XboxController driverController = new XboxController(0);
@@ -114,6 +116,7 @@ public class OI {
         JoystickButton essieAutoIntake = new JoystickButton(operatorController, Controls.ESSIE_AUTOPICKUP);
         JoystickButton cancel = new JoystickButton(operatorController, Controls.CANCEL);
         JoystickButton operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
+        JoystickButton precisionDrive = new JoystickButton(driverController, Controls.PRECISION_DRIVE);
         JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
         JoystickButton reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
 
@@ -136,7 +139,7 @@ public class OI {
 
         cancel.whenActive(new InstantCommand() {
             @Override
-            public void initialize() {
+            protected void initialize() {
                 Command essieCommand = Robot.essie.getCurrentCommand();
                 if(essieCommand != null && essieCommand instanceof AutoCargoIntake) {
                     essieCommand.cancel();
@@ -145,6 +148,13 @@ public class OI {
         });
 
         operateHank.whenPressed(new OperateHank());
+
+        precisionDrive.whenPressed(new InstantCommand() {
+            @Override
+            protected void initialize() {
+                TeleopDrive.togglePrecisionDrive();
+            }
+        });
 
         Command debugCmd = new InstantCommand() {
             @Override
