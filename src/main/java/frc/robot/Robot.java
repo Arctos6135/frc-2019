@@ -129,6 +129,7 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
 
         SmartDashboard.putBoolean("Drive Reversed", TeleopDrive.isReversed());
+        SmartDashboard.putBoolean("Precision Drive", TeleopDrive.isPrecisionDrive());
         
         if(isInDebugMode) {
             SmartDashboard.putBoolean("Essie Switch(es)", RobotMap.essieSwitch1.get());
