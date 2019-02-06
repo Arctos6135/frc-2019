@@ -72,8 +72,7 @@ public class RobotMap {
     }, 5, 25, 1, () -> {
         OI.errorRumbleOperatorMajor.execute();
     });
-    public static final DigitalInput essieSwitch1 = new DigitalInput(4);
-    public static final DigitalInput essieSwitch2 = new DigitalInput(5);
+    public static final DigitalInput essiePhotoElectric = new DigitalInput(4);
 
     // navX
     public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);

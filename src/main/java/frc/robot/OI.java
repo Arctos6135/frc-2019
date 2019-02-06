@@ -19,6 +19,7 @@ import frc.robot.commands.HighCargoOuttake;
 import frc.robot.commands.LowCargoOuttake;
 import frc.robot.commands.OperateHank;
 import frc.robot.commands.ShutdownJetson;
+import frc.robot.commands.TeleopDrive;
 import frc.robot.misc.Rumble;
 
 /**
@@ -102,6 +103,8 @@ public class OI {
         public static final int CANCEL_ALIGN = ControllerMap.BUTTON_B;
         
         public static final int REVERSE_DRIVE = ControllerMap.BUTTON_LSTICK;
+
+        public static final int PRECISION_DRIVE = ControllerMap.BUTTON_X;
     }
 
     public static final XboxController driverController = new XboxController(0);
@@ -122,6 +125,7 @@ public class OI {
         JoystickButton essieOuttakeLow = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_LOW);
         JoystickButton essieOuttakeHigh = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH);
         JoystickButton operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
+        JoystickButton precisionDrive = new JoystickButton(driverController, Controls.PRECISION_DRIVE);
         JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
         JoystickButton visionAlign = new JoystickButton(driverController, Controls.VISION_ALIGN);
         JoystickButton cancelAlign = new JoystickButton(driverController, Controls.CANCEL_ALIGN);
@@ -147,7 +151,7 @@ public class OI {
 
         cancelEssie.whenActive(new InstantCommand() {
             @Override
-            public void initialize() {
+            protected void initialize() {
                 Command essieCommand = Robot.essie.getCurrentCommand();
                 if(essieCommand != null && essieCommand instanceof AutoCargoIntake) {
                     essieCommand.cancel();
@@ -176,6 +180,13 @@ public class OI {
             }
         });
         
+        precisionDrive.whenPressed(new InstantCommand() {
+            @Override
+            protected void initialize() {
+                TeleopDrive.togglePrecisionDrive();
+            }
+        });
+
         Command debugCmd = new InstantCommand() {
             @Override
             protected void initialize() {
