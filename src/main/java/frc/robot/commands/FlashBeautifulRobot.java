@@ -19,6 +19,7 @@ public class FlashBeautifulRobot extends Command {
     private final BeautifulRobot.Color color;
     private final int duration;
     private int count;
+    private final int initCount;
 
     private long last;
 
@@ -35,7 +36,7 @@ public class FlashBeautifulRobot extends Command {
 
         this.color = color;
         this.duration = duration;
-        this.count = count;
+        this.initCount = count;
     }
 
     private BeautifulRobot.Pattern initMode;
@@ -45,6 +46,7 @@ public class FlashBeautifulRobot extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
+        count = initCount;
         initMode = Robot.beautifulRobot.getPattern();
         initColor = Robot.beautifulRobot.getColor();
         initState = Robot.beautifulRobot.isOn();
@@ -61,10 +63,11 @@ public class FlashBeautifulRobot extends Command {
         }
         last = System.currentTimeMillis();
     }
-
+    
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
+        System.out.println(count);
         // If the duration has elapsed, toggle the on/off state of the LEDs
         if(System.currentTimeMillis() - last >= duration) {
             if(Robot.beautifulRobot.isOn()) {
@@ -83,7 +86,7 @@ public class FlashBeautifulRobot extends Command {
     @Override
     protected boolean isFinished() {
         // When the counter reaches 0 this command is finished
-        return count > 0;
+        return count <= 0;
     }
 
     // Called once after isFinished returns true
