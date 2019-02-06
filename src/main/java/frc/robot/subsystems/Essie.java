@@ -53,7 +53,7 @@ public class Essie extends Subsystem {
      */
     public void startOuttakeHigh() {
         RobotMap.essieMotorHigh.set(1.0);
-        RobotMap.essieMotorLow.set(1.0);
+        RobotMap.essieMotorLow.set(0.5);
     }
     /**
      * Stops Essie's motors.

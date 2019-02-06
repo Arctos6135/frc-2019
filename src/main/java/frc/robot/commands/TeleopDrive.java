@@ -68,14 +68,15 @@ public class TeleopDrive extends Command {
         x = Math.copySign(x * x, x);
         y = Math.copySign(y * y, y);
 
+        if(reverseDrive) {
+            y = -y;
+            x = -x;
+        }
+
         double l = y + x, r = y - x;
         if(rampingOn) {
             l = Math.max(Robot.drivetrain.getPrevLeft() - rampBand, Math.min(Robot.drivetrain.getPrevLeft() + rampBand, l));
             r = Math.max(Robot.drivetrain.getPrevRight() - rampBand, Math.min(Robot.drivetrain.getPrevRight() + rampBand, r));
-        }
-        if(reverseDrive) {
-            l = -l;
-            r = -r;
         }
 
         Robot.drivetrain.setMotors(l, r);
@@ -96,10 +97,6 @@ public class TeleopDrive extends Command {
         }
         else if(shiftHigh) {
             Robot.drivetrain.setGear(Drivetrain.Gear.HIGH);
-        }
-        // Check for reverse toggle
-        if(OI.driverController.getRawButton(OI.Controls.REVERSE_DRIVE)) {
-            reverse();
         }
     }
 

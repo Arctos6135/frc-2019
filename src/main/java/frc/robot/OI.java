@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.AutoCargoIntake;
 import frc.robot.commands.OperateHank;
+import frc.robot.commands.TeleopDrive;
 import frc.robot.misc.Rumble;
 
 /**
@@ -114,6 +115,7 @@ public class OI {
         JoystickButton cancel = new JoystickButton(operatorController, Controls.CANCEL);
         JoystickButton operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
         JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
+        JoystickButton reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand() {
             @Override
@@ -152,5 +154,12 @@ public class OI {
         };
         debugCmd.setRunWhenDisabled(true);
         debug.whenPressed(debugCmd);
+
+        reverse.whenPressed(new InstantCommand() {
+            @Override
+            protected void initialize() {
+                TeleopDrive.reverse();
+            }
+        });
     }
 }
