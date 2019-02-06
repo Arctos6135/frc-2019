@@ -37,7 +37,7 @@ public class AutoCargoIntake extends Command {
     @Override
     protected boolean isFinished() {
         if(Robot.essie.hasCargo()) {
-            OI.essiePickupRumble.execute();
+            OI.pickupRumble.execute();
             return true;
         }
         else {

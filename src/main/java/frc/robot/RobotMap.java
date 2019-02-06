@@ -77,6 +77,8 @@ public class RobotMap {
     });
     public static final DigitalInput essiePhotoElectric = new DigitalInput(4);
 
+    public static final DigitalInput hankSwitch = new DigitalInput(5);
+
     // navX
     public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
 	public static Encoder rightEncoder = new Encoder(2, 3, false, EncodingType.k4X);
