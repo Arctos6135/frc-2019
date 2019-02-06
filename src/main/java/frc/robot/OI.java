@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.buttons.POVButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.AutoCargoIntake;
-import frc.robot.commands.PulseBeautifulRobot;
+import frc.robot.commands.FlashBeautifulRobot;
 import frc.robot.commands.HighCargoOuttake;
 import frc.robot.commands.LowCargoOuttake;
 import frc.robot.commands.OperateHank;
@@ -109,8 +109,8 @@ public class OI {
         public static final int OPERATE_HANK = ControllerMap.BUTTON_A;
         public static final int DEBUG = ControllerMap.BUTTON_START;
 
-        public static final int POV_LED_FLASH_SHORT = ControllerMap.POV_UP;
-        public static final int POV_LED_FLASH_LONG = ControllerMap.POV_DOWN;
+        public static final int POV_LED_FLASH_GREEN = ControllerMap.POV_UP;
+        public static final int POV_LED_FLASH_YELLOW = ControllerMap.POV_DOWN;
         
         public static final int REVERSE_DRIVE = ControllerMap.BUTTON_LSTICK;
 
@@ -135,8 +135,8 @@ public class OI {
         JoystickButton essieOuttakeLow = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_LOW);
         JoystickButton essieOuttakeHigh = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH);
         JoystickButton operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
-        POVButton ledFlashShort = new POVButton(operatorController, Controls.POV_LED_FLASH_SHORT);
-        POVButton ledFlashLong = new POVButton(operatorController, Controls.POV_LED_FLASH_LONG);
+        POVButton ledFlashGreen = new POVButton(operatorController, Controls.POV_LED_FLASH_GREEN);
+        POVButton ledFlashYellow = new POVButton(operatorController, Controls.POV_LED_FLASH_YELLOW);
         JoystickButton precisionDrive = new JoystickButton(driverController, Controls.PRECISION_DRIVE);
         JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
 
@@ -186,8 +186,8 @@ public class OI {
         };
         debugCmd.setRunWhenDisabled(true);
         debug.whenPressed(debugCmd);
-
-        ledFlashShort.whenPressed(new PulseBeautifulRobot(3.5, 1, BeautifulRobot.Color.GREEN));
-        ledFlashLong.whenPressed(new PulseBeautifulRobot(1.5, 13, BeautifulRobot.Color.YELLOW));
+        
+        ledFlashGreen.whenPressed(new FlashBeautifulRobot(BeautifulRobot.Color.GREEN, 150, 5));
+        ledFlashYellow.whenPressed(new FlashBeautifulRobot(BeautifulRobot.Color.YELLOW, 150, 5));
     }
 }

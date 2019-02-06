@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
@@ -81,15 +82,7 @@ public class BeautifulRobot extends Subsystem {
      * @param color The alliance colour to set to
      */
     public void setAlliance(Alliance color) {
-        if(color == Alliance.Red) {
-            setColor(Color.RED);
-        }
-        else if(color == Alliance.Blue) {
-            setColor(Color.BLUE);
-        }
-        else {
-            setColor(Color.GREEN);
-        }
+        setColor(Color.fromAlliance(color));
     }
 
     /**
@@ -101,6 +94,17 @@ public class BeautifulRobot extends Subsystem {
         byte code;
         Color(byte code) {
             this.code = code;
+        }
+        public static Color fromAlliance(DriverStation.Alliance alliance) {
+            if(alliance == Alliance.Red) {
+                return Color.RED;
+            }
+            else if(alliance == Alliance.Blue) {
+                return Color.BLUE;
+            }
+            else {
+                return Color.GREEN;
+            }
         }
         public byte getCode() {
             return code;
