@@ -17,6 +17,7 @@ import frc.robot.commands.FlashBeautifulRobot;
 import frc.robot.commands.HighCargoOuttake;
 import frc.robot.commands.LowCargoOuttake;
 import frc.robot.commands.OperateHank;
+import frc.robot.commands.TeleopDrive;
 import frc.robot.misc.Rumble;
 import frc.robot.subsystems.BeautifulRobot;
 
@@ -112,6 +113,8 @@ public class OI {
         public static final int POV_LED_FLASH_LONG = ControllerMap.POV_DOWN;
         
         public static final int REVERSE_DRIVE = ControllerMap.BUTTON_LSTICK;
+
+        public static final int PRECISION_DRIVE = ControllerMap.BUTTON_X;
     }
 
     public static final XboxController driverController = new XboxController(0);
@@ -134,6 +137,7 @@ public class OI {
         JoystickButton operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
         POVButton ledFlashShort = new POVButton(operatorController, Controls.POV_LED_FLASH_SHORT);
         POVButton ledFlashLong = new POVButton(operatorController, Controls.POV_LED_FLASH_LONG);
+        JoystickButton precisionDrive = new JoystickButton(driverController, Controls.PRECISION_DRIVE);
         JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand() {
@@ -157,7 +161,7 @@ public class OI {
 
         cancel.whenActive(new InstantCommand() {
             @Override
-            public void initialize() {
+            protected void initialize() {
                 Command essieCommand = Robot.essie.getCurrentCommand();
                 if(essieCommand != null && essieCommand instanceof AutoCargoIntake) {
                     essieCommand.cancel();
@@ -166,6 +170,13 @@ public class OI {
         });
 
         operateHank.whenPressed(new OperateHank());
+
+        precisionDrive.whenPressed(new InstantCommand() {
+            @Override
+            protected void initialize() {
+                TeleopDrive.togglePrecisionDrive();
+            }
+        });
 
         Command debugCmd = new InstantCommand() {
             @Override
