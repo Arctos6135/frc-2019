@@ -125,17 +125,27 @@ public class BeautifulRobot extends Subsystem {
         return color;
     }
 
+    private boolean on = false;
     /**
      * Turns the BeautifulRobot&#8482; ON. By default, it is OFF.
      */
     public void turnOn() {
+        on = true;
         writeCommand(Operation.ENABLE, (byte) 1);
     }
     /**
      * Turns the BeautifulRobot&#8482; OFF. By default, it is OFF.
      */
     public void turnOff() {
+        on = false;
         writeCommand(Operation.ENABLE, (byte) 0);
+    }
+    /**
+     * Returns whether the BeautifulRobot&#8482; is on. By default, it is OFF.
+     * @return Whether the BeautifulRobot&#8482; is on
+     */
+    public boolean isOn() {
+        return on;
     }
     /**
      * All the different patterns the BeautifulRobot&#8482; has.

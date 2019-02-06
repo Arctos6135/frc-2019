@@ -7,56 +7,103 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.command.TimedCommand;
+import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.subsystems.BeautifulRobot;
 
-public class FlashBeautifulRobot extends TimedCommand {
+/**
+ * Flashes the BeautifulRobot&#8482; a number of times.
+ */
+public class FlashBeautifulRobot extends Command {
 
-    private final int speed;
     private final BeautifulRobot.Color color;
+    private final int duration;
+    private int count;
 
-    public FlashBeautifulRobot(double timeout, int speed, BeautifulRobot.Color color) {
+    private long last;
+
+    /**
+     * Constructor.
+     * @param color The colour to flash
+     * @param duration The time the LEDs stay on/off
+     * @param count The number of flashes
+     */
+    public FlashBeautifulRobot(BeautifulRobot.Color color, int duration, int count) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-        super(timeout);
         requires(Robot.beautifulRobot);
 
-        this.speed = speed;
         this.color = color;
+        this.duration = duration;
+        this.count = count;
     }
 
-    private BeautifulRobot.Pattern pattern;
+    private BeautifulRobot.Pattern initMode;
     private BeautifulRobot.Color initColor;
+    private boolean initState;
 
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        pattern = Robot.beautifulRobot.getPattern();
+        initMode = Robot.beautifulRobot.getPattern();
         initColor = Robot.beautifulRobot.getColor();
-        if(pattern != BeautifulRobot.Pattern.PULSATING) {
-            Robot.beautifulRobot.setPattern(BeautifulRobot.Pattern.PULSATING);
+        initState = Robot.beautifulRobot.isOn();
+
+        // Set mode, colour and turn on
+        if(initMode != BeautifulRobot.Pattern.SOLID) {
+            Robot.beautifulRobot.setPattern(BeautifulRobot.Pattern.SOLID);
         }
         if(initColor != color) {
             Robot.beautifulRobot.setColor(color);
         }
-        Robot.beautifulRobot.writeCommand(BeautifulRobotDriver.Operation.SPEED_HIGH, (byte) speed);
+        if(!initState) {
+            Robot.beautifulRobot.turnOn();
+        }
+        last = System.currentTimeMillis();
     }
 
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
+        // If the duration has elapsed, toggle the on/off state of the LEDs
+        if(System.currentTimeMillis() - last >= duration) {
+            if(Robot.beautifulRobot.isOn()) {
+                Robot.beautifulRobot.turnOff();
+            }
+            else {
+                Robot.beautifulRobot.turnOn();
+                // For each off-then-on cycle, decrement the counter
+                count --;
+            }
+            last = System.currentTimeMillis();
+        }
+    }
+
+    // Make this return true when this Command no longer needs to run execute()
+    @Override
+    protected boolean isFinished() {
+        // When the counter reaches 0 this command is finished
+        return count > 0;
     }
 
     // Called once after isFinished returns true
     @Override
     protected void end() {
-        Robot.beautifulRobot.writeCommand(BeautifulRobotDriver.Operation.SPEED_HIGH, (byte) 1);
+        // Reset the mode, colour and on/off state if they were changed
+        if(initMode != BeautifulRobot.Pattern.SOLID) {
+            Robot.beautifulRobot.setPattern(initMode);
+        }
         if(initColor != color) {
             Robot.beautifulRobot.setColor(initColor);
         }
-        Robot.beautifulRobot.setPattern(pattern);
+        if(initState != Robot.beautifulRobot.isOn()) {
+            if(initState) {
+                Robot.beautifulRobot.turnOn();
+            }
+            else {
+                Robot.beautifulRobot.turnOff();
+            }
+        }
     }
 
     // Called when another command which requires one or more of the same

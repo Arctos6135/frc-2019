@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.buttons.POVButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.AutoCargoIntake;
-import frc.robot.commands.FlashBeautifulRobot;
+import frc.robot.commands.PulseBeautifulRobot;
 import frc.robot.commands.HighCargoOuttake;
 import frc.robot.commands.LowCargoOuttake;
 import frc.robot.commands.OperateHank;
@@ -187,7 +187,7 @@ public class OI {
         debugCmd.setRunWhenDisabled(true);
         debug.whenPressed(debugCmd);
 
-        ledFlashShort.whenPressed(new FlashBeautifulRobot(3.5, 1, BeautifulRobot.Color.GREEN));
-        ledFlashLong.whenPressed(new FlashBeautifulRobot(1.5, 13, BeautifulRobot.Color.YELLOW));
+        ledFlashShort.whenPressed(new PulseBeautifulRobot(3.5, 1, BeautifulRobot.Color.GREEN));
+        ledFlashLong.whenPressed(new PulseBeautifulRobot(1.5, 13, BeautifulRobot.Color.YELLOW));
     }
 }
