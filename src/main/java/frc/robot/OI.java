@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.POVButton;
@@ -18,6 +19,7 @@ import frc.robot.commands.FlashBeautifulRobot;
 import frc.robot.commands.HighCargoOuttake;
 import frc.robot.commands.LowCargoOuttake;
 import frc.robot.commands.OperateHank;
+import frc.robot.commands.PulseBeautifulRobot;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.misc.Rumble;
 import frc.robot.subsystems.BeautifulRobot;
@@ -141,6 +143,8 @@ public class OI {
         JoystickButton precisionDrive = new JoystickButton(driverController, Controls.PRECISION_DRIVE);
         JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
 
+        // Overrides the blacklisted status of all the motors
+        // (Overrides motor protection)
         overrideMotorBlacklist1.whenActive(new InstantCommand() {
             @Override
             protected void initialize() {
@@ -156,10 +160,13 @@ public class OI {
             }
         });
 
+        // Intake Essie until cargo sensor is triggered
         essieAutoIntake.whenPressed(new AutoCargoIntake());
+        // Outtake Essie through the lower or higher cargo outputs
         essieOuttakeHigh.whileHeld(new HighCargoOuttake());
         essieOuttakeLow.whileHeld(new LowCargoOuttake());
 
+        // Cancels Essie's auto pickup command
         cancel.whenActive(new InstantCommand() {
             @Override
             protected void initialize() {
@@ -170,8 +177,10 @@ public class OI {
             }
         });
 
+        // Operates Hank
         operateHank.whenPressed(new OperateHank());
 
+        // Toggles precision drive
         precisionDrive.whenPressed(new InstantCommand() {
             @Override
             protected void initialize() {
@@ -179,6 +188,7 @@ public class OI {
             }
         });
 
+        // Rumbles the controller and flashes the LEDs when Hank picks up a hatch
         Trigger hankHatchTrigger = new Trigger() {
             @Override
             public boolean get() {
@@ -189,9 +199,13 @@ public class OI {
             @Override
             protected void initialize() {
                 OI.pickupRumble.execute();
+                @SuppressWarnings("resource")
+                Command pulse = new PulseBeautifulRobot(1.5, 10, BeautifulRobot.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
+                pulse.start();
             }
         });
 
+        // Toggles debug mode
         Command debugCmd = new InstantCommand() {
             @Override
             protected void initialize() {
@@ -201,6 +215,7 @@ public class OI {
         debugCmd.setRunWhenDisabled(true);
         debug.whenPressed(debugCmd);
         
+        // Flashes the LEDs
         ledFlashGreen.whenPressed(new FlashBeautifulRobot(BeautifulRobot.Color.GREEN, 150, 5));
         ledFlashYellow.whenPressed(new FlashBeautifulRobot(BeautifulRobot.Color.YELLOW, 150, 5));
     }
