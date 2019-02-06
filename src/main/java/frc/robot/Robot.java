@@ -179,7 +179,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        beautifulRobot.setPattern(BeautifulRobot.Pattern.RAINBOW);
+        beautifulRobot.setPattern(BeautifulRobot.Pattern.MOVING_PULSE);
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
@@ -204,7 +204,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
-        beautifulRobot.setPattern(BeautifulRobot.Pattern.SOLID);
+        beautifulRobot.setPattern(BeautifulRobot.Pattern.RAINBOW);
         if(isInDebugMode) {
             getTuningEntries();
             putTuningEntries();
