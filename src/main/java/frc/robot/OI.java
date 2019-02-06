@@ -10,6 +10,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.POVButton;
+import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.AutoCargoIntake;
@@ -124,7 +125,7 @@ public class OI {
     public static final Rumble errorRumbleOperatorMajor = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 200, 3);
     public static final Rumble errorRumbleDriverMinor = new Rumble(driverController, Rumble.SIDE_BOTH, 0.75, 200, 2);
     public static final Rumble errorRumbleOperatorMinor = new Rumble(operatorController, Rumble.SIDE_BOTH, 0.75, 200, 2);
-    public static final Rumble essiePickupRumble = new Rumble(operatorController, Rumble.SIDE_BOTH, 0.5, 100);
+    public static final Rumble pickupRumble = new Rumble(operatorController, Rumble.SIDE_BOTH, 0.5, 100);
     
     @SuppressWarnings("resource")
     public OI() {
@@ -175,6 +176,19 @@ public class OI {
             @Override
             protected void initialize() {
                 TeleopDrive.togglePrecisionDrive();
+            }
+        });
+
+        Trigger hankHatchTrigger = new Trigger() {
+            @Override
+            public boolean get() {
+                return Robot.hank.hasHatch();
+            }
+        };
+        hankHatchTrigger.whenActive(new InstantCommand() {
+            @Override
+            protected void initialize() {
+                OI.pickupRumble.execute();
             }
         });
 
