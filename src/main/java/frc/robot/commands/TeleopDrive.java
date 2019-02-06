@@ -77,7 +77,7 @@ public class TeleopDrive extends Command {
         y = Math.abs(y) > DEADZONE ? y : 0;
         
         x = Math.copySign(x * x, x);
-        y = Math.copySign(y * y, y);
+        y = Math.copySign(Math.pow(y, 4), y);
 
         if(reverseDrive) {
             y = -y;

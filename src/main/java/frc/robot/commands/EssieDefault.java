@@ -8,7 +8,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.OI;
 import frc.robot.Robot;
 
@@ -39,6 +38,11 @@ public class EssieDefault extends Command {
             Robot.essie.startOuttakeHigh();
         }
         else {
+            if(OI.operatorController.getRawButton(OI.Controls.ESSIE_REVERSE_INTAKE)) {
+                Robot.essie.reverseIntake();
+                return;
+            }
+
             boolean lb = OI.operatorController.getRawButton(OI.Controls.ESSIE_OUTTAKE_LOW);
             boolean hb = OI.operatorController.getRawButton(OI.Controls.ESSIE_OUTTAKE_HIGH);
 

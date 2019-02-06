@@ -8,7 +8,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.RobotMap;
 import frc.robot.commands.EssieDefault;
 
@@ -41,6 +40,10 @@ public class Essie extends Subsystem {
         RobotMap.essieMotorHigh.set(0);
         RobotMap.essieMotorLow.set(1.0);
     }
+    public void reverseIntake() {
+        RobotMap.essieMotorHigh.set(0);
+        RobotMap.essieMotorLow.set(-1.0);
+    }
     /**
      * Sets Essie's motors to start outtaking through the lower exit (rocket ship level 1).
      */
@@ -53,7 +56,7 @@ public class Essie extends Subsystem {
      */
     public void startOuttakeHigh() {
         RobotMap.essieMotorHigh.set(1.0);
-        RobotMap.essieMotorLow.set(0.5);
+        RobotMap.essieMotorLow.set(1.0);
     }
     /**
      * Stops Essie's motors.
