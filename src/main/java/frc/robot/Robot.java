@@ -127,11 +127,12 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
-
         SmartDashboard.putBoolean("Drive Reversed", TeleopDrive.isReversed());
+        SmartDashboard.putBoolean("Essie Cargo", essie.hasCargo());
         
         if(isInDebugMode) {
-            SmartDashboard.putBoolean("Essie Cargo", essie.hasCargo());
+            SmartDashboard.putNumber("Essie High", RobotMap.essieMotorHighUnprotected.get());
+            SmartDashboard.putNumber("Essie Low", RobotMap.essieMotorLowUnprotected.get());        
             SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
             SmartDashboard.putString("Drivetrain Gear", drivetrain.getGear() == Drivetrain.Gear.HIGH ? "HIGH" : "LOW");
             SmartDashboard.putNumber("Left Distance", drivetrain.getLeftDistance());
