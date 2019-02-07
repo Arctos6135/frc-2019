@@ -15,19 +15,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.FollowTrajectory;
 import frc.robot.commands.ShutdownJetson;
-import frc.robot.misc.AutoPaths;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.commands.sandstorm.AutoDispatcher;
-import frc.robot.commands.sandstorm.AutoDispatcher.Mode;
+import frc.robot.misc.AutoPaths;
 import frc.robot.subsystems.BeautifulRobot;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Essie;
 import frc.robot.subsystems.Hank;
 import frc.robot.subsystems.Vision;
-import robot.pathfinder.core.TrajectoryParams;
-import robot.pathfinder.core.Waypoint;
-import robot.pathfinder.core.path.PathType;
-import robot.pathfinder.core.trajectory.TankDriveTrajectory;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -255,6 +250,15 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledPeriodic() {
         Scheduler.getInstance().run();
+
+        // Check if the auto configuration is valid
+        try {
+            AutoDispatcher.getAuto(habLevelChooser.getSelected(), modeChooser.getSelected());
+            SmartDashboard.putBoolean("Valid Auto Configuration", true);
+        }
+        catch(AutoDispatcher.AutoNotFoundException e) {
+            SmartDashboard.putBoolean("Valid Auto Configuration", false);
+        }
     }
 
     /**
