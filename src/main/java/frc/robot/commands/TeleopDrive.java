@@ -81,7 +81,6 @@ public class TeleopDrive extends Command {
 
         if(reverseDrive) {
             y = -y;
-            x = -x;
         }
 
         double l = y + x, r = y - x;

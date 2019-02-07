@@ -87,7 +87,7 @@ public class RobotMap {
     public static final RobotSpecs specs = new RobotSpecs(120, 80, BASEPLATE_WIDTH);
   
     public static void init() {
-        essieMotorHighUnprotected.setInverted(true);
+        essieMotorLowUnprotected.setInverted(true);
 
         // Set the motors to follow
         lTalon1.follow(lVictor);
