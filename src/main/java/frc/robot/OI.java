@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
@@ -105,6 +106,8 @@ public class OI {
         public static final int REVERSE_DRIVE = ControllerMap.BUTTON_LSTICK;
 
         public static final int PRECISION_DRIVE = ControllerMap.BUTTON_X;
+
+        public static final int STOP_AUTO = ControllerMap.BUTTON_B;
     }
 
     public static final XboxController driverController = new XboxController(0);
@@ -128,6 +131,7 @@ public class OI {
         JoystickButton visionAlign = new JoystickButton(driverController, Controls.VISION_ALIGN);
         JoystickButton cancelAlign = new JoystickButton(driverController, Controls.CANCEL_ALIGN);
         JoystickButton reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
+        JoystickButton stopAuto = new JoystickButton(driverController, Controls.STOP_AUTO);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand() {
             @Override
@@ -199,5 +203,11 @@ public class OI {
                 TeleopDrive.reverse();
             }
         });
+
+        stopAuto.whenPressed(new InstantCommand(() -> {
+            if(DriverStation.getInstance().isAutonomous() && Robot.autoCommand != null) {
+                Robot.autoCommand.cancel();
+            }
+        }));
     }
 }

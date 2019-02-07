@@ -39,7 +39,7 @@ public class Robot extends TimedRobot {
     public static BeautifulRobot beautifulRobot;
     public static OI oi;
     
-    Command autoCommand;
+    public static Command autoCommand;
 
     SendableChooser<AutoDispatcher.Mode> modeChooser = new SendableChooser<>();
     SendableChooser<AutoDispatcher.HabLevel> habLevelChooser = new SendableChooser<>();
