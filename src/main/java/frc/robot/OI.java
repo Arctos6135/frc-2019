@@ -15,8 +15,6 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.AdvancedVisionAlign;
 import frc.robot.commands.AutoCargoIntake;
-import frc.robot.commands.HighCargoOuttake;
-import frc.robot.commands.LowCargoOuttake;
 import frc.robot.commands.OperateHank;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
@@ -89,8 +87,10 @@ public class OI {
         public static final int GEARSHIFT_HIGH = ControllerMap.RBUMPER;
 
         public static final int ESSIE_AUTOPICKUP = ControllerMap.BUTTON_X;
+        public static final int ESSIE_REVERSE_INTAKE = ControllerMap.BUTTON_Y;
         public static final int ESSIE_OUTTAKE_LOW = ControllerMap.LBUMPER;
         public static final int ESSIE_OUTTAKE_HIGH = ControllerMap.RBUMPER;
+        public static final int ESSIE_OUTTAKE = ControllerMap.LSTICK_Y_AXIS;
 
         // This will cancel Essie's auto intake
         public static final int CANCEL_ESSIE = ControllerMap.BUTTON_B;
@@ -112,9 +112,9 @@ public class OI {
 
     public static final Rumble errorRumbleDriverMajor = new Rumble(driverController, Rumble.SIDE_BOTH, 1, 200, 3);
     public static final Rumble errorRumbleOperatorMajor = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 200, 3);
-    public static final Rumble errorRumbleDriverMinor = new Rumble(driverController, Rumble.SIDE_BOTH, 0.75, 200, 2);
-    public static final Rumble errorRumbleOperatorMinor = new Rumble(operatorController, Rumble.SIDE_BOTH, 0.75, 200, 2);
-    public static final Rumble essiePickupRumble = new Rumble(operatorController, Rumble.SIDE_BOTH, 0.5, 100);
+    public static final Rumble errorRumbleDriverMinor = new Rumble(driverController, Rumble.SIDE_BOTH, 1, 200, 2);
+    public static final Rumble errorRumbleOperatorMinor = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 200, 2);
+    public static final Rumble essiePickupRumble = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 100);
     
     @SuppressWarnings("resource")
     public OI() {
@@ -122,13 +122,12 @@ public class OI {
         JoystickButton overrideMotorBlacklist2 = new JoystickButton(operatorController, Controls.OVERRIDE_MOTOR_BLACKLIST);
         JoystickButton essieAutoIntake = new JoystickButton(operatorController, Controls.ESSIE_AUTOPICKUP);
         JoystickButton cancelEssie = new JoystickButton(operatorController, Controls.CANCEL_ESSIE);
-        JoystickButton essieOuttakeLow = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_LOW);
-        JoystickButton essieOuttakeHigh = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH);
         JoystickButton operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
         JoystickButton precisionDrive = new JoystickButton(driverController, Controls.PRECISION_DRIVE);
         JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
         JoystickButton visionAlign = new JoystickButton(driverController, Controls.VISION_ALIGN);
         JoystickButton cancelAlign = new JoystickButton(driverController, Controls.CANCEL_ALIGN);
+        JoystickButton reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand() {
             @Override
@@ -146,8 +145,6 @@ public class OI {
         });
 
         essieAutoIntake.whenPressed(new AutoCargoIntake());
-        essieOuttakeHigh.whileHeld(new HighCargoOuttake());
-        essieOuttakeLow.whileHeld(new LowCargoOuttake());
 
         cancelEssie.whenActive(new InstantCommand() {
             @Override
@@ -195,5 +192,12 @@ public class OI {
         };
         debugCmd.setRunWhenDisabled(true);
         debug.whenPressed(debugCmd);
+
+        reverse.whenPressed(new InstantCommand() {
+            @Override
+            protected void initialize() {
+                TeleopDrive.reverse();
+            }
+        });
     }
 }

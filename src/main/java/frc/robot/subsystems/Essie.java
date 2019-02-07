@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
+import frc.robot.commands.EssieDefault;
 
 /**
  * Essie is our ball mechanism. :D
@@ -21,6 +22,7 @@ public class Essie extends Subsystem {
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
         // setDefaultCommand(new MySpecialCommand());
+        setDefaultCommand(new EssieDefault());
     }
 
     /**
@@ -37,6 +39,10 @@ public class Essie extends Subsystem {
     public void startIntake() {
         RobotMap.essieMotorHigh.set(0);
         RobotMap.essieMotorLow.set(1.0);
+    }
+    public void reverseIntake() {
+        RobotMap.essieMotorHigh.set(0);
+        RobotMap.essieMotorLow.set(-1.0);
     }
     /**
      * Sets Essie's motors to start outtaking through the lower exit (rocket ship level 1).
