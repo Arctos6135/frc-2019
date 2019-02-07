@@ -17,6 +17,8 @@ import frc.robot.commands.FollowTrajectory;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.misc.AutoPaths;
 import frc.robot.commands.TeleopDrive;
+import frc.robot.commands.sandstorm.AutoDispatcher;
+import frc.robot.commands.sandstorm.AutoDispatcher.Mode;
 import frc.robot.subsystems.BeautifulRobot;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Essie;
@@ -41,9 +43,11 @@ public class Robot extends TimedRobot {
     public static Vision vision;
     public static BeautifulRobot beautifulRobot;
     public static OI oi;
-
+    
     Command autoCommand;
-    SendableChooser<Command> chooser = new SendableChooser<>();
+
+    SendableChooser<AutoDispatcher.Mode> modeChooser = new SendableChooser<>();
+    SendableChooser<AutoDispatcher.HabLevel> habLevelChooser = new SendableChooser<>();
 
     public static boolean isInDebugMode = false;
 
@@ -68,11 +72,20 @@ public class Robot extends TimedRobot {
         beautifulRobot.setColor(DriverStation.getInstance().getAlliance());
         beautifulRobot.turnOn();
 
-        // chooser.setDefaultOption("Default Auto", new ExampleCommand());
-        // chooser.addOption("My Auto", new MyAutoCommand());
-        // SmartDashboard.putData("Auto mode", m_chooser);
-
         SmartDashboard.putData("Shutdown Jetson", new ShutdownJetson());
+
+        // Create auto chooser
+        modeChooser.setDefaultOption("None", AutoDispatcher.Mode.NONE);
+        modeChooser.addOption("Left Side", AutoDispatcher.Mode.LEFT);
+        modeChooser.addOption("Right Side", AutoDispatcher.Mode.RIGHT);
+        modeChooser.addOption("Aligned", AutoDispatcher.Mode.ALIGNED);
+        modeChooser.addOption("Vision", AutoDispatcher.Mode.VISION);
+        modeChooser.addOption("Debug", AutoDispatcher.Mode.DEBUG);
+        habLevelChooser.setDefaultOption("Level 1", AutoDispatcher.HabLevel.ONE);
+        habLevelChooser.addOption("Level 2", AutoDispatcher.HabLevel.TWO);
+
+        SmartDashboard.putData("Auto Mode", modeChooser);
+        SmartDashboard.putData("Starting Hab Level", habLevelChooser);
         
         // Wait for vision to be ready if it's not already
         SmartDashboard.putBoolean("Vision Status", false);
@@ -95,22 +108,6 @@ public class Robot extends TimedRobot {
             OI.errorRumbleDriverMajor.execute();
             OI.errorRumbleOperatorMajor.execute();
         }
-        
-        chooser.setDefaultOption("None", null);
-
-        TrajectoryParams params = new TrajectoryParams();
-        params.waypoints = new Waypoint[] {
-            new Waypoint(0.0, 0.0, Math.PI / 2),
-            new Waypoint(60.0, 120.0, Math.PI / 2),
-        };
-        params.alpha = 150.0;
-        params.segmentCount = 500;
-        params.isTank = true;
-        params.pathType = PathType.QUINTIC_HERMITE;
-        TankDriveTrajectory trajectory = new TankDriveTrajectory(RobotMap.specs, params);
-
-        chooser.addOption("Debug Auto", new FollowTrajectory(trajectory));
-        SmartDashboard.putData("Auto Mode", chooser);
 
         if(isInDebugMode) {
             putTuningEntries();
@@ -193,11 +190,18 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         beautifulRobot.setPattern(BeautifulRobot.Pattern.PULSATING);
-        autoCommand = chooser.getSelected();
+        AutoDispatcher.Mode mode = modeChooser.getSelected();
+        AutoDispatcher.HabLevel level = habLevelChooser.getSelected();
 
-        // schedule the autonomous command (example)
-        if (autoCommand != null) {
+        try {
+            autoCommand = AutoDispatcher.getAuto(level, mode);
             autoCommand.start();
+        }
+        catch(AutoDispatcher.AutoNotFoundException e) {
+            SmartDashboard.putString("Last Error", "No auto exists for the specified configuration!");
+            OI.errorRumbleDriverMinor.execute();
+            OI.errorRumbleDriverMajor.execute();
+            autoCommand = null;
         }
     }
 

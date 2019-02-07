@@ -10,13 +10,13 @@ package frc.robot.commands.sandstorm;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.commands.FollowTrajectory;
 import frc.robot.commands.OperateHank;
-import frc.robot.commands.sandstorm.AutoDispatcher.Side;
+import frc.robot.commands.sandstorm.AutoDispatcher.Mode;
 import frc.robot.misc.AutoPaths;
 
 public class HatchAutoHabLevelOneSide extends CommandGroup {
 
-    public HatchAutoHabLevelOneSide(Side side) {
-        addSequential(new FollowTrajectory(side == Side.LEFT ? AutoPaths.hatchAutoHabLevel1SideLeft : AutoPaths.hatchAutoHabLevel1SideRight));
+    public HatchAutoHabLevelOneSide(Mode side) {
+        addSequential(new FollowTrajectory(side == Mode.LEFT ? AutoPaths.hatchAutoHabLevel1SideLeft : AutoPaths.hatchAutoHabLevel1SideRight));
         addSequential(new OperateHank());
         addSequential(new FollowTrajectory(AutoPaths.driveBack));
     }
