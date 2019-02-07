@@ -100,6 +100,7 @@ public class RobotMap {
         public static final double HAB_LVL1_TO_CARGO_SHIP = 172.5;
         public static final double HAB_LVL1_TO_CARGO_SHIP_SIDE = 213.2200787;
         public static final double HAB_LVL1_EDGE_TO_CARGO_SHIP_SIDE = 42.96;
+        public static final double HAB_LVL2_LENGTH = 48;
     }
   
     public static void init() {

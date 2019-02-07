@@ -18,12 +18,14 @@ public final class AutoPaths {
     public static TankDriveTrajectory hatchAutoHabLevel1AlignedFront;
     public static TankDriveTrajectory hatchAutoHabLevel1SideLeft;
     public static TankDriveTrajectory hatchAutoHabLevel1SideRight;
+    public static TankDriveTrajectory dropFromHabLevel2;
     public static TankDriveTrajectory driveBack;
     
     public static void generateAll() {
         hatchAutoHabLevel1AlignedFront = TrajectoryGenerator.generateStraightTank(RobotMap.specs, 
                 RobotMap.FieldDimensions.HAB_LVL1_TO_CARGO_SHIP - RobotMap.RobotDimensions.LENGTH);
         driveBack = TrajectoryGenerator.generateStraightTank(RobotMap.specs, 40);
+        dropFromHabLevel2 = TrajectoryGenerator.generateStraightTank(RobotMap.specs, RobotMap.FieldDimensions.HAB_LVL2_LENGTH);
 
         TrajectoryParams params = new TrajectoryParams();
         params.waypoints = new Waypoint[] {

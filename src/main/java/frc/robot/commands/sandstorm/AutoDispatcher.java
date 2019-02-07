@@ -84,7 +84,11 @@ public final class AutoDispatcher {
                 throw new AutoNotFoundException("No auto found");
             }
         case TWO:
-            throw new AutoNotFoundException("Not implemented");
+            switch(mode) {
+            case VISION: 
+                return new HatchAutoHabLevelTwoFrontVision();
+            default: throw new AutoNotFoundException("No auto found");
+            }
         case THREE:
             throw new AutoNotFoundException("No autos for hab level 3");
         default:
