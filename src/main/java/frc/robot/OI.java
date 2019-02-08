@@ -113,11 +113,11 @@ public class OI {
     public static final XboxController driverController = new XboxController(0);
     public static final XboxController operatorController = new XboxController(1);
 
-    public static final Rumble errorRumbleDriverMajor = new Rumble(driverController, Rumble.SIDE_BOTH, 1, 200, 3);
-    public static final Rumble errorRumbleOperatorMajor = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 200, 3);
-    public static final Rumble errorRumbleDriverMinor = new Rumble(driverController, Rumble.SIDE_BOTH, 1, 200, 2);
-    public static final Rumble errorRumbleOperatorMinor = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 200, 2);
-    public static final Rumble essiePickupRumble = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 100);
+    public static final Rumble errorRumbleDriverMajor = new Rumble(driverController, Rumble.SIDE_BOTH, 1, 400, 3);
+    public static final Rumble errorRumbleOperatorMajor = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 400, 3);
+    public static final Rumble errorRumbleDriverMinor = new Rumble(driverController, Rumble.SIDE_BOTH, 1, 400, 2);
+    public static final Rumble errorRumbleOperatorMinor = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 400, 2);
+    public static final Rumble essiePickupRumble = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 200);
     
     @SuppressWarnings("resource")
     public OI() {
@@ -133,32 +133,23 @@ public class OI {
         JoystickButton reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
         JoystickButton stopAuto = new JoystickButton(driverController, Controls.STOP_AUTO);
 
-        overrideMotorBlacklist1.whenActive(new InstantCommand() {
-            @Override
-            protected void initialize() {
-                RobotMap.essieMotorHigh.overrideBlacklist();
-                RobotMap.essieMotorLow.overrideBlacklist();
-            }
-        });
-        overrideMotorBlacklist2.whenActive(new InstantCommand() {
-            @Override
-            protected void initialize() {
-                RobotMap.essieMotorHigh.overrideBlacklist();
-                RobotMap.essieMotorLow.overrideBlacklist();
-            }
-        });
+        overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
+            RobotMap.essieMotorHigh.overrideBlacklist();
+            RobotMap.essieMotorLow.overrideBlacklist();
+        }));
+        overrideMotorBlacklist2.whenActive(new InstantCommand(() -> {
+            RobotMap.essieMotorHigh.overrideBlacklist();
+            RobotMap.essieMotorLow.overrideBlacklist();
+        }));
 
         essieAutoIntake.whenPressed(new AutoCargoIntake());
 
-        cancelEssie.whenActive(new InstantCommand() {
-            @Override
-            protected void initialize() {
-                Command essieCommand = Robot.essie.getCurrentCommand();
-                if(essieCommand != null && essieCommand instanceof AutoCargoIntake) {
-                    essieCommand.cancel();
-                }
+        cancelEssie.whenActive(new InstantCommand(() -> {
+            Command essieCommand = Robot.essie.getCurrentCommand();
+            if(essieCommand != null && essieCommand instanceof AutoCargoIntake) {
+                essieCommand.cancel();
             }
-        });
+        }));
 
         operateHank.whenPressed(new OperateHank());
 
@@ -172,42 +163,28 @@ public class OI {
         shutdownJetson.whenActive(new ShutdownJetson());
 
         visionAlign.whenPressed(new AdvancedVisionAlign());
-        cancelAlign.whenPressed(new InstantCommand() {
-            @Override
-            protected void initialize() {
-                if(Robot.vision.getCurrentCommand() != null) {
-                    Robot.vision.getCurrentCommand().cancel();
-                }
+        cancelAlign.whenPressed(new InstantCommand(() -> {
+            if(Robot.vision.getCurrentCommand() != null) {
+                Robot.vision.getCurrentCommand().cancel();
             }
-        });
-        
-        precisionDrive.whenPressed(new InstantCommand() {
-            @Override
-            protected void initialize() {
-                TeleopDrive.togglePrecisionDrive();
-            }
-        });
+        }));
+        precisionDrive.whenPressed(new InstantCommand(() -> {
+            TeleopDrive.togglePrecisionDrive();
+        }));
 
-        Command debugCmd = new InstantCommand() {
-            @Override
-            protected void initialize() {
-                Robot.isInDebugMode = !Robot.isInDebugMode;
-            }
-        };
+        Command debugCmd = new InstantCommand(() -> {
+            Robot.isInDebugMode = !Robot.isInDebugMode;
+        });
         debugCmd.setRunWhenDisabled(true);
         debug.whenPressed(debugCmd);
-
-        reverse.whenPressed(new InstantCommand() {
-            @Override
-            protected void initialize() {
-                TeleopDrive.reverse();
-            }
-        });
 
         stopAuto.whenPressed(new InstantCommand(() -> {
             if(DriverStation.getInstance().isAutonomous() && Robot.autoCommand != null) {
                 Robot.autoCommand.cancel();
             }
+        }));
+        reverse.whenPressed(new InstantCommand(() -> {
+            TeleopDrive.reverse();
         }));
     }
 }
