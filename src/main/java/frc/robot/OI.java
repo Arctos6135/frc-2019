@@ -15,12 +15,9 @@ import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.AutoCargoIntake;
-<<<<<<< HEAD
 import frc.robot.commands.FlashBeautifulRobot;
 import frc.robot.commands.HighCargoOuttake;
 import frc.robot.commands.LowCargoOuttake;
-=======
->>>>>>> master
 import frc.robot.commands.OperateHank;
 import frc.robot.commands.PulseBeautifulRobot;
 import frc.robot.commands.TeleopDrive;
@@ -148,22 +145,15 @@ public class OI {
 		JoystickButton reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
 		JoystickButton essieOuttakeHigh = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH);
 		JoystickButton essieOuttakeLow = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_LOW);
-        // Overrides the blacklisted status of all the motors
-        // (Overrides motor protection)
-        overrideMotorBlacklist1.whenActive(new InstantCommand() {
-            @Override
-            protected void initialize() {
-                RobotMap.essieMotorHigh.overrideBlacklist();
-                RobotMap.essieMotorLow.overrideBlacklist();
-            }
-        });
-        overrideMotorBlacklist2.whenActive(new InstantCommand() {
-            @Override
-            protected void initialize() {
-                RobotMap.essieMotorHigh.overrideBlacklist();
-                RobotMap.essieMotorLow.overrideBlacklist();
-            }
-        });
+
+        overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
+            RobotMap.essieMotorHigh.overrideBlacklist();
+            RobotMap.essieMotorLow.overrideBlacklist();
+        }));
+        overrideMotorBlacklist2.whenActive(new InstantCommand(() -> {
+            RobotMap.essieMotorHigh.overrideBlacklist();
+            RobotMap.essieMotorLow.overrideBlacklist();
+        }));
 
         // Intake Essie until cargo sensor is triggered
 		essieAutoIntake.whenPressed(new AutoCargoIntake());
@@ -172,27 +162,20 @@ public class OI {
         essieOuttakeHigh.whileHeld(new HighCargoOuttake());
         essieOuttakeLow.whileHeld(new LowCargoOuttake());
 
-        // Cancels Essie's auto pickup command
-        cancel.whenActive(new InstantCommand() {
-            @Override
-            protected void initialize() {
-                Command essieCommand = Robot.essie.getCurrentCommand();
-                if(essieCommand != null && essieCommand instanceof AutoCargoIntake) {
-                    essieCommand.cancel();
-                }
+        cancel.whenActive(new InstantCommand(() -> {
+            Command essieCommand = Robot.essie.getCurrentCommand();
+            if(essieCommand != null && essieCommand instanceof AutoCargoIntake) {
+                essieCommand.cancel();
             }
-        });
+        }));
 
         // Operates Hank
         operateHank.whenPressed(new OperateHank());
 
         // Toggles precision drive
-        precisionDrive.whenPressed(new InstantCommand() {
-            @Override
-            protected void initialize() {
-                TeleopDrive.togglePrecisionDrive();
-            }
-        });
+        precisionDrive.whenPressed(new InstantCommand(() -> {
+            TeleopDrive.togglePrecisionDrive();
+        }));
 
         // Rumbles the controller and flashes the LEDs when Hank picks up a hatch
         Trigger hankHatchTrigger = new Trigger() {
@@ -212,12 +195,10 @@ public class OI {
         });
 
         // Toggles debug mode
-        Command debugCmd = new InstantCommand() {
-            @Override
-            protected void initialize() {
-                Robot.isInDebugMode = !Robot.isInDebugMode;
-            }
-        };
+        Command debugCmd = new InstantCommand(() -> {
+            Robot.isInDebugMode = !Robot.isInDebugMode;
+		});
+		
         debugCmd.setRunWhenDisabled(true);
         debug.whenPressed(debugCmd);
         
@@ -225,11 +206,8 @@ public class OI {
         ledFlashGreen.whenPressed(new FlashBeautifulRobot(BeautifulRobot.Color.GREEN, 150, 5));
         ledFlashYellow.whenPressed(new FlashBeautifulRobot(BeautifulRobot.Color.YELLOW, 150, 5));
 
-        reverse.whenPressed(new InstantCommand() {
-            @Override
-            protected void initialize() {
-                TeleopDrive.reverse();
-            }
-        });
+        reverse.whenPressed(new InstantCommand(() -> {
+            TeleopDrive.reverse();
+        }));
     }
 }
