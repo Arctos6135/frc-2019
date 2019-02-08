@@ -67,12 +67,12 @@ public class RobotMap {
     public static final VictorSP essieMotorHighUnprotected = new VictorSP(1);
     public static final ProtectedMotor essieMotorLow = new ProtectedMotor((speed) -> {
         essieMotorLowUnprotected.set(speed);
-    }, 4, 25, 1, () -> {
+    }, 6, 35, 2, () -> {
         OI.errorRumbleOperatorMajor.execute();
     });
     public static final ProtectedMotor essieMotorHigh = new ProtectedMotor((speed) -> {
         essieMotorHighUnprotected.set(speed);
-    }, 5, 25, 1, () -> {
+    }, 7, 35, 2, () -> {
         OI.errorRumbleOperatorMajor.execute();
     });
     public static final DigitalInput essiePhotoElectric = new DigitalInput(4);
@@ -87,6 +87,8 @@ public class RobotMap {
     public static final RobotSpecs specs = new RobotSpecs(120, 80, BASEPLATE_WIDTH);
   
     public static void init() {
+        essieMotorHighUnprotected.setInverted(true);
+
         // Set the motors to follow
         lTalon1.follow(lVictor);
         lTalon2.follow(lVictor);
