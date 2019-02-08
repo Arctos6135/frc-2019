@@ -81,18 +81,18 @@ public class Drivetrain extends Subsystem {
     public void setMotors(double left, double right) {
         prevLeft = left;
         prevRight = right;
-        RobotMap.lVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, left * speedMultiplier)));
+        RobotMap.lVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, -left * speedMultiplier)));
         // Invert right side
-        RobotMap.rVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, -right * speedMultiplier)));
+        RobotMap.rVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, right * speedMultiplier)));
     }
     
     public void setLeftMotor(double output) {
         prevLeft = output;
-        RobotMap.lVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, output * speedMultiplier)));
+        RobotMap.lVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, -output * speedMultiplier)));
     }
     public void setRightMotor(double output) {
         prevRight = output;
-        RobotMap.rVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, -output * speedMultiplier)));
+        RobotMap.rVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, output * speedMultiplier)));
     }
 	
 	// Encoders
