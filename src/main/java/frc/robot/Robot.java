@@ -157,6 +157,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Drive Reversed", TeleopDrive.isReversed());
         SmartDashboard.putBoolean("Essie Cargo", essie.hasCargo());
         SmartDashboard.putBoolean("Precision Drive", TeleopDrive.isPrecisionDrive());
+        SmartDashboard.putBoolean("Debug", isInDebugMode);
         
         if(isInDebugMode) {
             SmartDashboard.putNumber("Essie High", RobotMap.essieMotorHighUnprotected.get());
@@ -241,10 +242,6 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         beautifulRobot.setPattern(BeautifulRobot.Pattern.SOLID);
-        if(isInDebugMode) {
-            getTuningEntries();
-            putTuningEntries();
-        }
     }
 
     @Override
@@ -258,6 +255,10 @@ public class Robot extends TimedRobot {
         }
         catch(AutoDispatcher.AutoNotFoundException e) {
             SmartDashboard.putBoolean("Valid Auto Configuration", false);
+        }
+        if(isInDebugMode) {
+            getTuningEntries();
+            putTuningEntries();
         }
     }
 

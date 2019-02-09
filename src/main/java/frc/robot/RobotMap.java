@@ -52,12 +52,12 @@ public class RobotMap {
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
 
     // Drive motors
-    public static final VictorSPX lVictor = new VictorSPX(0);
-    public static final TalonSRX lTalon1 = new TalonSRX(1);
-    public static final TalonSRX lTalon2 = new TalonSRX(2);
-    public static final VictorSPX rVictor = new VictorSPX(3);
-    public static final TalonSRX rTalon1 = new TalonSRX(4);
-	public static final TalonSRX rTalon2 = new TalonSRX(5);
+    public static final VictorSPX rVictor = new VictorSPX(0);
+    public static final TalonSRX rTalon1 = new TalonSRX(1);
+    public static final TalonSRX rTalon2 = new TalonSRX(2);
+    public static final VictorSPX lVictor = new VictorSPX(3);
+    public static final TalonSRX lTalon1 = new TalonSRX(4);
+	public static final TalonSRX lTalon2 = new TalonSRX(5);
 
     // Essie motors
     public static final VictorSP essieMotorLowUnprotected = new VictorSP(0);
@@ -76,13 +76,11 @@ public class RobotMap {
 
     // navX
     public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
-	public static Encoder rightEncoder = new Encoder(2, 3, false, EncodingType.k4X);
-	public static Encoder leftEncoder = new Encoder(0, 1, true, EncodingType.k4X);
+	public static Encoder rightEncoder = new Encoder(0, 1, false, EncodingType.k4X);
+	public static Encoder leftEncoder = new Encoder(2, 3, true, EncodingType.k4X);
 	
     public static final BeautifulRobotDriver beautifulRobotDriver = new BeautifulRobotDriver(Port.kOnboard);
     
-    public static final RobotSpecs specs = new RobotSpecs(120, 80, RobotDimensions.BASEPLATE_WIDTH);
-
     /**
      * Holds robot dimensions.
      */
@@ -102,6 +100,7 @@ public class RobotMap {
         public static final double HAB_LVL1_EDGE_TO_CARGO_SHIP_SIDE = 42.96;
         public static final double HAB_LVL2_LENGTH = 48;
     }
+    public static final RobotSpecs specs = new RobotSpecs(45, 53, RobotDimensions.BASEPLATE_WIDTH);
   
     public static void init() {
         essieMotorHighUnprotected.setInverted(true);
