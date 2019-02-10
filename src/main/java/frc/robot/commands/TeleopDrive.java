@@ -71,7 +71,7 @@ public class TeleopDrive extends Command {
     protected void execute() {
         // Handle regular driving
         double x = OI.driverController.getRawAxis(OI.Controls.DRIVE_LEFT_RIGHT);
-        double y = OI.driverController.getRawAxis(OI.Controls.DRIVE_FWD_REV);
+        double y = -OI.driverController.getRawAxis(OI.Controls.DRIVE_FWD_REV);
         
         x = Math.abs(x) > DEADZONE ? x : 0;
         y = Math.abs(y) > DEADZONE ? y : 0;
