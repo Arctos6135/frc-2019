@@ -140,7 +140,9 @@ public class OI {
             }
         }));
 
-        operateHank.whenPressed(new OperateHank());
+        // Push hank out with a timeout of infinity
+        // This means that hank will never retract unless the button is released
+        operateHank.whileHeld(new OperateHank(Double.POSITIVE_INFINITY));
 
         precisionDrive.whenPressed(new InstantCommand(() -> {
             TeleopDrive.togglePrecisionDrive();
