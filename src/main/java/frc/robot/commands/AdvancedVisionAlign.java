@@ -29,7 +29,7 @@ public class AdvancedVisionAlign extends Command {
 
     private boolean error = false;
 
-    private final long RESPONSE_TIMEOUT = 200; // Milliseconds
+    private final long RESPONSE_TIMEOUT = 1000; // Milliseconds
     private final double RECALCULATION_INTERVAL = 0.5; // Seconds
 
     private TrajectoryParams params;
@@ -59,9 +59,9 @@ public class AdvancedVisionAlign extends Command {
         // If vision is not enabled, attempt to enable it
         if(!Robot.vision.getVisionEnabled()) {
             try {
-                Robot.vision.setVisionEnabled(true, true, 100);
+                Robot.vision.setVisionEnabled(true);
                 // Short delay to wait for camera to switch
-                Thread.sleep(100);
+                Thread.sleep(400);
             }
             catch(VisionException | InterruptedException e) {
                 SmartDashboard.putString("Last Error", "Error: " + e.getMessage());
@@ -114,7 +114,7 @@ public class AdvancedVisionAlign extends Command {
         params.waypoints = new Waypoint[] {
             new Waypoint(0, 0, Math.PI / 2),
             // The second waypoint has coordinates relative to the first waypoint, which is just the robot's current position
-            new Waypoint(visionXOffset, visionYOffset, -visionAngleOffset + Math.PI / 2),
+            new Waypoint(visionXOffset, visionYOffset, Math.toRadians(-visionAngleOffset) + Math.PI / 2),
         };
         // Set alpha to be 3/4 of the diagonal distance
         params.alpha = Math.sqrt(visionXOffset * visionXOffset + visionYOffset * visionYOffset) * 0.75;
@@ -135,60 +135,66 @@ public class AdvancedVisionAlign extends Command {
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        followerCommand.execute();
-        // Check the result of the asynchronous computation
-        if(trajGenFuture != null && trajGenFuture.isDone()) {
-            // Simply replace the follower command
-            try {
-                followerCommand = new FollowTrajectory(trajGenFuture.get());
-                // Don't forget this
-                followerCommand.initialize();
-            }
-            catch(CancellationException e) {
-                // Well, it seems like that the computation was so slow that it got cancelled. 
-            }
-            catch(InterruptedException | ExecutionException e) {
-                // This should not happen.
-                SmartDashboard.putString("Last Error", "Error: Unexpected exception in asynchronous trajectory recalculation");
-            }
+        if(followerCommand != null) {
+            followerCommand.execute();
         }
-        if(timeSinceInitialized() - lastTime >= RECALCULATION_INTERVAL) {
-            // Recalculate the trajectory, if the target is still in sight
-            double angleOffset, xOffset, yOffset;
-            try {
-                angleOffset = Robot.vision.getTargetAngleOffset();
-                xOffset = Robot.vision.getTargetXOffset();
-                yOffset = Robot.vision.getTargetYOffset();
-            }
-            catch(VisionException e) {
-                // Report the error, but don't cause the current command to finish
-                SmartDashboard.putString("Last Error", "Error: Vision went offline unexpectedly");
-                lastTime = timeSinceInitialized();
-                return;
-            }
-            // Make sure it's not NaN
-            if(!Double.isNaN(angleOffset)) {
-                // Terminate the previous trajectory generation thread if it is still not done
-                if(trajGenFuture != null && !trajGenFuture.isDone()) {
-                    trajGenFuture.cancel(true);
-                }
-                // Do the trajectory generation in a separate thread
-                trajGenFuture = executorService.submit(() -> {
-                    // Set the waypoints
-                    params.waypoints = new Waypoint[] {
-                        // The first waypoint has the velocity equal to our current velocity
-                        new WaypointEx(0, 0, Math.PI / 2, (Robot.drivetrain.getLeftSpeed() + Robot.drivetrain.getRightSpeed()) / 2),
-                        // The second waypoint has coordinates relative to the first waypoint, which is just the robot's current position
-                        new Waypoint(xOffset, yOffset, -angleOffset + Math.PI / 2),
-                    };
-                    // Set alpha to be 3/4 of the diagonal distance
-                    params.alpha = Math.sqrt(xOffset * xOffset + yOffset * yOffset) * 0.75;
-                    return new TankDriveTrajectory(RobotMap.specs, params);
-                });
-                // Only update the last timestamp if the vision processing was successful
-                lastTime = timeSinceInitialized();
-            }
-        }
+        // // Check the result of the asynchronous computation
+        // if(trajGenFuture != null && trajGenFuture.isDone()) {
+        //     // Simply replace the follower command
+        //     try {
+        //         followerCommand = new FollowTrajectory(trajGenFuture.get());
+        //         // Don't forget this
+        //         followerCommand.initialize();
+        //     }
+        //     catch(CancellationException e) {
+        //         // Well, it seems like that the computation was so slow that it got cancelled. 
+        //     }
+        //     catch(InterruptedException | ExecutionException e) {
+        //         // This should not happen.
+        //         SmartDashboard.putString("Last Error", "Error: Unexpected exception in asynchronous trajectory recalculation");
+        //     }
+        // }
+        // if(timeSinceInitialized() - lastTime >= RECALCULATION_INTERVAL) {
+        //     // Recalculate the trajectory, if the target is still in sight
+        //     double visionAngleOffset, visionXOffset, visionYOffset;
+        //     try {
+        //         visionAngleOffset = Robot.vision.getTargetAngleOffset();
+        //         visionXOffset = Robot.vision.getTargetXOffset();
+        //         visionYOffset = Robot.vision.getTargetYOffset();
+        //     }
+        //     catch(VisionException e) {
+        //         // Report the error, but don't cause the current command to finish
+        //         SmartDashboard.putString("Last Error", "Error: Vision went offline unexpectedly");
+        //         lastTime = timeSinceInitialized();
+        //         return;
+        //     }
+        //     // Make sure it's not NaN
+        //     if(!Double.isNaN(visionAngleOffset)) {
+        //         // Terminate the previous trajectory generation thread if it is still not done
+        //         if(trajGenFuture != null && !trajGenFuture.isDone()) {
+        //             trajGenFuture.cancel(true);
+        //         }
+        //         // Do the trajectory generation in a separate thread
+        //         trajGenFuture = executorService.submit(() -> {
+        //             params = new TrajectoryParams();
+        //             params.isTank = true;
+        //             params.pathType = PathType.QUINTIC_HERMITE;
+        //             params.segmentCount = 100;
+        //             // Set the waypoints
+        //             params.waypoints = new Waypoint[] {
+        //                 new Waypoint(0, 0, Math.PI / 2),
+        //                 // The second waypoint has coordinates relative to the first waypoint, which is just the robot's current position
+        //                 new Waypoint(visionXOffset, visionYOffset, Math.toRadians(-visionAngleOffset) + Math.PI / 2),
+        //             };
+        //             // Set alpha to be 3/4 of the diagonal distance
+        //             params.alpha = Math.sqrt(visionXOffset * visionXOffset + visionYOffset * visionYOffset) * 0.75;
+                    
+        //             return new TankDriveTrajectory(RobotMap.specs, params);
+        //         });
+        //         // Only update the last timestamp if the vision processing was successful
+        //         lastTime = timeSinceInitialized();
+        //     }
+        // }
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -203,7 +209,9 @@ public class AdvancedVisionAlign extends Command {
     // Called once after isFinished returns true
     @Override
     protected void end() {
-        followerCommand.end();
+        if(followerCommand != null) {
+            followerCommand.end();
+        }
         if(Robot.vision.ready() && Robot.vision.getVisionEnabled()) {
             try {
                 Robot.vision.setVisionEnabled(false);
@@ -219,7 +227,9 @@ public class AdvancedVisionAlign extends Command {
     // subsystems is scheduled to run
     @Override
     protected void interrupted() {
-        followerCommand.interrupted();
+        if(followerCommand != null) {
+            followerCommand.interrupted();
+        }
         if(Robot.vision.ready() && Robot.vision.getVisionEnabled()) {
             try {
                 Robot.vision.setVisionEnabled(false);

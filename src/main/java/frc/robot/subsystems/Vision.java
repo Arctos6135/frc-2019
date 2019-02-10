@@ -21,6 +21,8 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public class Vision extends Subsystem {
 
+    static final double CAMERA_Y_OFFSET = 15;
+
     /**
      * Indicates that something has gone wrong with vision, typically the communications to the Jetson.
      */
@@ -175,7 +177,9 @@ public class Vision extends Subsystem {
         // Only do this if enable and check
         if(enabled && check) {
             try {
-                wait(timeout);
+                synchronized(this) {
+                    wait(timeout);
+                }
             }
             catch(InterruptedException e) {
                 e.printStackTrace();
@@ -246,7 +250,7 @@ public class Vision extends Subsystem {
             throw new VisionException("Vision is offline!");
         }
 
-        return yOffset.getDouble(Double.NaN);
+        return yOffset.getDouble(Double.NaN) - CAMERA_Y_OFFSET;
     }
  
     /**

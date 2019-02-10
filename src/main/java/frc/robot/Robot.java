@@ -23,6 +23,7 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Essie;
 import frc.robot.subsystems.Hank;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.Vision.VisionException;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -103,6 +104,14 @@ public class Robot extends TimedRobot {
             OI.errorRumbleDriverMajor.execute();
             OI.errorRumbleOperatorMajor.execute();
         }
+        else {
+            try {
+                vision.setVisionEnabled(false);
+            }
+            catch(VisionException e) {
+                SmartDashboard.putString("Last Error", "Error: Vision went offline unexpectedly.");
+            }
+        }
 
         if(isInDebugMode) {
             putTuningEntries();
@@ -172,6 +181,18 @@ public class Robot extends TimedRobot {
             var accelerations = drivetrain.getAccelerations();
             SmartDashboard.putNumber("Left Acceleration", accelerations[0]);
             SmartDashboard.putNumber("Right Acceleration", accelerations[1]);
+
+            SmartDashboard.putBoolean("Vision Enabled", vision.getVisionEnabled());
+            if(Robot.vision.getVisionEnabled()) {
+                try {
+                    SmartDashboard.putNumber("X Offset", vision.getTargetXOffset());
+                    SmartDashboard.putNumber("Y Offset", vision.getTargetYOffset());
+                    SmartDashboard.putNumber("Angle Offset", vision.getTargetAngleOffset());
+                }
+                catch(VisionException e) {
+                    SmartDashboard.putString("Last Error", "Error: Vision went offline unexpectedly.");
+                }
+            }
         }
     }
 
