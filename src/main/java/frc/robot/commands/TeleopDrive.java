@@ -14,7 +14,7 @@ import frc.robot.subsystems.Drivetrain;
 
 public class TeleopDrive extends Command {
 
-    private static final double DEADZONE = 0.15;
+    public static final double DEADZONE = 0.15;
 
     static double rampBand = 0.07;
     static boolean rampingOn = true;

@@ -186,5 +186,21 @@ public class OI {
         reverse.whenPressed(new InstantCommand(() -> {
             TeleopDrive.reverse();
         }));
+
+        // This trigger is activated when the drive controls are active
+        Trigger interruptAdvancedVisionAlign = new Trigger() {
+            @Override
+            public boolean get() {
+                return Math.abs(OI.driverController.getRawAxis(Controls.DRIVE_FWD_REV)) > TeleopDrive.DEADZONE
+                        || Math.abs(OI.driverController.getRawAxis(Controls.DRIVE_LEFT_RIGHT)) > TeleopDrive.DEADZONE;
+            }
+        };
+        // When activated, it will cancel the currently running command on the drivetrain
+        interruptAdvancedVisionAlign.whenActive(new InstantCommand(() -> {
+            Command cmd = Robot.drivetrain.getCurrentCommand();
+            if(cmd != null && !(cmd instanceof TeleopDrive)) {
+                Robot.drivetrain.getCurrentCommand().cancel();
+            }
+        }));
     }
 }
