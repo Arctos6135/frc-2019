@@ -182,7 +182,7 @@ public class AdvancedVisionAlign extends Command {
                     params.segmentCount = 100;
                     // Set the waypoints
                     params.waypoints = new Waypoint[] {
-                        new Waypoint(Robot.drivetrain.getLeftSpeed(), Robot.drivetrain.getRightSpeed(), Math.PI / 2),
+                        new WaypointEx(0, 0, Math.PI / 2, (Robot.drivetrain.getLeftSpeed() + Robot.drivetrain.getRightSpeed()) / 2),
                         // The second waypoint has coordinates relative to the first waypoint, which is just the robot's current position
                         new Waypoint(visionXOffset, visionYOffset, Math.toRadians(-visionAngleOffset) + Math.PI / 2),
                     };
