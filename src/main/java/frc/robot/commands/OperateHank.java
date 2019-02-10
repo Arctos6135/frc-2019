@@ -15,6 +15,8 @@ import frc.robot.Robot;
  */
 public class OperateHank extends Command {
 
+    final double timeout;
+
     /**
      * Toggles Hank.
      */
@@ -23,6 +25,14 @@ public class OperateHank extends Command {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
         requires(Robot.hank);
+        timeout = 0.6;
+    }
+
+    public OperateHank(double timeout) {
+        super();
+
+        requires(Robot.hank);
+        this.timeout = timeout;
     }
 
     // Called once when the command executes

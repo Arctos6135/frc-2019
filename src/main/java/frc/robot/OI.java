@@ -117,7 +117,8 @@ public class OI {
     public static final Rumble errorRumbleOperatorMajor = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 400, 3);
     public static final Rumble errorRumbleDriverMinor = new Rumble(driverController, Rumble.SIDE_BOTH, 1, 400, 2);
     public static final Rumble errorRumbleOperatorMinor = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 400, 2);
-    public static final Rumble essiePickupRumble = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 200);
+    public static final Rumble pickupRumbleDriver = new Rumble(driverController, Rumble.SIDE_BOTH, 1, 200);
+    public static final Rumble pickupRumbleOperator = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 200);
     
     @SuppressWarnings("resource")
     public OI() {
@@ -151,7 +152,9 @@ public class OI {
             }
         }));
 
-        operateHank.whenPressed(new OperateHank());
+        // Push hank out with a timeout of infinity
+        // This means that hank will never retract unless the button is released
+        operateHank.whileHeld(new OperateHank(Double.POSITIVE_INFINITY));
 
         // User button on the rio shuts down the Jetson
         Trigger shutdownJetson = new Trigger() {
