@@ -126,6 +126,12 @@ public class AdvancedVisionAlign extends Command {
         followerCommand.initialize();
 
         lastTime = timeSinceInitialized();
+
+        if(Robot.isInDebugMode) {
+            SmartDashboard.putNumber("Auto Align X Offset", visionXOffset);
+            SmartDashboard.putNumber("Auto Align Y Offset", visionYOffset);
+            SmartDashboard.putNumber("Auto Align Angle Offset", visionAngleOffset);
+        }
     }
 
     // For concurrent trajectory generation
@@ -191,6 +197,13 @@ public class AdvancedVisionAlign extends Command {
                  
                     return new TankDriveTrajectory(RobotMap.specs, params);
                 });
+
+                if(Robot.isInDebugMode) {
+                    SmartDashboard.putNumber("Auto Align X Offset", visionXOffset);
+                    SmartDashboard.putNumber("Auto Align Y Offset", visionYOffset);
+                    SmartDashboard.putNumber("Auto Align Angle Offset", visionAngleOffset);
+                }
+
                 // Only update the last timestamp if the vision processing was successful
                 lastTime = timeSinceInitialized();
             }
