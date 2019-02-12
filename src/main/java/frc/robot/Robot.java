@@ -86,11 +86,14 @@ public class Robot extends TimedRobot {
         // Wait for vision to be ready if it's not already
         SmartDashboard.putBoolean("Vision Status", false);
         if(!vision.ready()) {
-            vision.notifyWhenReady(this);
+            long start = System.currentTimeMillis();
             try {
-                synchronized(this) {
-                    // Wait for a maximum of 1 minute before timing out
-                    wait(60000);
+                // Wait for up to a minute for the vision subsystem to come online
+                while(!vision.ready() && System.currentTimeMillis() - start < 60000) {
+                    Thread.sleep(300);
+                    if(OI.operatorController.getRawButton(OI.Controls.SKIP_VISION_INIT)) {
+                        break;
+                    }
                 }
             }
             catch(InterruptedException e) {

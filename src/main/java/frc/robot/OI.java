@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Controller;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
@@ -99,7 +100,9 @@ public class OI {
         public static final int OVERRIDE_MOTOR_BLACKLIST = ControllerMap.BUTTON_BACK;
         public static final int OPERATE_HANK = ControllerMap.BUTTON_A;
         public static final int VISION_ALIGN = ControllerMap.BUTTON_Y;
+
         public static final int DEBUG = ControllerMap.BUTTON_START;
+        public static final int SKIP_VISION_INIT = ControllerMap.BUTTON_START;
 
         public static final int CANCEL_ALIGN = ControllerMap.BUTTON_B;
         
