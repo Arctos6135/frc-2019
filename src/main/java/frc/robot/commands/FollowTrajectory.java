@@ -125,11 +125,13 @@ public class FollowTrajectory extends Command {
                 new Waypoint(0, 0, Math.PI / 2),
                 new Waypoint(Math.random() * 100, Math.random() * 100, Math.PI * 2 * Math.random()),
             };
+            @SuppressWarnings("unused")
             TankDriveTrajectory trajectory = new TankDriveTrajectory(RobotMap.specs, params);
             if(i == count - 1) {
                 return System.currentTimeMillis() - start;
             }
         }
+        System.gc();
         return -1;
     }
 }
