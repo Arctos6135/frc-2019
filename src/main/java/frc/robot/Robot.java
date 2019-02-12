@@ -83,6 +83,9 @@ public class Robot extends TimedRobot {
         SmartDashboard.putData("Auto Mode", modeChooser);
         SmartDashboard.putData("Starting Hab Level", habLevelChooser);
         
+        // Warm up RobotPathfinder
+        SmartDashboard.putNumber("Final Generation Time", FollowTrajectory.warmupRobotPathfinder(10));
+        
         // Wait for vision to be ready if it's not already
         SmartDashboard.putBoolean("Vision Status", false);
         if(!vision.ready()) {

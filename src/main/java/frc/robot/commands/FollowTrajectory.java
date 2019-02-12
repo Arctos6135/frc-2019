@@ -11,7 +11,11 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
+import frc.robot.RobotMap;
 import frc.robot.subsystems.Drivetrain;
+import robot.pathfinder.core.TrajectoryParams;
+import robot.pathfinder.core.Waypoint;
+import robot.pathfinder.core.path.PathType;
 import robot.pathfinder.core.trajectory.TankDriveTrajectory;
 import robot.pathfinder.follower.Follower.DirectionSource;
 import robot.pathfinder.follower.Follower.DistanceSource;
@@ -101,5 +105,31 @@ public class FollowTrajectory extends Command {
     public void interrupted() {
         follower.stop();
         Robot.drivetrain.setMotors(0, 0);
+    }
+
+    /**
+     * This static method makes RobotPathfinder generate a bunch of random trajectories in an attempt to
+     * activate the JIT and improve performance. 
+     * @param count The number of random trajectories to generate
+     * @return The final time it takes to generate a trajectory
+     */
+    public static long warmupRobotPathfinder(int count) {
+        for(int i = 0; i < count; i ++) {
+            long start = System.currentTimeMillis();
+            TrajectoryParams params = new TrajectoryParams();
+            params.alpha = Math.random() * 200;
+            params.isTank = true;
+            params.pathType = PathType.QUINTIC_HERMITE;
+            params.segmentCount = 500;
+            params.waypoints = new Waypoint[] {
+                new Waypoint(0, 0, Math.PI / 2),
+                new Waypoint(Math.random() * 100, Math.random() * 100, Math.PI * 2 * Math.random()),
+            };
+            TankDriveTrajectory trajectory = new TankDriveTrajectory(RobotMap.specs, params);
+            if(i == count - 1) {
+                return System.currentTimeMillis() - start;
+            }
+        }
+        return -1;
     }
 }
