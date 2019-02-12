@@ -8,7 +8,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.subsystems.Vision.VisionException;
 
@@ -31,7 +30,7 @@ public class VisionAlign extends Command {
         // Check that vision is ready
         if(!Robot.vision.ready()) {
             error = true; // Signal an error
-            SmartDashboard.putString("Last Error", "Error: Vision is offline");
+            Robot.error("Vision is offline");
             return;
         }
         // If vision is not on, turn on vision
@@ -41,7 +40,7 @@ public class VisionAlign extends Command {
             }
             catch(VisionException e) {
                 error = true;
-                SmartDashboard.putString("Last Error", "Error: Vision enable failed");
+                Robot.error("Vision enable failed");
                 return;
             }
         }
@@ -56,18 +55,18 @@ public class VisionAlign extends Command {
                     sleepCount ++;
                     if (sleepCount >= 30) {
                         error = true;
-                        SmartDashboard.putString("Last Error", "Error: Vision target not found");
+                        Robot.error("Vision target not found");
                         return;
                     }
                 }
                 catch(InterruptedException e) {
-                    SmartDashboard.putString("Last Error", "IDK WTF just happened.");
+                    Robot.error("Unexpected InterruptedException");
                 }
             }
         }
         catch(VisionException e) {
             // This message should never appear. Contact your system administrator if you see this.
-            SmartDashboard.putString("Last Error", "LOL XD You're screwed");
+            Robot.error("LOL XD You're screwed");
         }
 
         // Alright, now we know that we didn't screw up!

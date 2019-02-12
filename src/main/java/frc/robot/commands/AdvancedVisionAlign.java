@@ -51,7 +51,7 @@ public class AdvancedVisionAlign extends Command {
     protected void initialize() {
         // First check if vision is ready
         if(!Robot.vision.ready()) {
-            SmartDashboard.putString("Last Error", "Error: Vision is offline");
+            Robot.error("Vision is offline");
             OI.errorRumbleDriverMinor.execute();
             error = true;
             return;
@@ -62,7 +62,7 @@ public class AdvancedVisionAlign extends Command {
                 Robot.vision.setVisionEnabled(true, true, 300);
             }
             catch(VisionException e) {
-                SmartDashboard.putString("Last Error", "Error: " + e.getMessage());
+                Robot.error(e.getMessage());
                 OI.errorRumbleDriverMinor.execute();
                 error = true;
                 return;
@@ -78,7 +78,7 @@ public class AdvancedVisionAlign extends Command {
                 try {
                     // If we exceeded the time limit, signal an error
                     if(System.currentTimeMillis() - start >= RESPONSE_TIMEOUT) {
-                        SmartDashboard.putString("Last Error", "Error: Could not find vision target");
+                        Robot.error("Could not find vision target");
                         OI.errorRumbleDriverMinor.execute();
                         error = true;
                         return;
@@ -88,7 +88,7 @@ public class AdvancedVisionAlign extends Command {
                     Thread.sleep(20);
                 }
                 catch(InterruptedException e) {
-                    SmartDashboard.putString("Last Error", "Error: That wasn't supposed to happen");
+                    Robot.error("Unexpected InterruptedException");
                     OI.errorRumbleDriverMinor.execute();
                     error = true;
                     return;
@@ -98,7 +98,7 @@ public class AdvancedVisionAlign extends Command {
             visionYOffset = Robot.vision.getTargetYOffset();
         }
         catch(VisionException e) {
-            SmartDashboard.putString("Last Error", "Error: Vision went offline unexpectedly");
+            Robot.error("Vision went offline unexpectedly");
             OI.errorRumbleDriverMajor.execute();
             error = true;
             return;
@@ -152,10 +152,11 @@ public class AdvancedVisionAlign extends Command {
             }
             catch(CancellationException e) {
                 // Well, it seems like that the computation was so slow that it got cancelled. 
+                Robot.warning("New trajectory generation went overtime");
             }
             catch(InterruptedException | ExecutionException e) {
                 // This should not happen.
-                SmartDashboard.putString("Last Error", "Error: Unexpected exception in asynchronous trajectory recalculation");
+                Robot.error("Unexpected exception in asynchronous trajectory recalculation");
             }
         }
         if(timeSinceInitialized() - lastTime >= RECALCULATION_INTERVAL) {
@@ -168,7 +169,7 @@ public class AdvancedVisionAlign extends Command {
             }
             catch(VisionException e) {
                 // Report the error, but don't cause the current command to finish
-                SmartDashboard.putString("Last Error", "Error: Vision went offline unexpectedly");
+                Robot.error("Vision went offline unexpectedly");
                 lastTime = timeSinceInitialized();
                 return;
             }
@@ -228,7 +229,7 @@ public class AdvancedVisionAlign extends Command {
                 Robot.vision.setVisionEnabled(false);
             }
             catch(VisionException e) {
-                SmartDashboard.putString("Last Error", "Failed to disable vision!");
+                Robot.error("Failed to disable vision");
                 OI.errorRumbleDriverMinor.execute();
             }
         }
@@ -246,7 +247,7 @@ public class AdvancedVisionAlign extends Command {
                 Robot.vision.setVisionEnabled(false);
             }
             catch(VisionException e) {
-                SmartDashboard.putString("Last Error", "Failed to disable vision!");
+                Robot.error("Failed to disable vision");
                 OI.errorRumbleDriverMinor.execute();
             }
         }

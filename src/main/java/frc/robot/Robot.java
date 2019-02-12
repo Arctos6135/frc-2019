@@ -106,7 +106,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Vision Status", vision.ready());
 
         if(!vision.ready()) {
-            SmartDashboard.putString("Last Error", "Error: Wait for vision initialization timed out.");
+            Robot.error("Wait for vision initialization timed out");
             OI.errorRumbleDriverMajor.execute();
             OI.errorRumbleOperatorMajor.execute();
         }
@@ -115,7 +115,7 @@ public class Robot extends TimedRobot {
                 vision.setVisionEnabled(false);
             }
             catch(VisionException e) {
-                SmartDashboard.putString("Last Error", "Error: Vision went offline unexpectedly.");
+                Robot.error("Vision went offline unexpectedly");
             }
         }
 
@@ -196,7 +196,7 @@ public class Robot extends TimedRobot {
                     SmartDashboard.putNumber("Angle Offset", vision.getTargetAngleOffset());
                 }
                 catch(VisionException e) {
-                    SmartDashboard.putString("Last Error", "Error: Vision went offline unexpectedly.");
+                    Robot.error("Vision went offline unexpectedly");
                 }
             }
         }
@@ -221,7 +221,7 @@ public class Robot extends TimedRobot {
             autoCommand.start();
         }
         catch(AutoDispatcher.AutoNotFoundException e) {
-            SmartDashboard.putString("Last Error", "No auto exists for the specified configuration!");
+            Robot.error("No auto exists for the specified configuration");
             OI.errorRumbleDriverMinor.execute();
             OI.errorRumbleDriverMajor.execute();
             autoCommand = null;
@@ -294,5 +294,14 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void testPeriodic() {
+    }
+
+    public static void error(String error) {
+        SmartDashboard.putString("Last Error", error);
+        DriverStation.reportError(error, true);
+    }
+    public static void warning(String warning) {
+        SmartDashboard.putString("Last Warning", warning);
+        DriverStation.reportWarning(warning, true);
     }
 }
