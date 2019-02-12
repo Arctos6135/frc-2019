@@ -29,7 +29,7 @@ public class AdvancedVisionAlign extends Command {
 
     private boolean error = false;
 
-    private final long RESPONSE_TIMEOUT = 1000; // Milliseconds
+    private final long RESPONSE_TIMEOUT = 600; // Milliseconds
     private final double RECALCULATION_INTERVAL = 0.5; // Seconds
 
     private TrajectoryParams params;
@@ -59,11 +59,9 @@ public class AdvancedVisionAlign extends Command {
         // If vision is not enabled, attempt to enable it
         if(!Robot.vision.getVisionEnabled()) {
             try {
-                Robot.vision.setVisionEnabled(true);
-                // Short delay to wait for camera to switch
-                Thread.sleep(400);
+                Robot.vision.setVisionEnabled(true, true, 300);
             }
-            catch(VisionException | InterruptedException e) {
+            catch(VisionException e) {
                 SmartDashboard.putString("Last Error", "Error: " + e.getMessage());
                 OI.errorRumbleDriverMinor.execute();
                 error = true;

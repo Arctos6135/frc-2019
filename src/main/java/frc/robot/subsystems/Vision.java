@@ -186,7 +186,7 @@ public class Vision extends Subsystem {
             }
             
             visionEnableSuccess.removeListener(handle);
-            if(visionEnableSuccess.getBoolean(false)) {
+            if(!visionEnableSuccess.getBoolean(false)) {
                 throw new VisionException("Vision enable failed!");
             }
         }
