@@ -128,6 +128,9 @@ public class OI {
         JoystickButton overrideMotorBlacklist2 = new JoystickButton(operatorController, Controls.OVERRIDE_MOTOR_BLACKLIST);
         JoystickButton essieAutoIntake = new JoystickButton(operatorController, Controls.ESSIE_AUTOPICKUP);
         JoystickButton cancelEssie = new JoystickButton(operatorController, Controls.CANCEL_ESSIE);
+        JoystickButton essieHigh = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH);
+        JoystickButton essieLow = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_LOW);
+        JoystickButton essieReverse = new JoystickButton(operatorController, Controls.ESSIE_REVERSE_INTAKE);
         JoystickButton operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
         JoystickButton precisionDrive = new JoystickButton(driverController, Controls.PRECISION_DRIVE);
         JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
@@ -154,9 +157,7 @@ public class OI {
             }
         }));
 
-        // Push hank out with a timeout of infinity
-        // This means that hank will never retract unless the button is released
-        operateHank.whileHeld(new OperateHank(Double.POSITIVE_INFINITY));
+        operateHank.whileHeld(new OperateHank());
 
         // User button on the rio shuts down the Jetson
         Trigger shutdownJetson = new Trigger() {
