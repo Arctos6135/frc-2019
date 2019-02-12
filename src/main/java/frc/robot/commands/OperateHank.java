@@ -47,7 +47,7 @@ public class OperateHank extends Command {
 
     @Override
     protected boolean isFinished() {
-        return timeSinceInitialized() > 0.6;
+        return timeSinceInitialized() > timeout;
     }
 
     @Override

@@ -104,6 +104,7 @@ public class RobotMap {
   
     public static void init() {
         essieMotorLowUnprotected.setInverted(true);
+        essieMotorHighUnprotected.setInverted(false);
 
         // Set the motors to follow
         lTalon1.follow(lVictor);
