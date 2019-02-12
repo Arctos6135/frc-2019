@@ -11,21 +11,52 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
 /**
- * Runs Essie so that the motors spin to shoot the cargo through the low exit (Rocket ship level 1).
+ * This command operates Essie. When started, it operates Essie in the mode specified, and when stopped/interrupted,
+ * it will stop Essie.
  * 
- * Note that this command will never terminate!!
+ * <b>Note that this command will never terminate on its own.</b>
+ * As a result, it must be manually interrupted, or used with the {@link Button#whileHeld(Command)} or 
+ * {@link Trigger#whileActive(Command)}.
  */
-public class LowCargoOuttake extends Command {
-    public LowCargoOuttake() {
+public class OperateEssie extends Command {
+
+    public enum Mode {
+        OUT_LOW, OUT_HIGH, REVERSE;
+    }
+
+    private final Mode mode;
+
+    /**
+     * This command operates Essie. When started, it operates Essie in the mode specified, and when stopped/interrupted,
+     * it will stop Essie.
+     * 
+     * <b>Note that this command will never terminate on its own.</b>
+     * As a result, it must be manually interrupted, or used with the {@link Button#whileHeld(Command)} or 
+     * {@link Trigger#whileActive(Command)}.
+     * 
+     * @param mode The mode to operate Essie in
+     */
+    public OperateEssie(Mode mode) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
         requires(Robot.essie);
+        this.mode = mode;
     }
 
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        Robot.essie.startOuttakeLow();
+        switch(mode) {
+        case OUT_LOW:
+            Robot.essie.startOuttakeLow();
+            break;
+        case OUT_HIGH:
+            Robot.essie.startOuttakeHigh();
+            break;
+        case REVERSE:
+            Robot.essie.reverseIntake();
+            break;
+        }
     }
 
     // Called repeatedly when this Command is scheduled to run

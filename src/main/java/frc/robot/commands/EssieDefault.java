@@ -37,26 +37,6 @@ public class EssieDefault extends Command {
         else if(val <= -THRESHOLD) {
             Robot.essie.startOuttakeHigh();
         }
-        else {
-            if(OI.operatorController.getRawButton(OI.Controls.ESSIE_REVERSE_INTAKE)) {
-                Robot.essie.reverseIntake();
-                return;
-            }
-
-            boolean lb = OI.operatorController.getRawButton(OI.Controls.ESSIE_OUTTAKE_LOW);
-            boolean hb = OI.operatorController.getRawButton(OI.Controls.ESSIE_OUTTAKE_HIGH);
-
-            if(lb && hb || !lb && !hb) {
-                Robot.essie.stop();
-                return;
-            }
-            else if(lb) {
-                Robot.essie.startOuttakeLow();
-            }
-            else {
-                Robot.essie.startOuttakeHigh();
-            }
-        }
     }
 
     // Make this return true when this Command no longer needs to run execute()

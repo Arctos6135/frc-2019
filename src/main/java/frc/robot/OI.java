@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.AdvancedVisionAlign;
 import frc.robot.commands.AutoCargoIntake;
+import frc.robot.commands.OperateEssie;
 import frc.robot.commands.OperateHank;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
@@ -149,6 +150,9 @@ public class OI {
         }));
 
         essieAutoIntake.whenPressed(new AutoCargoIntake());
+        essieHigh.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_HIGH));
+        essieLow.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_LOW));
+        essieReverse.whileHeld(new OperateEssie(OperateEssie.Mode.REVERSE));
 
         cancelEssie.whenActive(new InstantCommand(() -> {
             Command essieCommand = Robot.essie.getCurrentCommand();
