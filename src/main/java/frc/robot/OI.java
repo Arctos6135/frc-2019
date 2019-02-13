@@ -18,6 +18,7 @@ import frc.robot.commands.AdvancedVisionAlign;
 import frc.robot.commands.AutoCargoIntake;
 import frc.robot.commands.OperateEssie;
 import frc.robot.commands.OperateHank;
+import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.misc.Rumble;
@@ -111,6 +112,8 @@ public class OI {
         public static final int PRECISION_DRIVE = ControllerMap.BUTTON_X;
 
         public static final int STOP_AUTO = ControllerMap.BUTTON_B;
+
+        public static final int TURN_180 = ControllerMap.BUTTON_A;
     }
 
     public static final XboxController driverController = new XboxController(0);
@@ -139,6 +142,7 @@ public class OI {
         JoystickButton cancelAlign = new JoystickButton(driverController, Controls.CANCEL_ALIGN);
         JoystickButton reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
         JoystickButton stopAuto = new JoystickButton(driverController, Controls.STOP_AUTO);
+        JoystickButton turn180 = new JoystickButton(driverController, Controls.TURN_180);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
             RobotMap.essieMotorHigh.overrideBlacklist();
@@ -212,5 +216,8 @@ public class OI {
                 Robot.drivetrain.getCurrentCommand().cancel();
             }
         }));
+
+        // Turns 180 degrees in place
+        turn180.whenPressed(new RotateToAngle(180, RotateToAngle.Direction.LEFT));
     }
 }
