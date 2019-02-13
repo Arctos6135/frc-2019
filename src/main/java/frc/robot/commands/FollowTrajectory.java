@@ -37,6 +37,10 @@ public class FollowTrajectory extends Command {
     public static double kP_l = 0.025, kD_l = 0.0005, kV_l = 0.025, kA_l = 0.0025, kDP_l = 0;
     public static double kP_h = 0, kD_h = 0, kV_h = 0, kA_h = 0, kDP_h = 0;
 
+    // This is the gear the robot must be in for trajectory following
+    // If set to null, the robot will accept both
+    public static Drivetrain.Gear gearToUse = Drivetrain.Gear.LOW;
+
     private final TankDriveTrajectory trajectory;
     private TankFollower follower;
 
@@ -47,10 +51,18 @@ public class FollowTrajectory extends Command {
         this.trajectory = trajectory;
     }
 
+    private Drivetrain.Gear startingGear;
+
     // Called just before this Command runs the first time
     // Note we made this method public! This is so that Commands that wrap around this one have an easier time.
     @Override
     public void initialize() {
+        // If the gear to use is not null, make sure the robot is in the correct gear
+        if(gearToUse != null) {
+            startingGear = Robot.drivetrain.getGear();
+            Robot.drivetrain.setGear(gearToUse);
+        }
+
         if(Robot.drivetrain.getGear() == Drivetrain.Gear.HIGH) {
             follower = new TankFollower(trajectory, L_MOTOR, R_MOTOR, L_DISTANCE_SOURCE, R_DISTANCE_SOURCE, TIMESTAMP_SOURCE, 
                     GYRO, kV_h, kA_h, kP_h, kD_h, kDP_h);
@@ -99,6 +111,10 @@ public class FollowTrajectory extends Command {
     public void end() {
         follower.stop();
         Robot.drivetrain.setMotors(0, 0);
+        
+        if(gearToUse != null) {
+            Robot.drivetrain.setGear(startingGear);
+        }
     }
 
     // Called when another command which requires one or more of the same
@@ -107,6 +123,10 @@ public class FollowTrajectory extends Command {
     public void interrupted() {
         follower.stop();
         Robot.drivetrain.setMotors(0, 0);
+
+        if(gearToUse != null) {
+            Robot.drivetrain.setGear(startingGear);
+        }
     }
 
     /**
