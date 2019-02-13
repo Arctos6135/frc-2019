@@ -188,6 +188,9 @@ public class OI {
 
         Command debugCmd = new InstantCommand(() -> {
             Robot.isInDebugMode = !Robot.isInDebugMode;
+            if(Robot.isInDebugMode) {
+                Robot.putTuningEntries();
+            }
         });
         debugCmd.setRunWhenDisabled(true);
         debug.whenPressed(debugCmd);

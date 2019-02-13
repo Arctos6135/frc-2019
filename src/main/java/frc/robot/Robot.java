@@ -42,8 +42,9 @@ public class Robot extends TimedRobot {
     
     public static Command autoCommand;
 
-    SendableChooser<AutoDispatcher.Mode> modeChooser = new SendableChooser<>();
-    SendableChooser<AutoDispatcher.HabLevel> habLevelChooser = new SendableChooser<>();
+    static SendableChooser<AutoDispatcher.Mode> modeChooser = new SendableChooser<>();
+    static SendableChooser<AutoDispatcher.HabLevel> habLevelChooser = new SendableChooser<>();
+    static SendableChooser<Drivetrain.Gear> followerGearChooser = new SendableChooser<>();
 
     public static boolean isInDebugMode = false;
 
@@ -79,6 +80,10 @@ public class Robot extends TimedRobot {
         modeChooser.addOption("Debug", AutoDispatcher.Mode.DEBUG);
         habLevelChooser.setDefaultOption("Level 1", AutoDispatcher.HabLevel.ONE);
         habLevelChooser.addOption("Level 2", AutoDispatcher.HabLevel.TWO);
+        
+        followerGearChooser.setDefaultOption("Low Gear", Drivetrain.Gear.LOW);
+        followerGearChooser.addOption("High Gear", Drivetrain.Gear.HIGH);
+        followerGearChooser.addOption("All Gears", null);
 
         SmartDashboard.putData("Auto Mode", modeChooser);
         SmartDashboard.putData("Starting Hab Level", habLevelChooser);
@@ -127,7 +132,9 @@ public class Robot extends TimedRobot {
     /**
      * Puts a bunch of tunable values to SmartDashboard for tuning.
      */
-    public void putTuningEntries() {
+    public static void putTuningEntries() {
+        SmartDashboard.putData("Path Follower Gear", followerGearChooser);
+
         SmartDashboard.putNumber("Follower kP (High Gear)", FollowTrajectory.kP_h);
         SmartDashboard.putNumber("Follower kD (High Gear)", FollowTrajectory.kD_h);
         SmartDashboard.putNumber("Follower kV (High Gear)", FollowTrajectory.kV_h);
@@ -143,7 +150,9 @@ public class Robot extends TimedRobot {
     /**
      * Updates a bunch of tunable values based on new values from SmartDashboard.
      */
-    public void getTuningEntries() {
+    public static void getTuningEntries() {
+        FollowTrajectory.gearToUse = followerGearChooser.getSelected();
+
         FollowTrajectory.kP_h = SmartDashboard.getNumber("Follower kP (High Gear)", FollowTrajectory.kP_h);
         FollowTrajectory.kD_h = SmartDashboard.getNumber("Follower kD (High Gear)", FollowTrajectory.kD_h);
         FollowTrajectory.kV_h = SmartDashboard.getNumber("Follower kV (High Gear)", FollowTrajectory.kV_h);
@@ -285,7 +294,6 @@ public class Robot extends TimedRobot {
         }
         if(isInDebugMode) {
             getTuningEntries();
-            putTuningEntries();
         }
     }
 
