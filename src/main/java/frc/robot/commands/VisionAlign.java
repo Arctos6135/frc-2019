@@ -22,7 +22,7 @@ public class VisionAlign extends Command {
     private boolean error = false;
 
     // The type of this command can be changed later
-    private RotateToAngleGyro turningCommand;
+    private RotateToAngle turningCommand;
 
     // Called just before this Command runs the first time
     @Override
@@ -71,7 +71,7 @@ public class VisionAlign extends Command {
 
         // Alright, now we know that we didn't screw up!
         // With the vision code, a negative value means that the angle is towards the left
-        turningCommand = new RotateToAngleGyro(Math.abs(visionResult), visionResult < 0 ? RotateToAngleGyro.Direction.LEFT : RotateToAngleGyro.Direction.RIGHT);
+        turningCommand = new RotateToAngle(Math.abs(visionResult), visionResult < 0 ? RotateToAngle.Direction.LEFT : RotateToAngle.Direction.RIGHT);
         turningCommand.start();
     }
 
