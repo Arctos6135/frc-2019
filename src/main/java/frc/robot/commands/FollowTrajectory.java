@@ -27,7 +27,9 @@ public class FollowTrajectory extends Command {
 
     public static final Motor L_MOTOR = Robot.drivetrain::setLeftMotor;
     public static final Motor R_MOTOR = Robot.drivetrain::setRightMotor;
-    public static final DirectionSource GYRO = Robot.drivetrain::getHeading;
+    public static final DirectionSource GYRO = () -> {
+        return Math.toRadians(Robot.drivetrain.getHeading());
+    };
     public static final DistanceSource L_DISTANCE_SOURCE = Robot.drivetrain::getLeftDistance;
     public static final DistanceSource R_DISTANCE_SOURCE = Robot.drivetrain::getRightDistance;
     public static final TimestampSource TIMESTAMP_SOURCE = Timer::getFPGATimestamp;
