@@ -22,6 +22,7 @@ import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.misc.Rumble;
+import frc.robot.subsystems.Drivetrain;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -143,6 +144,8 @@ public class OI {
         JoystickButton reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
         JoystickButton stopAuto = new JoystickButton(driverController, Controls.STOP_AUTO);
         JoystickButton turn180 = new JoystickButton(driverController, Controls.TURN_180);
+        JoystickButton gearShiftHigh = new JoystickButton(driverController, Controls.GEARSHIFT_HIGH);
+        JoystickButton gearShiftLow = new JoystickButton(driverController, Controls.GEARSHIFT_LOW);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
             RobotMap.essieMotorHigh.overrideBlacklist();
@@ -183,7 +186,11 @@ public class OI {
             }
         }));
         precisionDrive.whenPressed(new InstantCommand(() -> {
-            TeleopDrive.togglePrecisionDrive();
+            // Precision drive is disabled when the robot is in low gear,
+            // as the robot already goes very slowly anyways.
+            if(Robot.drivetrain.getGear() != Drivetrain.Gear.LOW) {
+                TeleopDrive.togglePrecisionDrive();
+            }
         }));
 
         Command debugCmd = new InstantCommand(() -> {
@@ -222,5 +229,17 @@ public class OI {
 
         // Turns 180 degrees in place
         turn180.whenPressed(new RotateToAngle(180, RotateToAngle.Direction.LEFT));
+
+        gearShiftHigh.whenPressed(new InstantCommand(() -> {
+            Robot.drivetrain.setGear(Drivetrain.Gear.HIGH);
+        }));
+        gearShiftLow.whenPressed(new InstantCommand(() -> {
+            Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
+            // When setting gear from high to low, check if precision mode is enabled
+            // Disable precision mode as it is useless in low gear and there is no way to disable it
+            if(TeleopDrive.isPrecisionDrive()) {
+                TeleopDrive.setPrecisionDrive(false);
+            }
+        }));
     }
 }
