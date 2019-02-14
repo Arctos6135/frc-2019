@@ -7,6 +7,8 @@
 
 package frc.robot.commands;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
 import frc.robot.Robot;
@@ -73,11 +75,32 @@ public class TeleopDrive extends Command {
         double x = OI.driverController.getRawAxis(OI.Controls.DRIVE_LEFT_RIGHT);
         double y = -OI.driverController.getRawAxis(OI.Controls.DRIVE_FWD_REV);
         
-        x = Math.abs(x) > DEADZONE ? x : 0;
-        y = Math.abs(y) > DEADZONE ? y : 0;
+        // See if the absolute value of X is greater than the deadzone
+        if(Math.abs(x) > DEADZONE) {
+            // Don't do anything with the value of X if it's valid
+            // However, check and make sure the robot is in coast mode
+            if(Robot.drivetrain.getNeutralMode() != NeutralMode.Coast) {
+                Robot.drivetrain.setNeutralMode(NeutralMode.Coast);
+            }
+        }
+        // If it's not, then set it to 0 as it's probably just noise
+        else {
+            x = 0;
+        }
+        // Same logic as above
+        if(Math.abs(y) > DEADZONE) {
+            if(Robot.drivetrain.getNeutralMode() != NeutralMode.Coast) {
+                Robot.drivetrain.setNeutralMode(NeutralMode.Coast);
+            }
+        }
+        else {
+            y = 0;
+        }
         
-        x = Math.copySign(x * x, x);
-        y = Math.copySign(Math.pow(y, 4), y);
+        // Square y and take x^4 and keep their signs
+        // This is to give the driver greater control over the robot when the joystick is pushed less
+        x = Math.copySign(Math.pow(x, 4), x);
+        y = Math.copySign(y * y, y);
 
         if(reverseDrive) {
             y = -y;

@@ -118,7 +118,6 @@ public class FollowTrajectory extends Command {
         if(gearToUse != null) {
             Robot.drivetrain.setGear(startingGear);
         }
-        Robot.drivetrain.setNeutralMode(NeutralMode.Coast);
     }
 
     // Called when another command which requires one or more of the same
@@ -131,7 +130,6 @@ public class FollowTrajectory extends Command {
         if(gearToUse != null) {
             Robot.drivetrain.setGear(startingGear);
         }
-        Robot.drivetrain.setNeutralMode(NeutralMode.Coast);
     }
 
     /**
