@@ -30,6 +30,7 @@ public class VisionAlign extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
+        error = false;
         // Check that vision is ready
         if(!Robot.vision.ready()) {
             error = true; // Signal an error
