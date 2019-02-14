@@ -70,8 +70,6 @@ public class AdvancedVisionAlign extends Command {
             }
         }
 
-        
-
         // Get the parameters we need
         double visionAngleOffset, visionXOffset, visionYOffset;
         try {

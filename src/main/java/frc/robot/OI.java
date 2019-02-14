@@ -21,6 +21,7 @@ import frc.robot.commands.OperateHank;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
+import frc.robot.commands.VisionAlign;
 import frc.robot.misc.Rumble;
 import frc.robot.subsystems.Drivetrain;
 
@@ -95,17 +96,17 @@ public class OI {
         public static final int ESSIE_OUTTAKE_LOW = ControllerMap.LBUMPER;
         public static final int ESSIE_OUTTAKE_HIGH = ControllerMap.RBUMPER;
         public static final int ESSIE_OUTTAKE = ControllerMap.LSTICK_Y_AXIS;
-
         // This will cancel Essie's auto intake
         public static final int CANCEL_ESSIE = ControllerMap.BUTTON_B;
 
         public static final int OVERRIDE_MOTOR_BLACKLIST = ControllerMap.BUTTON_BACK;
         public static final int OPERATE_HANK = ControllerMap.BUTTON_A;
-        public static final int VISION_ALIGN = ControllerMap.BUTTON_Y;
-
+        
         public static final int DEBUG = ControllerMap.BUTTON_START;
         public static final int SKIP_VISION_INIT = ControllerMap.BUTTON_START;
-
+        
+        public static final int VISION_ALIGN_ADVANCED = ControllerMap.BUTTON_Y;
+        public static final int VISION_ALIGN_BASIC = ControllerMap.BUTTON_RSTICK;
         public static final int CANCEL_ALIGN = ControllerMap.BUTTON_B;
         
         public static final int REVERSE_DRIVE = ControllerMap.BUTTON_LSTICK;
@@ -139,7 +140,8 @@ public class OI {
         JoystickButton operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
         JoystickButton precisionDrive = new JoystickButton(driverController, Controls.PRECISION_DRIVE);
         JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
-        JoystickButton visionAlign = new JoystickButton(driverController, Controls.VISION_ALIGN);
+        JoystickButton visionAlignAdvanced = new JoystickButton(driverController, Controls.VISION_ALIGN_ADVANCED);
+        JoystickButton visionAlignBasic = new JoystickButton(driverController, Controls.VISION_ALIGN_BASIC);
         JoystickButton cancelAlign = new JoystickButton(driverController, Controls.CANCEL_ALIGN);
         JoystickButton reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
         JoystickButton stopAuto = new JoystickButton(driverController, Controls.STOP_AUTO);
@@ -179,8 +181,10 @@ public class OI {
         };
         shutdownJetson.whenActive(new ShutdownJetson());
 
-        visionAlign.whenPressed(new AdvancedVisionAlign());
+        visionAlignAdvanced.whenPressed(new AdvancedVisionAlign());
+        visionAlignBasic.whenPressed(new VisionAlign());
         cancelAlign.whenPressed(new InstantCommand(() -> {
+            // Since all vision align commands must require the vision subsystem, this will cancel any vision align command.
             if(Robot.vision.getCurrentCommand() != null) {
                 Robot.vision.getCurrentCommand().cancel();
             }
