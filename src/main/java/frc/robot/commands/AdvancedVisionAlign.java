@@ -51,7 +51,6 @@ public class AdvancedVisionAlign extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        Robot.drivetrain.setNeutralMode(NeutralMode.Brake);
         error = false;
         // First check if vision is ready
         if(!Robot.vision.ready()) {
@@ -314,7 +313,6 @@ public class AdvancedVisionAlign extends Command {
                 OI.errorRumbleDriverMinor.execute();
             }
         }
-        Robot.drivetrain.setNeutralMode(NeutralMode.Coast);
     }
 
     // Called when another command which requires one or more of the same
