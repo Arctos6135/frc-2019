@@ -37,6 +37,9 @@ public class EssieDefault extends Command {
         else if(val <= -THRESHOLD) {
             Robot.essie.startOuttakeHigh();
         }
+        else {
+            Robot.essie.stop();
+        }
     }
 
     // Make this return true when this Command no longer needs to run execute()

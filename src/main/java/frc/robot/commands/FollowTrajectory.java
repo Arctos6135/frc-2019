@@ -41,8 +41,8 @@ public class FollowTrajectory extends Command {
     // If set to null, the robot will accept both
     public static Drivetrain.Gear gearToUse = Drivetrain.Gear.LOW;
 
-    private final TankDriveTrajectory trajectory;
-    private TankFollower follower;
+    public final TankDriveTrajectory trajectory;
+    public TankFollower follower;
 
     public FollowTrajectory(TankDriveTrajectory trajectory) {
         // Use requires() here to declare subsystem dependencies
@@ -57,6 +57,8 @@ public class FollowTrajectory extends Command {
     // Note we made this method public! This is so that Commands that wrap around this one have an easier time.
     @Override
     public void initialize() {
+        Robot.drivetrain.getLeftEncoder().reset();
+        Robot.drivetrain.getRightEncoder().reset();
         // If the gear to use is not null, make sure the robot is in the correct gear
         if(gearToUse != null) {
             startingGear = Robot.drivetrain.getGear();
