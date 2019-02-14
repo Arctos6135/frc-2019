@@ -8,6 +8,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.robot.OI;
 import frc.robot.Robot;
 import frc.robot.subsystems.Vision.VisionException;
 
@@ -21,6 +22,8 @@ public class VisionAlign extends Command {
 
     private boolean error = false;
 
+    private final long RESPONSE_TIMEOUT = 600;
+
     // The type of this command can be changed later
     private RotateToAngle turningCommand;
 
@@ -31,6 +34,7 @@ public class VisionAlign extends Command {
         if(!Robot.vision.ready()) {
             error = true; // Signal an error
             Robot.error("Vision is offline");
+            OI.errorRumbleDriverMajor.execute();
             return;
         }
         // If vision is not on, turn on vision
@@ -41,32 +45,42 @@ public class VisionAlign extends Command {
             catch(VisionException e) {
                 error = true;
                 Robot.error("Vision enable failed");
+                OI.errorRumbleDriverMajor.execute();
                 return;
             }
         }
         
-        double visionResult = 0;
+        // Get the parameters we need
+        double visionResult = Double.NaN;
         try {
-            // Give the Jetson up to 300ms to figure the vision stuff out
-            int sleepCount = 0;
-            while(Double.isNaN(visionResult = Robot.vision.getVisionResult())) {
+            long start = System.currentTimeMillis();
+            // Give the Jetson some time to figure it out
+            while(Double.isNaN(visionResult = Robot.vision.getTargetAngleOffset())) {
                 try {
-                    Thread.sleep(10);
-                    sleepCount ++;
-                    if (sleepCount >= 30) {
+                    // If we exceeded the time limit, signal an error
+                    if(System.currentTimeMillis() - start >= RESPONSE_TIMEOUT) {
+                        Robot.error("Could not find vision target");
+                        OI.errorRumbleDriverMinor.execute();
                         error = true;
-                        Robot.error("Vision target not found");
                         return;
                     }
+
+                    // Sleep for 20ms
+                    Thread.sleep(20);
                 }
                 catch(InterruptedException e) {
                     Robot.error("Unexpected InterruptedException");
+                    OI.errorRumbleDriverMinor.execute();
+                    error = true;
+                    return;
                 }
             }
         }
         catch(VisionException e) {
-            // This message should never appear. Contact your system administrator if you see this.
-            Robot.error("LOL XD You're screwed");
+            Robot.error("Vision went offline unexpectedly");
+            OI.errorRumbleDriverMajor.execute();
+            error = true;
+            return;
         }
 
         // Alright, now we know that we didn't screw up!
