@@ -61,7 +61,7 @@ public class Robot extends TimedRobot {
         // SmartDashboard.putData("Auto mode", m_chooser);
         beautifulRobot.init();
         beautifulRobot.setEnabled(true);
-        beautifulRobot.setColor(DriverStation.getInstance().getAlliance());
+        beautifulRobot.setAlliance(DriverStation.getInstance().getAlliance());
         beautifulRobot.turnOn();
         chooser.setDefaultOption("None", null);
 
@@ -133,6 +133,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Precision Drive", TeleopDrive.isPrecisionDrive());
         SmartDashboard.putBoolean("Debug", isInDebugMode);
         
+        SmartDashboard.putBoolean("Essie Cargo", essie.hasCargo());
         if(isInDebugMode) {
             SmartDashboard.putNumber("Essie High", RobotMap.essieMotorHighUnprotected.get());
             SmartDashboard.putNumber("Essie Low", RobotMap.essieMotorLowUnprotected.get());        
@@ -183,7 +184,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        beautifulRobot.setPattern(BeautifulRobot.Pattern.RAINBOW);
+        beautifulRobot.setPattern(BeautifulRobot.Pattern.MOVING_PULSE);
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
@@ -208,7 +209,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
-        beautifulRobot.setPattern(BeautifulRobot.Pattern.SOLID);
+        beautifulRobot.setPattern(BeautifulRobot.Pattern.RAINBOW);
     }
 
     @Override

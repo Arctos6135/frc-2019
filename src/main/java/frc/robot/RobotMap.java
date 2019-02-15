@@ -75,14 +75,15 @@ public class RobotMap {
     }, 7, 35, 2, () -> {
         OI.errorRumbleOperatorMajor.execute();
     });
-    public static final DigitalInput essiePhotoElectric = new DigitalInput(4);
+    public static final DigitalInput essieSwitch1 = new DigitalInput(4);
+    public static final DigitalInput essieSwitch2 = new DigitalInput(5);
 
     // navX
     public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
 	public static Encoder rightEncoder = new Encoder(0, 1, false, EncodingType.k4X);
 	public static Encoder leftEncoder = new Encoder(2, 3, true, EncodingType.k4X);
 	
-    public static final BeautifulRobotDriver beautifulRobotDriver = new BeautifulRobotDriver(Port.kOnboard);
+    public static final BeautifulRobotDriver beautifulRobotDriver = new BeautifulRobotDriver(Port.kMXP);
     
     public static final RobotSpecs specs = new RobotSpecs(45, 53, BASEPLATE_WIDTH);
   

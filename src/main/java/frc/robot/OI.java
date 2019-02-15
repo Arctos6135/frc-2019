@@ -9,12 +9,17 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.buttons.POVButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.AutoCargoIntake;
+import frc.robot.commands.FlashBeautifulRobot;
+import frc.robot.commands.HighCargoOuttake;
+import frc.robot.commands.LowCargoOuttake;
 import frc.robot.commands.OperateHank;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.misc.Rumble;
+import frc.robot.subsystems.BeautifulRobot;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -71,6 +76,16 @@ public class OI {
         public static final int BUTTON_START = 8;
         public static final int BUTTON_LSTICK = 9;
         public static final int BUTTON_RSTICK = 10;
+
+        public static final int POV_UP = 0;
+        public static final int POV_UPPER_RIGHT = 45;
+        public static final int POV_RIGHT = 90;
+        public static final int POV_LOWER_RIGHT = 135;
+        public static final int POV_DOWN = 180;
+        public static final int POV_LOWER_LEFT = 225;
+        public static final int POV_LEFT = 270;
+        public static final int POV_UPPER_LEFT = 315;
+        public static final int POV_CENTER = -1;
     }
     /**
      * A static final class to group all the controls. From here, one can easily change the mappings of any control.
@@ -96,6 +111,9 @@ public class OI {
         public static final int OPERATE_HANK = ControllerMap.BUTTON_A;
         public static final int DEBUG = ControllerMap.BUTTON_START;
 
+        public static final int POV_LED_FLASH_GREEN = ControllerMap.POV_UP;
+        public static final int POV_LED_FLASH_YELLOW = ControllerMap.POV_DOWN;
+        
         public static final int REVERSE_DRIVE = ControllerMap.BUTTON_LSTICK;
 
         public static final int PRECISION_DRIVE = ControllerMap.BUTTON_X;
@@ -118,9 +136,13 @@ public class OI {
         JoystickButton essieAutoIntake = new JoystickButton(operatorController, Controls.ESSIE_AUTOPICKUP);
         JoystickButton cancel = new JoystickButton(operatorController, Controls.CANCEL);
         JoystickButton operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
+        POVButton ledFlashGreen = new POVButton(operatorController, Controls.POV_LED_FLASH_GREEN);
+        POVButton ledFlashYellow = new POVButton(operatorController, Controls.POV_LED_FLASH_YELLOW);
         JoystickButton precisionDrive = new JoystickButton(driverController, Controls.PRECISION_DRIVE);
         JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
-        JoystickButton reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
+		JoystickButton reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
+		JoystickButton essieOuttakeHigh = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH);
+		JoystickButton essieOuttakeLow = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_LOW);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
             RobotMap.essieMotorHigh.overrideBlacklist();
@@ -131,7 +153,12 @@ public class OI {
             RobotMap.essieMotorLow.overrideBlacklist();
         }));
 
-        essieAutoIntake.whenPressed(new AutoCargoIntake());
+        // Intake Essie until cargo sensor is triggered
+		essieAutoIntake.whenPressed(new AutoCargoIntake());
+		
+        // Outtake Essie through the lower or higher cargo outputs
+        essieOuttakeHigh.whileHeld(new HighCargoOuttake());
+        essieOuttakeLow.whileHeld(new LowCargoOuttake());
 
         cancel.whenActive(new InstantCommand(() -> {
             Command essieCommand = Robot.essie.getCurrentCommand();
@@ -144,15 +171,22 @@ public class OI {
         // This means that hank will never retract unless the button is released
         operateHank.whileHeld(new OperateHank(Double.POSITIVE_INFINITY));
 
+        // Toggles precision drive
         precisionDrive.whenPressed(new InstantCommand(() -> {
             TeleopDrive.togglePrecisionDrive();
         }));
 
-        Command debugCmd = new InstantCommand(() -> {
-            Robot.isInDebugMode = !Robot.isInDebugMode;
-        });
+        Command debugCmd = new InstantCommand() {
+            @Override
+            protected void initialize() {
+                Robot.isInDebugMode = !Robot.isInDebugMode;
+            }
+        };
         debugCmd.setRunWhenDisabled(true);
         debug.whenPressed(debugCmd);
+        
+        ledFlashGreen.whenPressed(new FlashBeautifulRobot(BeautifulRobot.Color.GREEN, 150, 5));
+        ledFlashYellow.whenPressed(new FlashBeautifulRobot(BeautifulRobot.Color.YELLOW, 150, 5));
 
         reverse.whenPressed(new InstantCommand(() -> {
             TeleopDrive.reverse();
