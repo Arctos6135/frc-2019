@@ -12,12 +12,14 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
 import frc.robot.Robot;
+import frc.robot.subsystems.Drivetrain;
 
 public class TeleopDrive extends Command {
 
     public static final double DEADZONE = 0.15;
 
-    static double rampBand = 0.07;
+    static double rampBandLow = 0.07;
+    static double rampBandHigh = 0.03;
     static boolean rampingOn = true;
 
     static boolean reverseDrive = false;
@@ -35,11 +37,17 @@ public class TeleopDrive extends Command {
     public static void setRamping(boolean ramping) {
         rampingOn = ramping;
     }
-    public static double getRampBand() {
-        return rampBand;
+    public static double getRampBandHigh() {
+        return rampBandHigh;
     }
-    public static void setRampBand(double band) {
-        rampBand = band;
+    public static double getRampBandLow() {
+        return rampBandLow;
+    }
+    public static void setRampBandHigh(double band) {
+        rampBandHigh = band;
+    }
+    public static void setRampBandLow(double band) {
+        rampBandLow = band;
     }
 
     public static boolean isReversed() {
@@ -107,6 +115,7 @@ public class TeleopDrive extends Command {
 
         double l = y + x, r = y - x;
         if(rampingOn) {
+            double rampBand = Robot.drivetrain.getGear() == Drivetrain.Gear.HIGH ? rampBandHigh : rampBandLow;
             l = Math.max(Robot.drivetrain.getPrevLeft() - rampBand, Math.min(Robot.drivetrain.getPrevLeft() + rampBand, l));
             r = Math.max(Robot.drivetrain.getPrevRight() - rampBand, Math.min(Robot.drivetrain.getPrevRight() + rampBand, r));
         }
