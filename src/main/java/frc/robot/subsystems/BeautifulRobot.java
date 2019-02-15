@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
@@ -78,31 +79,77 @@ public class BeautifulRobot extends Subsystem {
     /**
      * Sets the BeautifulRobot&#8482;'s colour to the colour of an alliance.
      * 
-     * @param color The colour to set to
+     * @param color The alliance colour to set to
      */
-    public void setColor(Alliance color) {
-        if(color == Alliance.Red) {
-            writeCommand(Operation.COLOR, (byte) 0);
-        }
-        else if(color == Alliance.Blue) {
-            writeCommand(Operation.COLOR, (byte) 1);
-        }
-        else {
-            writeCommand(Operation.COLOR, (byte) 2);
-        }
+    public void setAlliance(Alliance color) {
+        setColor(Color.fromAlliance(color));
     }
 
+    /**
+     * A colour of the BeautifulRobot&#8482;.
+     */
+    public enum Color {
+        RED((byte) 0), BLUE((byte) 1), GREEN((byte) 2), YELLOW((byte) 3);
+
+        byte code;
+        Color(byte code) {
+            this.code = code;
+        }
+        public static Color fromAlliance(DriverStation.Alliance alliance) {
+            if(alliance == Alliance.Red) {
+                return Color.RED;
+            }
+            else if(alliance == Alliance.Blue) {
+                return Color.BLUE;
+            }
+            else {
+                return Color.GREEN;
+            }
+        }
+        public byte getCode() {
+            return code;
+        }
+    }
+    private Color color = Color.GREEN;
+
+    /**
+     * Sets the colour of the BeautifulRobot&#8482;.
+     * 
+     * @param color The colour to set to
+     */
+    public void setColor(Color color) {
+        this.color = color;
+        writeCommand(Operation.COLOR, color.getCode());
+    }
+    /**
+     * Gets the colour of the BeautifulRobot&#8482;, last set by the {@link #setColor(Color)} method.
+     * @return The color
+     */
+    public Color getColor() {
+        return color;
+    }
+
+    private boolean on = false;
     /**
      * Turns the BeautifulRobot&#8482; ON. By default, it is OFF.
      */
     public void turnOn() {
+        on = true;
         writeCommand(Operation.ENABLE, (byte) 1);
     }
     /**
      * Turns the BeautifulRobot&#8482; OFF. By default, it is OFF.
      */
     public void turnOff() {
+        on = false;
         writeCommand(Operation.ENABLE, (byte) 0);
+    }
+    /**
+     * Returns whether the BeautifulRobot&#8482; is on. By default, it is OFF.
+     * @return Whether the BeautifulRobot&#8482; is on
+     */
+    public boolean isOn() {
+        return on;
     }
     /**
      * All the different patterns the BeautifulRobot&#8482; has.
@@ -118,13 +165,25 @@ public class BeautifulRobot extends Subsystem {
             return value;
         }
     }
+
+    private Pattern pattern = Pattern.SOLID;
     /**
      * Sets the pattern to be displayed by the BeautifulRobot&#8482;.
      * 
      * @param pattern The pattern to display
      */
     public void setPattern(Pattern pattern) {
+        this.pattern = pattern;
         writeCommand(Operation.MODE, pattern.getValue());
+    }
+
+    /**
+     * Gets the pattern to be displayed by the BeautifulRobot&#8482;.
+     * 
+     * @return The pattern
+     */
+    public Pattern getPattern() {
+        return pattern;
     }
 
     /**

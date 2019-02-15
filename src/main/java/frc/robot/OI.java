@@ -11,11 +11,13 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.buttons.POVButton;
 import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.AdvancedVisionAlign;
 import frc.robot.commands.AutoCargoIntake;
+import frc.robot.commands.FlashBeautifulRobot;
 import frc.robot.commands.OperateEssie;
 import frc.robot.commands.OperateHank;
 import frc.robot.commands.RotateToAngle;
@@ -23,6 +25,7 @@ import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.commands.VisionAlign;
 import frc.robot.misc.Rumble;
+import frc.robot.subsystems.BeautifulRobot;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -80,6 +83,16 @@ public class OI {
         public static final int BUTTON_START = 8;
         public static final int BUTTON_LSTICK = 9;
         public static final int BUTTON_RSTICK = 10;
+
+        public static final int POV_UP = 0;
+        public static final int POV_UPPER_RIGHT = 45;
+        public static final int POV_RIGHT = 90;
+        public static final int POV_LOWER_RIGHT = 135;
+        public static final int POV_DOWN = 180;
+        public static final int POV_LOWER_LEFT = 225;
+        public static final int POV_LEFT = 270;
+        public static final int POV_UPPER_LEFT = 315;
+        public static final int POV_CENTER = -1;
     }
     /**
      * A static final class to group all the controls. From here, one can easily change the mappings of any control.
@@ -108,6 +121,9 @@ public class OI {
         public static final int VISION_ALIGN_ADVANCED = ControllerMap.BUTTON_Y;
         public static final int VISION_ALIGN_BASIC = ControllerMap.BUTTON_RSTICK;
         public static final int CANCEL_ALIGN = ControllerMap.BUTTON_B;
+
+        public static final int POV_LED_FLASH_GREEN = ControllerMap.POV_UP;
+        public static final int POV_LED_FLASH_YELLOW = ControllerMap.POV_DOWN;
         
         public static final int REVERSE_DRIVE = ControllerMap.BUTTON_LSTICK;
 
@@ -138,6 +154,8 @@ public class OI {
         JoystickButton essieLow = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_LOW);
         JoystickButton essieReverse = new JoystickButton(operatorController, Controls.ESSIE_REVERSE_INTAKE);
         JoystickButton operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
+        POVButton ledFlashGreen = new POVButton(operatorController, Controls.POV_LED_FLASH_GREEN);
+        POVButton ledFlashYellow = new POVButton(operatorController, Controls.POV_LED_FLASH_YELLOW);
         JoystickButton precisionDrive = new JoystickButton(driverController, Controls.PRECISION_DRIVE);
         JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
         JoystickButton visionAlignAdvanced = new JoystickButton(driverController, Controls.VISION_ALIGN_ADVANCED);
@@ -205,6 +223,9 @@ public class OI {
         });
         debugCmd.setRunWhenDisabled(true);
         debug.whenPressed(debugCmd);
+        
+        ledFlashGreen.whenPressed(new FlashBeautifulRobot(BeautifulRobot.Color.GREEN, 150, 5));
+        ledFlashYellow.whenPressed(new FlashBeautifulRobot(BeautifulRobot.Color.YELLOW, 150, 5));
 
         stopAuto.whenPressed(new InstantCommand(() -> {
             if(DriverStation.getInstance().isAutonomous() && Robot.autoCommand != null) {

@@ -73,7 +73,7 @@ public class RobotMap {
 	public static Encoder rightEncoder = new Encoder(0, 1, false, EncodingType.k4X);
 	public static Encoder leftEncoder = new Encoder(2, 3, true, EncodingType.k4X);
 	
-    public static final BeautifulRobotDriver beautifulRobotDriver = new BeautifulRobotDriver(Port.kOnboard);
+    public static final BeautifulRobotDriver beautifulRobotDriver = new BeautifulRobotDriver(Port.kMXP);
     
     /**
      * Holds robot dimensions.
