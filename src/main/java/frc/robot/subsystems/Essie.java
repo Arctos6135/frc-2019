@@ -41,7 +41,7 @@ public class Essie extends Subsystem {
         RobotMap.essieMotorLow.set(1.0);
     }
     public void reverseIntake() {
-        RobotMap.essieMotorHigh.set(0);
+        RobotMap.essieMotorHigh.set(-1.0);
         RobotMap.essieMotorLow.set(-1.0);
     }
     /**

@@ -68,7 +68,7 @@ public class Robot extends TimedRobot {
         TrajectoryParams params = new TrajectoryParams();
         params.waypoints = new Waypoint[] {
             new Waypoint(0.0, 0.0, Math.PI / 2),
-            new Waypoint(60.0, 120.0, Math.PI / 2),
+            new Waypoint(-60.0, 120.0, Math.PI / 2),
         };
         params.alpha = 150.0;
         params.segmentCount = 500;
@@ -127,9 +127,11 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
+
         SmartDashboard.putBoolean("Drive Reversed", TeleopDrive.isReversed());
         SmartDashboard.putBoolean("Essie Cargo", essie.hasCargo());
         SmartDashboard.putBoolean("Precision Drive", TeleopDrive.isPrecisionDrive());
+        SmartDashboard.putBoolean("Debug", isInDebugMode);
         
         SmartDashboard.putBoolean("Essie Cargo", essie.hasCargo());
         if(isInDebugMode) {
@@ -159,6 +161,7 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         beautifulRobot.setPattern(BeautifulRobot.Pattern.PULSATING);
         autoCommand = chooser.getSelected();
+        SmartDashboard.putData(autoCommand);
 
         // schedule the autonomous command (example)
         if (autoCommand != null) {
@@ -207,15 +210,15 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         beautifulRobot.setPattern(BeautifulRobot.Pattern.RAINBOW);
-        if(isInDebugMode) {
-            getTuningEntries();
-            putTuningEntries();
-        }
     }
 
     @Override
     public void disabledPeriodic() {
         Scheduler.getInstance().run();
+        if(isInDebugMode) {
+            getTuningEntries();
+            putTuningEntries();
+        }
     }
 
     /**

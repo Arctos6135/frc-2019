@@ -28,7 +28,7 @@ public class FollowTrajectory extends Command {
     public static final DistanceSource R_DISTANCE_SOURCE = Robot.drivetrain::getRightDistance;
     public static final TimestampSource TIMESTAMP_SOURCE = Timer::getFPGATimestamp;
 
-    public static double kP_l = 0, kD_l = 0, kV_l = 0, kA_l = 0, kDP_l = 0;
+    public static double kP_l = 0.025, kD_l = 0.0005, kV_l = 0.025, kA_l = 0.0025, kDP_l = 0;
     public static double kP_h = 0, kD_h = 0, kV_h = 0, kA_h = 0, kDP_h = 0;
 
     private final TankDriveTrajectory trajectory;

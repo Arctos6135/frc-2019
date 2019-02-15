@@ -22,7 +22,10 @@ public class Drivetrain extends Subsystem {
     // here. Call these from Commands.
 
 	double leftLastRate = 0, rightLastRate = 0;
-	double lastTime;
+    double lastTime;
+    
+    static final double LEFT_MULT = 1.0;
+    static final double RIGHT_MULT = 1.0;
 
     @Override
     public void initDefaultCommand() {
@@ -81,18 +84,18 @@ public class Drivetrain extends Subsystem {
     public void setMotors(double left, double right) {
         prevLeft = left;
         prevRight = right;
-        RobotMap.lVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, -left * speedMultiplier)));
+        RobotMap.lVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, -left * speedMultiplier * LEFT_MULT)));
         // Invert right side
-        RobotMap.rVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, right * speedMultiplier)));
+        RobotMap.rVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, right * speedMultiplier * RIGHT_MULT)));
     }
     
     public void setLeftMotor(double output) {
         prevLeft = output;
-        RobotMap.lVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, -output * speedMultiplier)));
+        RobotMap.lVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, -output * speedMultiplier * LEFT_MULT)));
     }
     public void setRightMotor(double output) {
         prevRight = output;
-        RobotMap.rVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, output * speedMultiplier)));
+        RobotMap.rVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, output * speedMultiplier * RIGHT_MULT)));
     }
 	
 	// Encoders
@@ -128,7 +131,7 @@ public class Drivetrain extends Subsystem {
 	 * @return The speed of the left encoder
 	 */
 	public double getLeftSpeed() {
-		return RobotMap.leftEncoder.getDistance();
+		return RobotMap.leftEncoder.getRate();
 	}
 
 	/**
@@ -137,7 +140,7 @@ public class Drivetrain extends Subsystem {
 	 * @return The speed of the right encoder
 	 */
 	public double getRightSpeed() {
-		return RobotMap.rightEncoder.getDistance();
+		return RobotMap.rightEncoder.getRate();
 	}
 
 	/**
@@ -216,7 +219,7 @@ public class Drivetrain extends Subsystem {
      * @return The yaw of the robot
      */
     public double getHeading() {
-        return constrainAngle(RobotMap.ahrs.getAngle());
+        return constrainAngle(RobotMap.ahrs.getYaw());
     }
     /**
      * Resets the heading (yaw) of the robot.

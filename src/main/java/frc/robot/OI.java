@@ -122,11 +122,12 @@ public class OI {
     public static final XboxController driverController = new XboxController(0);
     public static final XboxController operatorController = new XboxController(1);
 
-    public static final Rumble errorRumbleDriverMajor = new Rumble(driverController, Rumble.SIDE_BOTH, 1, 200, 3);
-    public static final Rumble errorRumbleOperatorMajor = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 200, 3);
-    public static final Rumble errorRumbleDriverMinor = new Rumble(driverController, Rumble.SIDE_BOTH, 0.75, 200, 2);
-    public static final Rumble errorRumbleOperatorMinor = new Rumble(operatorController, Rumble.SIDE_BOTH, 0.75, 200, 2);
-    public static final Rumble essiePickupRumble = new Rumble(operatorController, Rumble.SIDE_BOTH, 0.5, 100);
+    public static final Rumble errorRumbleDriverMajor = new Rumble(driverController, Rumble.SIDE_BOTH, 1, 400, 3);
+    public static final Rumble errorRumbleOperatorMajor = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 400, 3);
+    public static final Rumble errorRumbleDriverMinor = new Rumble(driverController, Rumble.SIDE_BOTH, 1, 400, 2);
+    public static final Rumble errorRumbleOperatorMinor = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 400, 2);
+    public static final Rumble pickupRumbleDriver = new Rumble(driverController, Rumble.SIDE_BOTH, 1, 200);
+    public static final Rumble pickupRumbleOperator = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 200);
     
     @SuppressWarnings("resource")
     public OI() {
@@ -166,11 +167,9 @@ public class OI {
             }
         }));
 
-        essieAutoIntake.whenPressed(new AutoCargoIntake());
-        essieOuttakeHigh.whileHeld(new HighCargoOuttake());
-        essieOuttakeLow.whileHeld(new LowCargoOuttake());
-
-        operateHank.whenPressed(new OperateHank());
+        // Push hank out with a timeout of infinity
+        // This means that hank will never retract unless the button is released
+        operateHank.whileHeld(new OperateHank(Double.POSITIVE_INFINITY));
 
         // Toggles precision drive
         precisionDrive.whenPressed(new InstantCommand(() -> {
