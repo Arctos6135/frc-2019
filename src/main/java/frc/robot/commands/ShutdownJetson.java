@@ -7,14 +7,14 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
 /**
  * Shuts down the Jetson. <b>Use with extreme care!!</b>
  */
-public class ShutdownJetson extends InstantCommand {
+public class ShutdownJetson extends Command {
 
     public ShutdownJetson() {
         super();
@@ -34,4 +34,20 @@ public class ShutdownJetson extends InstantCommand {
         SmartDashboard.putBoolean("Vision Status", false);
     }
 
+    @Override
+    protected boolean isFinished() {
+        return false;
+    }
+
+    // When this command ends, set the shutdown entry back to false
+    // This allows the Jetson to be started back up
+    @Override
+    protected void end() {
+        Robot.vision.table.getEntry("shutdown").setBoolean(false);
+    }
+
+    @Override
+    protected void interrupted() {
+        end();
+    }
 }

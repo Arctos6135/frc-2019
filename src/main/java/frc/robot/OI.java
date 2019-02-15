@@ -197,7 +197,7 @@ public class OI {
                 return RobotController.getUserButton();
             }
         };
-        shutdownJetson.whenActive(new ShutdownJetson());
+        shutdownJetson.whileActive(new ShutdownJetson());
 
         visionAlignAdvanced.whenPressed(new AdvancedVisionAlign());
         visionAlignBasic.whenPressed(new VisionAlign());

@@ -46,10 +46,10 @@ public class Vision extends Subsystem {
     }
 
     NetworkTableInstance instance;
-    NetworkTable table;
+    public NetworkTable table;
     
-    NetworkTableEntry visionOnline, visionEnabled, visionEnableSuccess, visionResult;
-    NetworkTableEntry angleOffset, xOffset, yOffset;
+    public NetworkTableEntry visionOnline, visionEnabled, visionEnableSuccess, visionResult;
+    public NetworkTableEntry angleOffset, xOffset, yOffset;
 
     /**
      * Creates a new vision subsystem.
