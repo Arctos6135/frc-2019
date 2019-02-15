@@ -61,6 +61,8 @@ public class Robot extends TimedRobot {
         essie = new Essie();
         beautifulRobot = new BeautifulRobot();
         oi = new OI();
+        // Clear the last error
+        SmartDashboard.putString("Last Error", "");
 
         AutoPaths.generateAll();
 
