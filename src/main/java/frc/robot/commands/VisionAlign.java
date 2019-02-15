@@ -87,12 +87,14 @@ public class VisionAlign extends Command {
         // Alright, now we know that we didn't screw up!
         // With the vision code, a negative value means that the angle is towards the left
         turningCommand = new RotateToAngle(Math.abs(visionResult), visionResult < 0 ? RotateToAngle.Direction.LEFT : RotateToAngle.Direction.RIGHT);
-        turningCommand.start();
+        turningCommand.initialize();
     }
 
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
+        if(turningCommand != null)
+            turningCommand.execute();
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -101,17 +103,46 @@ public class VisionAlign extends Command {
         if(error) {
             return true;
         }
-        return turningCommand.isFinished();
+        if(turningCommand != null) {
+            return turningCommand.isFinished();
+        }
+        else {
+            return true;
+        }
     }
 
     // Called once after isFinished returns true
     @Override
     protected void end() {
+        if(turningCommand != null) {
+            turningCommand.end();
+        }
+        if(Robot.vision.ready() && Robot.vision.getVisionEnabled()) {
+            try {
+                Robot.vision.setVisionEnabled(false);
+            }
+            catch(VisionException e) {
+                Robot.error("Failed to disable vision");
+                OI.errorRumbleDriverMinor.execute();
+            }
+        }
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     @Override
     protected void interrupted() {
+        if(turningCommand != null) {
+            turningCommand.interrupted();
+        }
+        if(Robot.vision.ready() && Robot.vision.getVisionEnabled()) {
+            try {
+                Robot.vision.setVisionEnabled(false);
+            }
+            catch(VisionException e) {
+                Robot.error("Failed to disable vision");
+                OI.errorRumbleDriverMinor.execute();
+            }
+        }
     }
 }

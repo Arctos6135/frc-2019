@@ -140,7 +140,7 @@ public class AdvancedVisionAlign extends Command {
     @Override
     protected void execute() {
         
-        try {
+        /*try {
             // Try to get the vision values
             // If this throws and error, the async trajectory generation is skipped
             visionAngleOffset = Robot.vision.getTargetAngleOffset();
@@ -217,7 +217,7 @@ public class AdvancedVisionAlign extends Command {
         catch(VisionException e) {
             // Report the error, but don't cause the current command to finish
             Robot.error("Vision went offline unexpectedly");
-        }
+        }*/
 
         // Execute the follower for one cycle
         if(followerCommand != null) {
@@ -231,7 +231,7 @@ public class AdvancedVisionAlign extends Command {
         if(error) {
             return true;
         }
-        return followerCommand.isFinished() || visionYOffset < 20;
+        return followerCommand.isFinished() /*|| visionYOffset < 20*/;
     }
 
     // Called once after isFinished returns true
@@ -267,6 +267,5 @@ public class AdvancedVisionAlign extends Command {
                 OI.errorRumbleDriverMinor.execute();
             }
         }
-        Robot.drivetrain.setNeutralMode(NeutralMode.Coast);
     }
 }

@@ -253,7 +253,7 @@ public class OI {
         }));
 
         // Turns 180 degrees in place
-        turn180.whenPressed(new RotateToAngle(180, RotateToAngle.Direction.LEFT));
+        turn180.whenPressed(new RotateToAngle(187, RotateToAngle.Direction.LEFT));
 
         gearShiftHigh.whenPressed(new InstantCommand(() -> {
             Robot.drivetrain.setGear(Drivetrain.Gear.HIGH);
