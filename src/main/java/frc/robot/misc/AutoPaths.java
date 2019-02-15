@@ -51,7 +51,7 @@ public final class AutoPaths {
             new Waypoint(60.0, 120.0, Math.PI / 2),
         };
         params.alpha = 150.0;
-        params.segmentCount = 500;
+        params.segmentCount = 200;
         params.isTank = true;
         params.pathType = PathType.QUINTIC_HERMITE;
         debug = new TankDriveTrajectory(FollowTrajectory.getSpecs(), params);

@@ -151,7 +151,13 @@ public class Robot extends TimedRobot {
      * Updates a bunch of tunable values based on new values from SmartDashboard.
      */
     public static void getTuningEntries() {
-        FollowTrajectory.gearToUse = followerGearChooser.getSelected();
+        Drivetrain.Gear newGearToUse = followerGearChooser.getSelected();
+        // Change the gear to use in autos
+        // If the option was changed, the auto paths have to be regenerated
+        if(FollowTrajectory.gearToUse != newGearToUse) {
+            FollowTrajectory.gearToUse = newGearToUse;
+            AutoPaths.generateAll();
+        }
 
         FollowTrajectory.kP_h = SmartDashboard.getNumber("Follower kP (High Gear)", FollowTrajectory.kP_h);
         FollowTrajectory.kD_h = SmartDashboard.getNumber("Follower kD (High Gear)", FollowTrajectory.kD_h);
