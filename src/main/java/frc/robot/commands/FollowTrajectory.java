@@ -36,7 +36,7 @@ public class FollowTrajectory extends Command {
     public static final DistanceSource R_DISTANCE_SOURCE = Robot.drivetrain::getRightDistance;
     public static final TimestampSource TIMESTAMP_SOURCE = Timer::getFPGATimestamp;
 
-    public static double kP_l = 0.025, kD_l = 0.0005, kV_l = 0.025, kA_l = 0.0025, kDP_l = 0;
+    public static double kP_l = 0.07, kD_l = 0.00025, kV_l = 0.025, kA_l = 0.005, kDP_l = 0;
     public static double kP_h = 0, kD_h = 0, kV_h = 0, kA_h = 0, kDP_h = 0;
 
     // This is the gear the robot must be in for trajectory following
@@ -59,7 +59,7 @@ public class FollowTrajectory extends Command {
     // Note we made this method public! This is so that Commands that wrap around this one have an easier time.
     @Override
     public void initialize() {
-        Robot.drivetrain.setNeutralMode(NeutralMode.Brake);
+        //Robot.drivetrain.setNeutralMode(NeutralMode.Brake);
         // If the gear to use is not null, make sure the robot is in the correct gear
         if(gearToUse != null) {
             startingGear = Robot.drivetrain.getGear();

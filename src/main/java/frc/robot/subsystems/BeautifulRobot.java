@@ -72,7 +72,7 @@ public class BeautifulRobot extends Subsystem {
      */
     public void init() {
         // Set brightness to 20%
-        writeCommand(Operation.BRIGHTNESS, (byte) 20);
+        writeCommand(Operation.BRIGHTNESS, (byte) 50);
         // Set mode to solid colour
         writeCommand(Operation.MODE, (byte) 0);
     }

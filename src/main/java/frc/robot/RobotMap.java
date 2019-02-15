@@ -94,7 +94,7 @@ public class RobotMap {
         public static final double HAB_LVL1_EDGE_TO_CARGO_SHIP_SIDE = 42.96;
         public static final double HAB_LVL2_LENGTH = 48;
     }
-    public static final RobotSpecs specs = new RobotSpecs(45, 53, RobotDimensions.BASEPLATE_WIDTH);
+    public static final RobotSpecs specs = new RobotSpecs(42.5, 53, RobotDimensions.BASEPLATE_WIDTH);
   
     public static void init() {
         essieMotorLowUnprotected.setInverted(true);
