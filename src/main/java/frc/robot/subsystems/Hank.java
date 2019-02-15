@@ -49,10 +49,6 @@ public class Hank extends Subsystem {
         SmartDashboard.putBoolean("Hank Out", isOut);
     }
 
-    public boolean hasHatch() {
-        return RobotMap.hankSwitch.get();
-    }
-
     @Override
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.

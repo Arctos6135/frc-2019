@@ -40,7 +40,7 @@ public class AutoCargoIntake extends Command {
     protected boolean isFinished() {
         // When this command finishes, rumble the controller and flash the LEDs
         if(Robot.essie.hasCargo()) {
-            OI.pickupRumble.execute();
+            OI.essiePickupRumble.execute();
             @SuppressWarnings("resource")
             Command pulse = new PulseBeautifulRobot(1.5, 10, BeautifulRobot.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
             pulse.start();
