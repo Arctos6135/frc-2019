@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.subsystems.Drivetrain;
+import robot.pathfinder.core.RobotSpecs;
 import robot.pathfinder.core.TrajectoryParams;
 import robot.pathfinder.core.Waypoint;
 import robot.pathfinder.core.path.PathType;
@@ -37,11 +38,11 @@ public class FollowTrajectory extends Command {
     public static final TimestampSource TIMESTAMP_SOURCE = Timer::getFPGATimestamp;
 
     public static double kP_l = 0.1, kD_l = 0.00025, kV_l = 0.025, kA_l = 0.002, kDP_l = 0.01;
-    public static double kP_h = 0, kD_h = 0, kV_h = 0, kA_h = 0, kDP_h = 0;
+    public static double kP_h = 0.07, kD_h = 0.001, kV_h = 0.007, kA_h = 0.002, kDP_h = 0.01;
 
     // This is the gear the robot must be in for trajectory following
     // If set to null, the robot will accept both
-    public static Drivetrain.Gear gearToUse = Drivetrain.Gear.LOW;
+    public static Drivetrain.Gear gearToUse = null;
 
     public final TankDriveTrajectory trajectory;
     public TankFollower follower;
@@ -151,12 +152,27 @@ public class FollowTrajectory extends Command {
                 new Waypoint(Math.random() * 100, Math.random() * 100, Math.PI * 2 * Math.random()),
             };
             @SuppressWarnings("unused")
-            TankDriveTrajectory trajectory = new TankDriveTrajectory(RobotMap.specs, params);
+            TankDriveTrajectory trajectory = new TankDriveTrajectory(getSpecs(), params);
             if(i == count - 1) {
                 return System.currentTimeMillis() - start;
             }
         }
         System.gc();
         return -1;
+    }
+
+    /**
+     * Retrieves the correct {@link RobotSpecs} based on the gear to use in autos and/or the robot's current gear.
+     * @return The correct {@link RobotSpecs}
+     */
+    public static RobotSpecs getSpecs() {
+        // If the gear to use in autos is specified, generate trajectories based on that
+        if(gearToUse != null) {
+            return gearToUse == Drivetrain.Gear.HIGH ? RobotMap.specsHigh : RobotMap.specsLow;
+        }
+        else {
+            // Otherwise generate it based on the robot's current gear
+            return Robot.drivetrain.getGear() == Drivetrain.Gear.HIGH ? RobotMap.specsHigh : RobotMap.specsLow;
+        }
     }
 }

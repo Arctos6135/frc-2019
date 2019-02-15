@@ -7,23 +7,17 @@
 
 package frc.robot.commands;
 
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
-import com.ctre.phoenix.motorcontrol.NeutralMode;
+//import java.util.concurrent.ExecutorService;
+//import java.util.concurrent.Executors;
+//import java.util.concurrent.Future;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.OI;
 import frc.robot.Robot;
-import frc.robot.RobotMap;
 import frc.robot.subsystems.Vision.VisionException;
 import robot.pathfinder.core.TrajectoryParams;
 import robot.pathfinder.core.Waypoint;
-import robot.pathfinder.core.WaypointEx;
 import robot.pathfinder.core.path.PathType;
 import robot.pathfinder.core.trajectory.TankDriveTrajectory;
 
@@ -118,7 +112,7 @@ public class AdvancedVisionAlign extends Command {
         // Set alpha to be 3/4 of the diagonal distance
         params.alpha = Math.sqrt(visionXOffset * visionXOffset + visionYOffset * visionYOffset) * 0.75;
         
-        trajectory = new TankDriveTrajectory(RobotMap.specs, params);
+        trajectory = new TankDriveTrajectory(FollowTrajectory.getSpecs(), params);
         followerCommand = new FollowTrajectory(trajectory);
         // We can't call start() on the command as it also requires drivetrain, which would cause this command to be interrupted. 
         // Thus we just call the raw methods and not hand control to WPILib.
@@ -132,8 +126,8 @@ public class AdvancedVisionAlign extends Command {
     }
     
     // For concurrent trajectory generation
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-    private Future<TankDriveTrajectory> trajGenFuture;
+    //private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    //private Future<TankDriveTrajectory> trajGenFuture;
     
     double visionXOffset = Double.NaN, visionYOffset = Double.NaN, visionAngleOffset = Double.NaN;
     // Called repeatedly when this Command is scheduled to run

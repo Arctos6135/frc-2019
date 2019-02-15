@@ -2,12 +2,8 @@ package frc.robot.commands.sandstorm;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import frc.robot.RobotMap;
 import frc.robot.commands.FollowTrajectory;
-import robot.pathfinder.core.TrajectoryParams;
-import robot.pathfinder.core.Waypoint;
-import robot.pathfinder.core.path.PathType;
-import robot.pathfinder.core.trajectory.TankDriveTrajectory;
+import frc.robot.misc.AutoPaths;
 
 /**
  * Finds the correct autonomous command based on parameters.
@@ -57,17 +53,7 @@ public final class AutoDispatcher {
         }
         // Debug auto
         else if(mode == Mode.DEBUG) {
-            TrajectoryParams params = new TrajectoryParams();
-            params.waypoints = new Waypoint[] {
-                new Waypoint(0.0, 0.0, Math.PI / 2),
-                new Waypoint(60.0, 120.0, Math.PI / 2),
-            };
-            params.alpha = 150.0;
-            params.segmentCount = 500;
-            params.isTank = true;
-            params.pathType = PathType.QUINTIC_HERMITE;
-            TankDriveTrajectory trajectory = new TankDriveTrajectory(RobotMap.specs, params);
-            return new FollowTrajectory(trajectory);
+            return new FollowTrajectory(AutoPaths.debug);
         }
         switch(level) {
         case ONE:

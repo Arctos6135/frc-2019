@@ -1,6 +1,8 @@
 package frc.robot.misc;
 
 import frc.robot.RobotMap;
+import frc.robot.commands.FollowTrajectory;
+import robot.pathfinder.core.RobotSpecs;
 import robot.pathfinder.core.TrajectoryParams;
 import robot.pathfinder.core.Waypoint;
 import robot.pathfinder.core.path.PathType;
@@ -20,12 +22,15 @@ public final class AutoPaths {
     public static TankDriveTrajectory hatchAutoHabLevel1SideRight;
     public static TankDriveTrajectory dropFromHabLevel2;
     public static TankDriveTrajectory driveBack;
+
+    public static TankDriveTrajectory debug;
     
     public static void generateAll() {
-        hatchAutoHabLevel1AlignedFront = TrajectoryGenerator.generateStraightTank(RobotMap.specs, 
+        RobotSpecs specs = FollowTrajectory.getSpecs();
+        hatchAutoHabLevel1AlignedFront = TrajectoryGenerator.generateStraightTank(specs, 
                 RobotMap.FieldDimensions.HAB_LVL1_TO_CARGO_SHIP - RobotMap.RobotDimensions.LENGTH);
-        driveBack = TrajectoryGenerator.generateStraightTank(RobotMap.specs, 40);
-        dropFromHabLevel2 = TrajectoryGenerator.generateStraightTank(RobotMap.specs, RobotMap.FieldDimensions.HAB_LVL2_LENGTH);
+        driveBack = TrajectoryGenerator.generateStraightTank(specs, 40);
+        dropFromHabLevel2 = TrajectoryGenerator.generateStraightTank(specs, RobotMap.FieldDimensions.HAB_LVL2_LENGTH);
 
         TrajectoryParams params = new TrajectoryParams();
         params.waypoints = new Waypoint[] {
@@ -38,7 +43,17 @@ public final class AutoPaths {
         params.segmentCount = 200;
         params.isTank = true;
         params.pathType = PathType.QUINTIC_HERMITE;
-        hatchAutoHabLevel1SideLeft = new TankDriveTrajectory(RobotMap.specs, params);
+        hatchAutoHabLevel1SideLeft = new TankDriveTrajectory(specs, params);
         hatchAutoHabLevel1SideRight = hatchAutoHabLevel1SideLeft.mirrorLeftRight();
+
+        params.waypoints = new Waypoint[] {
+            new Waypoint(0.0, 0.0, Math.PI / 2),
+            new Waypoint(60.0, 120.0, Math.PI / 2),
+        };
+        params.alpha = 150.0;
+        params.segmentCount = 500;
+        params.isTank = true;
+        params.pathType = PathType.QUINTIC_HERMITE;
+        debug = new TankDriveTrajectory(FollowTrajectory.getSpecs(), params);
     }
 }
