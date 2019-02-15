@@ -7,7 +7,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.POVButton;
@@ -19,7 +18,6 @@ import frc.robot.commands.FlashBeautifulRobot;
 import frc.robot.commands.HighCargoOuttake;
 import frc.robot.commands.LowCargoOuttake;
 import frc.robot.commands.OperateHank;
-import frc.robot.commands.PulseBeautifulRobot;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.misc.Rumble;
 import frc.robot.subsystems.BeautifulRobot;
@@ -129,7 +127,7 @@ public class OI {
     public static final Rumble errorRumbleOperatorMajor = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 400, 3);
     public static final Rumble errorRumbleDriverMinor = new Rumble(driverController, Rumble.SIDE_BOTH, 1, 400, 2);
     public static final Rumble errorRumbleOperatorMinor = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 400, 2);
-    public static final Rumble essiePickupRumble = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 200);
+    public static final Rumble pickupRumble = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 200);
     
     @SuppressWarnings("resource")
     public OI() {
@@ -169,7 +167,10 @@ public class OI {
             }
         }));
 
-        // Operates Hank
+        essieAutoIntake.whenPressed(new AutoCargoIntake());
+        essieOuttakeHigh.whileHeld(new HighCargoOuttake());
+        essieOuttakeLow.whileHeld(new LowCargoOuttake());
+
         operateHank.whenPressed(new OperateHank());
 
         // Toggles precision drive
@@ -177,7 +178,6 @@ public class OI {
             TeleopDrive.togglePrecisionDrive();
         }));
 
-        // Rumbles the controller and flashes the LEDs when Hank picks up a hatch
         Trigger hankHatchTrigger = new Trigger() {
             @Override
             public boolean get() {
@@ -187,22 +187,19 @@ public class OI {
         hankHatchTrigger.whenActive(new InstantCommand() {
             @Override
             protected void initialize() {
-                OI.essiePickupRumble.execute();
-                @SuppressWarnings("resource")
-                Command pulse = new PulseBeautifulRobot(1.5, 10, BeautifulRobot.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
-                pulse.start();
+                OI.pickupRumble.execute();
             }
         });
 
-        // Toggles debug mode
-        Command debugCmd = new InstantCommand(() -> {
-            Robot.isInDebugMode = !Robot.isInDebugMode;
-		});
-		
+        Command debugCmd = new InstantCommand() {
+            @Override
+            protected void initialize() {
+                Robot.isInDebugMode = !Robot.isInDebugMode;
+            }
+        };
         debugCmd.setRunWhenDisabled(true);
         debug.whenPressed(debugCmd);
         
-        // Flashes the LEDs
         ledFlashGreen.whenPressed(new FlashBeautifulRobot(BeautifulRobot.Color.GREEN, 150, 5));
         ledFlashYellow.whenPressed(new FlashBeautifulRobot(BeautifulRobot.Color.YELLOW, 150, 5));
 
