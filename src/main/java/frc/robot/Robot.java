@@ -45,6 +45,7 @@ public class Robot extends TimedRobot {
     static SendableChooser<AutoDispatcher.Mode> modeChooser = new SendableChooser<>();
     static SendableChooser<AutoDispatcher.HabLevel> habLevelChooser = new SendableChooser<>();
     static SendableChooser<Drivetrain.Gear> followerGearChooser = new SendableChooser<>();
+    static SendableChooser<Drivetrain.Gear> matchStartGearChooser = new SendableChooser<>();
 
     public static boolean isInDebugMode = false;
 
@@ -87,8 +88,13 @@ public class Robot extends TimedRobot {
         followerGearChooser.addOption("High Gear", Drivetrain.Gear.HIGH);
         followerGearChooser.addOption("All Gears", null);
 
+        matchStartGearChooser.setDefaultOption("Low Gear", Drivetrain.Gear.LOW);
+        matchStartGearChooser.addOption("High Gear", Drivetrain.Gear.HIGH);
+        matchStartGearChooser.addOption("Current Gear", null);
+
         SmartDashboard.putData("Auto Mode", modeChooser);
         SmartDashboard.putData("Starting Hab Level", habLevelChooser);
+        SmartDashboard.putData("Match Start Gear", matchStartGearChooser);
         
         // Warm up RobotPathfinder
         SmartDashboard.putNumber("Final Generation Time", FollowTrajectory.warmupRobotPathfinder(10));
@@ -234,6 +240,12 @@ public class Robot extends TimedRobot {
             // If the alliance colour is not set, do it here
             beautifulRobot.setColor(BeautifulRobot.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
         }
+        // Set the initial gear
+        Drivetrain.Gear matchStartGear = matchStartGearChooser.getSelected();
+        if(matchStartGear != null) {
+            Robot.drivetrain.setGear(matchStartGear);
+        }
+
         beautifulRobot.setPattern(BeautifulRobot.Pattern.PULSATING);
         AutoDispatcher.Mode mode = modeChooser.getSelected();
         AutoDispatcher.HabLevel level = habLevelChooser.getSelected();
