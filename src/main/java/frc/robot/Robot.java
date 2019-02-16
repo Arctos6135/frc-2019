@@ -230,6 +230,10 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
+        if(beautifulRobot.getColor() != BeautifulRobot.Color.RED && beautifulRobot.getColor() != BeautifulRobot.Color.BLUE) {
+            // If the alliance colour is not set, do it here
+            beautifulRobot.setColor(BeautifulRobot.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
+        }
         beautifulRobot.setPattern(BeautifulRobot.Pattern.PULSATING);
         AutoDispatcher.Mode mode = modeChooser.getSelected();
         AutoDispatcher.HabLevel level = habLevelChooser.getSelected();
@@ -261,6 +265,10 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        if(beautifulRobot.getColor() != BeautifulRobot.Color.RED && beautifulRobot.getColor() != BeautifulRobot.Color.BLUE) {
+            // If the alliance colour is not set, do it here
+            beautifulRobot.setColor(BeautifulRobot.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
+        }
         beautifulRobot.setPattern(BeautifulRobot.Pattern.MOVING_PULSE);
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to
