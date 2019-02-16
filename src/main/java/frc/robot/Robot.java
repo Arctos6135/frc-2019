@@ -119,7 +119,7 @@ public class Robot extends TimedRobot {
         }
         else {
             try {
-                vision.setVisionEnabled(true);
+                vision.setVisionEnabled(false);
             }
             catch(VisionException e) {
                 Robot.error("Vision went offline unexpectedly");
