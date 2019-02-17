@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
@@ -49,6 +51,11 @@ public class Robot extends TimedRobot {
 
     public static boolean isInDebugMode = false;
 
+    static final String FRONT_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/main_camera/image_raw&quality=60&width=640&height=360";
+    static final String REAR_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/secondary_camera/image_raw&quality=30;";
+    static final NetworkTableEntry mainCameraUrl = NetworkTableInstance.getDefault().getTable("SmartDashboard").getEntry("main-stream-url");
+    static final NetworkTableEntry secondaryCameraUrl = NetworkTableInstance.getDefault().getTable("SmartDashboard").getEntry("secondary-stream-url");
+
     /**
      * This function is run when the robot is first started up and should be
      * used for any initialization code.
@@ -64,6 +71,9 @@ public class Robot extends TimedRobot {
         oi = new OI();
         // Clear the last error
         SmartDashboard.putString("Last Error", "");
+
+        mainCameraUrl.setString(FRONT_CAMERA_URL);
+        secondaryCameraUrl.setString(REAR_CAMERA_URL);
 
         AutoPaths.generateAll();
 
