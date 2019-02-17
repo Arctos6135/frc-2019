@@ -234,6 +234,14 @@ public class OI {
         }));
         reverse.whenPressed(new InstantCommand(() -> {
             TeleopDrive.reverse();
+            if(TeleopDrive.isReversed()) {
+                Robot.mainCameraUrl.setString(Robot.REAR_CAMERA_URL);
+                Robot.secondaryCameraUrl.setString(Robot.FRONT_CAMERA_URL);
+            }
+            else {
+                Robot.mainCameraUrl.setString(Robot.FRONT_CAMERA_URL);
+                Robot.secondaryCameraUrl.setString(Robot.REAR_CAMERA_URL);
+            }
         }));
 
         // This trigger is activated when the drive controls are active
