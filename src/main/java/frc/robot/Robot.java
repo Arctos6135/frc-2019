@@ -86,6 +86,7 @@ public class Robot extends TimedRobot {
         beautifulRobot.init();
         beautifulRobot.setEnabled(true);
         beautifulRobot.setAlliance(DriverStation.getInstance().getAlliance());
+        beautifulRobot.setCustomColor((byte) 255, (byte) 102, (byte) 0);
         beautifulRobot.turnOn();
 
         SmartDashboard.putData("Shutdown Jetson", new ShutdownJetson());
