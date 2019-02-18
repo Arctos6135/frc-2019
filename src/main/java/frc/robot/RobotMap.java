@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
@@ -63,18 +64,13 @@ public class RobotMap {
 	public static final TalonSRX lTalon2 = new TalonSRX(5);
 
     // Essie motors
-    public static final VictorSP essieMotorLowUnprotected = new VictorSP(0);
+    public static final VictorSPX essieMotorLowUnprotected = new VictorSPX(6);
     public static final VictorSP essieMotorHighUnprotected = new VictorSP(1);
     public static final ProtectedMotor essieMotorLow = new ProtectedMotor((speed) -> {
-        essieMotorLowUnprotected.set(speed);
-    }, 6, 35, 2, () -> {
-        OI.errorRumbleOperatorMajor.execute();
-    });
-    public static final ProtectedMotor essieMotorHigh = new ProtectedMotor((speed) -> {
-        essieMotorHighUnprotected.set(speed);
-    }, 7, 35, 2, () -> {
-        OI.errorRumbleOperatorMajor.execute();
-    });
+        essieMotorLowUnprotected.set(ControlMode.PercentOutput, speed);
+    }, 6, 35, 2, OI.errorRumbleOperatorMajor::execute);
+    public static final ProtectedMotor essieMotorHigh = new ProtectedMotor(essieMotorHighUnprotected::set,
+            7, 35, 2, OI.errorRumbleOperatorMajor::execute);
     public static final DigitalInput essieSwitch1 = new DigitalInput(4);
     public static final DigitalInput essieSwitch2 = new DigitalInput(5);
 

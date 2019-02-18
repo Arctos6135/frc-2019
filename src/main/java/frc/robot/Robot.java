@@ -134,9 +134,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Debug", isInDebugMode);
         
         SmartDashboard.putBoolean("Essie Cargo", essie.hasCargo());
-        if(isInDebugMode) {
-            SmartDashboard.putNumber("Essie High", RobotMap.essieMotorHighUnprotected.get());
-            SmartDashboard.putNumber("Essie Low", RobotMap.essieMotorLowUnprotected.get());        
+        if(isInDebugMode) {     
             SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
             SmartDashboard.putString("Drivetrain Gear", drivetrain.getGear() == Drivetrain.Gear.HIGH ? "HIGH" : "LOW");
             SmartDashboard.putNumber("Left Distance", drivetrain.getLeftDistance());
