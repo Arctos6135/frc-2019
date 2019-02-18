@@ -18,12 +18,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.FollowTrajectory;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
-<<<<<<< HEAD
 import frc.robot.commands.sandstorm.AutoDispatcher;
 import frc.robot.misc.AutoPaths;
-=======
 import frc.robot.misc.powermanagement.PowerManager;
->>>>>>> dev/power-management
 import frc.robot.subsystems.BeautifulRobot;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Essie;
@@ -81,19 +78,15 @@ public class Robot extends TimedRobot {
 
         AutoPaths.generateAll();
 
-<<<<<<< HEAD
-=======
         PowerManager.startCompressorPowerManagement(11.0);
         PowerManager.startDrivetrainPowerManagement(8.5, 0.4);
         PowerManager.startEssiePowerManagement();
 
->>>>>>> dev/power-management
         beautifulRobot.init();
         beautifulRobot.setEnabled(true);
         beautifulRobot.setAlliance(DriverStation.getInstance().getAlliance());
         beautifulRobot.turnOn();
 
-<<<<<<< HEAD
         SmartDashboard.putData("Shutdown Jetson", new ShutdownJetson());
 
         // Create auto chooser
@@ -153,23 +146,6 @@ public class Robot extends TimedRobot {
                 Robot.error("Vision went offline unexpectedly");
             }
         }
-=======
-        chooser.setDefaultOption("None", null);
-
-        TrajectoryParams params = new TrajectoryParams();
-        params.waypoints = new Waypoint[] {
-            new Waypoint(0.0, 0.0, Math.PI / 2),
-            new Waypoint(-60.0, 120.0, Math.PI / 2),
-        };
-        params.alpha = 150.0;
-        params.segmentCount = 500;
-        params.isTank = true;
-        params.pathType = PathType.QUINTIC_HERMITE;
-        TankDriveTrajectory trajectory = new TankDriveTrajectory(RobotMap.specs, params);
-
-        chooser.addOption("Debug Auto", new FollowTrajectory(trajectory));
-        SmartDashboard.putData("Auto Mode", chooser);
->>>>>>> dev/power-management
 
         if(isInDebugMode) {
             putTuningEntries();
