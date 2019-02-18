@@ -56,13 +56,13 @@ public class Robot extends TimedRobot {
         beautifulRobot = new BeautifulRobot();
         oi = new OI();
 
-        // chooser.setDefaultOption("Default Auto", new ExampleCommand());
-        // chooser.addOption("My Auto", new MyAutoCommand());
-        // SmartDashboard.putData("Auto mode", m_chooser);
+        
+
         beautifulRobot.init();
         beautifulRobot.setEnabled(true);
         beautifulRobot.setAlliance(DriverStation.getInstance().getAlliance());
         beautifulRobot.turnOn();
+
         chooser.setDefaultOption("None", null);
 
         TrajectoryParams params = new TrajectoryParams();
