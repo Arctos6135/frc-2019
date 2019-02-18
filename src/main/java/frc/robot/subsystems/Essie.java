@@ -25,6 +25,11 @@ public class Essie extends Subsystem {
         setDefaultCommand(new EssieDefault());
     }
 
+    private boolean disableCompressor = false;
+    public void setDisableCompressorWhenActive(boolean disableCompressorWhenActive) {
+        disableCompressor = disableCompressorWhenActive;
+    }
+
     /**
      * Reads Essie's photoelectric sensor to see if it has a cargo.
      * 
@@ -39,10 +44,16 @@ public class Essie extends Subsystem {
     public void startIntake() {
         RobotMap.essieMotorHigh.set(0);
         RobotMap.essieMotorLow.set(1.0);
+        if(disableCompressor) {
+            RobotMap.compressor.stop();
+        }
     }
     public void reverseIntake() {
         RobotMap.essieMotorHigh.set(-1.0);
         RobotMap.essieMotorLow.set(-1.0);
+        if(disableCompressor) {
+            RobotMap.compressor.stop();
+        }
     }
     /**
      * Sets Essie's motors to start outtaking through the lower exit (rocket ship level 1).
@@ -50,6 +61,9 @@ public class Essie extends Subsystem {
     public void startOuttakeLow() {
         RobotMap.essieMotorHigh.set(-1.0);
         RobotMap.essieMotorLow.set(1.0);
+        if(disableCompressor) {
+            RobotMap.compressor.stop();
+        }
     }
     /**
      * Sets Essie's motors to start outtaking through the upper exit (cargo ship).
@@ -57,6 +71,9 @@ public class Essie extends Subsystem {
     public void startOuttakeHigh() {
         RobotMap.essieMotorHigh.set(1.0);
         RobotMap.essieMotorLow.set(1.0);
+        if(disableCompressor) {
+            RobotMap.compressor.stop();
+        }
     }
     /**
      * Stops Essie's motors.
@@ -64,6 +81,9 @@ public class Essie extends Subsystem {
     public void stop() {
         RobotMap.essieMotorHigh.set(0);
         RobotMap.essieMotorLow.set(0);
+        if(disableCompressor) {
+            RobotMap.compressor.start();
+        }
     }
 
 }
