@@ -15,5 +15,6 @@
     "**/.factorypath": true
 },
 "wpilib.online": true,
-"search.usePCRE2": true
+"search.usePCRE2": true,
+"cSpell.language": "en"
 }

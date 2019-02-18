@@ -145,6 +145,7 @@ public class OI {
     public static final Rumble errorRumbleOperatorMinor = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 400, 2);
     public static final Rumble pickupRumbleDriver = new Rumble(driverController, Rumble.SIDE_BOTH, 1, 200);
     public static final Rumble pickupRumbleOperator = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 200);
+    public static final Rumble noGearShiftRumble = new Rumble(driverController, Rumble.SIDE_BOTH, 0.75, 300);
     
     @SuppressWarnings("resource")
     public OI() {
@@ -259,14 +260,32 @@ public class OI {
         turn180.whenPressed(new RotateToAngle(187, RotateToAngle.Direction.LEFT));
 
         gearShiftHigh.whenPressed(new InstantCommand(() -> {
-            Robot.drivetrain.setGear(Drivetrain.Gear.HIGH);
+            // Do nothing if the current gear is already high
+            if(Robot.drivetrain.getGear() != Drivetrain.Gear.HIGH) {
+                // Disable shifting when the robot is going too fast to reduce stress on the gearbox
+                if(Math.abs(Robot.drivetrain.getLeftSpeed()) <= RobotMap.SHIFT_LOW_TO_HIGH_MAX
+                        && Math.abs(Robot.drivetrain.getRightSpeed()) <= RobotMap.SHIFT_LOW_TO_HIGH_MAX) {
+                    Robot.drivetrain.setGear(Drivetrain.Gear.HIGH);
+                }
+                else {
+                    noGearShiftRumble.execute();
+                }
+            }
         }));
         gearShiftLow.whenPressed(new InstantCommand(() -> {
-            Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
-            // When setting gear from high to low, check if precision mode is enabled
-            // Disable precision mode as it is useless in low gear and there is no way to disable it
-            if(TeleopDrive.isPrecisionDrive()) {
-                TeleopDrive.setPrecisionDrive(false);
+            if(Robot.drivetrain.getGear() != Drivetrain.Gear.LOW) {
+                if(Math.abs(Robot.drivetrain.getLeftSpeed()) <= RobotMap.SHIFT_HIGH_TO_LOW_MAX
+                        && Math.abs(Robot.drivetrain.getRightSpeed()) <= RobotMap.SHIFT_HIGH_TO_LOW_MAX) {
+                    Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
+                    // When setting gear from high to low, check if precision mode is enabled
+                    // Disable precision mode as it is useless in low gear and there is no way to disable it
+                    if(TeleopDrive.isPrecisionDrive()) {
+                        TeleopDrive.setPrecisionDrive(false);
+                    }
+                }
+                else {
+                    noGearShiftRumble.execute();
+                }
             }
         }));
 
