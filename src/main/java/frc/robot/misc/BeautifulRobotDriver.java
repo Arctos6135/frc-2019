@@ -70,7 +70,7 @@ public class BeautifulRobotDriver {
      * A colour of the BeautifulRobot&#8482;.
      */
     public enum Color {
-        RED((byte) 0), BLUE((byte) 1), GREEN((byte) 2), YELLOW((byte) 3);
+        RED((byte) 0), BLUE((byte) 1), GREEN((byte) 2), YELLOW((byte) 3), PURPLE((byte) 4), PINK((byte) 4), CUSTOM((byte) 5);
 
         byte code;
         Color(byte code) {

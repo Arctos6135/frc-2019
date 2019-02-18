@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
 import frc.robot.Robot;
 import frc.robot.misc.BeautifulRobotDriver;
-import frc.robot.subsystems.BeautifulRobot;
 
 /**
  * Runs Essie to intake cargo until the sensor inside it is activated.

@@ -10,7 +10,6 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import frc.robot.misc.BeautifulRobotDriver;
-import frc.robot.subsystems.BeautifulRobot;
 
 /**
  * Flashes the BeautifulRobot&#8482; a number of times.
