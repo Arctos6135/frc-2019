@@ -55,9 +55,25 @@ public class TeleopDrive extends Command {
     }
     public static void setReversed(boolean reversed) {
         reverseDrive = reversed;
+        if(reverseDrive) {
+            Robot.mainCameraUrl.setString(Robot.REAR_CAMERA_URL);
+            Robot.secondaryCameraUrl.setString(Robot.FRONT_CAMERA_URL);
+        }
+        else {
+            Robot.mainCameraUrl.setString(Robot.FRONT_CAMERA_URL);
+            Robot.secondaryCameraUrl.setString(Robot.REAR_CAMERA_URL);
+        }
     }
     public static void reverse() {
         reverseDrive = !reverseDrive;
+        if(reverseDrive) {
+            Robot.mainCameraUrl.setString(Robot.REAR_CAMERA_URL);
+            Robot.secondaryCameraUrl.setString(Robot.FRONT_CAMERA_URL);
+        }
+        else {
+            Robot.mainCameraUrl.setString(Robot.FRONT_CAMERA_URL);
+            Robot.secondaryCameraUrl.setString(Robot.REAR_CAMERA_URL);
+        }
     }
 
     public static boolean isPrecisionDrive() {
