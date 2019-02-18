@@ -29,4 +29,8 @@ public final class PowerManager {
             Robot.drivetrain.setSpeedMultiplier(regularMultiplier);
         }));
     }
+
+    public static void startEssiePowerManagement() {
+        Robot.essie.setDisableCompressorWhenActive(true);
+    }
 }

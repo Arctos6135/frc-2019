@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.FollowTrajectory;
 import frc.robot.commands.TeleopDrive;
+import frc.robot.misc.powermanagement.PowerManager;
 import frc.robot.subsystems.BeautifulRobot;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Essie;
@@ -56,7 +57,9 @@ public class Robot extends TimedRobot {
         beautifulRobot = new BeautifulRobot();
         oi = new OI();
 
-        
+        PowerManager.startCompressorPowerManagement(11.0);
+        PowerManager.startDrivetrainPowerManagement(8.5, 0.4);
+        PowerManager.startEssiePowerManagement();
 
         beautifulRobot.init();
         beautifulRobot.setEnabled(true);
