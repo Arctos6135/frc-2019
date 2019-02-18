@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
@@ -62,12 +63,13 @@ public class RobotMap {
 	public static final TalonSRX lTalon2 = new TalonSRX(5);
 
     // Essie motors
-    public static final VictorSP essieMotorLowUnprotected = new VictorSP(0);
+    public static final VictorSPX essieMotorLowUnprotected = new VictorSPX(6);
     public static final VictorSP essieMotorHighUnprotected = new VictorSP(1);
-    public static final ProtectedMotor essieMotorLow = new ProtectedMotor(essieMotorLowUnprotected::set,
-            6, 35, 2, OI.errorRumbleOperatorMajor::execute);
-    public static final ProtectedMotor essieMotorHigh = new ProtectedMotor(essieMotorHighUnprotected::set, 
-            7, 35, 2, OI.errorRumbleDriverMajor::execute);
+    public static final ProtectedMotor essieMotorLow = new ProtectedMotor((speed) -> {
+        essieMotorLowUnprotected.set(ControlMode.PercentOutput, speed);
+    }, 6, 35, 2, OI.errorRumbleOperatorMajor::execute);
+    public static final ProtectedMotor essieMotorHigh = new ProtectedMotor(essieMotorHighUnprotected::set,
+            7, 35, 2, OI.errorRumbleOperatorMajor::execute);
     public static final DigitalInput essiePhotoElectric = new DigitalInput(4);
 
     // navX
@@ -98,6 +100,9 @@ public class RobotMap {
     }
     public static final RobotSpecs specsHigh = new RobotSpecs(42.5, 53, RobotDimensions.BASEPLATE_WIDTH);
     public static final RobotSpecs specsLow = new RobotSpecs(150, 50, RobotDimensions.BASEPLATE_WIDTH);
+
+    public static final int SHIFT_LOW_TO_HIGH_MAX = 36;
+    public static final int SHIFT_HIGH_TO_LOW_MAX = 48;
   
     public static void init() {
         essieMotorLowUnprotected.setInverted(true);
