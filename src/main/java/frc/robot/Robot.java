@@ -20,6 +20,7 @@ import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.commands.sandstorm.AutoDispatcher;
 import frc.robot.misc.AutoPaths;
+import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.misc.powermanagement.PowerManager;
 import frc.robot.subsystems.BeautifulRobot;
 import frc.robot.subsystems.Drivetrain;
@@ -251,9 +252,9 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
-        if(beautifulRobot.getColor() != BeautifulRobot.Color.RED && beautifulRobot.getColor() != BeautifulRobot.Color.BLUE) {
+        if(beautifulRobot.getColor() != BeautifulRobotDriver.Color.RED && beautifulRobot.getColor() != BeautifulRobotDriver.Color.BLUE) {
             // If the alliance colour is not set, do it here
-            beautifulRobot.setColor(BeautifulRobot.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
+            beautifulRobot.setColor(BeautifulRobotDriver.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
         }
         // Set the initial gear
         Drivetrain.Gear matchStartGear = matchStartGearChooser.getSelected();
@@ -263,7 +264,7 @@ public class Robot extends TimedRobot {
         // Un-reverse driving
         TeleopDrive.setReversed(false);
 
-        beautifulRobot.setPattern(BeautifulRobot.Pattern.PULSATING);
+        beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.PULSATING);
         AutoDispatcher.Mode mode = modeChooser.getSelected();
         AutoDispatcher.HabLevel level = habLevelChooser.getSelected();
 
@@ -294,11 +295,11 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        if(beautifulRobot.getColor() != BeautifulRobot.Color.RED && beautifulRobot.getColor() != BeautifulRobot.Color.BLUE) {
+        if(beautifulRobot.getColor() != BeautifulRobotDriver.Color.RED && beautifulRobot.getColor() != BeautifulRobotDriver.Color.BLUE) {
             // If the alliance colour is not set, do it here
-            beautifulRobot.setColor(BeautifulRobot.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
+            beautifulRobot.setColor(BeautifulRobotDriver.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
         }
-        beautifulRobot.setPattern(BeautifulRobot.Pattern.MOVING_PULSE);
+        beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.MOVING_PULSE);
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
@@ -323,7 +324,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
-        beautifulRobot.setPattern(BeautifulRobot.Pattern.RAINBOW);
+        beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.RAINBOW);
     }
 
     @Override

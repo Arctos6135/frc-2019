@@ -25,8 +25,8 @@ import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.commands.VisionAlign;
+import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.misc.Rumble;
-import frc.robot.subsystems.BeautifulRobot;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -227,8 +227,8 @@ public class OI {
         debugCmd.setRunWhenDisabled(true);
         debug.whenPressed(debugCmd);
         
-        ledFlashGreen.whenPressed(new FlashBeautifulRobot(BeautifulRobot.Color.GREEN, 150, 5));
-        ledFlashYellow.whenPressed(new FlashBeautifulRobot(BeautifulRobot.Color.YELLOW, 150, 5));
+        ledFlashGreen.whenPressed(new FlashBeautifulRobot(BeautifulRobotDriver.Color.GREEN, 150, 5));
+        ledFlashYellow.whenPressed(new FlashBeautifulRobot(BeautifulRobotDriver.Color.YELLOW, 150, 5));
 
         stopAuto.whenPressed(new InstantCommand(() -> {
             if(DriverStation.getInstance().isAutonomous() && Robot.autoCommand != null) {

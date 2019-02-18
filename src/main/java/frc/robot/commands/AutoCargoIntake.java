@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
 import frc.robot.Robot;
+import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.subsystems.BeautifulRobot;
 
 /**
@@ -43,7 +44,7 @@ public class AutoCargoIntake extends Command {
             OI.pickupRumbleOperator.execute();
             OI.pickupRumbleDriver.execute();
             @SuppressWarnings("resource")
-            Command pulse = new PulseBeautifulRobot(1.5, 10, BeautifulRobot.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
+            Command pulse = new PulseBeautifulRobot(1.5, 10, BeautifulRobotDriver.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
             pulse.start();
             return true;
         }
