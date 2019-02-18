@@ -228,7 +228,7 @@ public class OI {
         debug.whenPressed(debugCmd);
         
         ledFlashGreen.whenPressed(new FlashBeautifulRobot(BeautifulRobotDriver.Color.GREEN, 150, 5));
-        ledFlashYellow.whenPressed(new FlashBeautifulRobot(BeautifulRobotDriver.Color.YELLOW, 150, 5));
+        ledFlashYellow.whenPressed(new FlashBeautifulRobot(BeautifulRobotDriver.Color.PURPLE, 150, 5));
 
         stopAuto.whenPressed(new InstantCommand(() -> {
             if(DriverStation.getInstance().isAutonomous() && Robot.autoCommand != null) {

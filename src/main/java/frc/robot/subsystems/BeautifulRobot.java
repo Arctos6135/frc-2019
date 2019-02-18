@@ -149,6 +149,20 @@ public class BeautifulRobot extends Subsystem {
     }
 
     /**
+     * Sets the RGB values of the custom colour of the BeautifulRobot&#8482;.
+     * 
+     * Note that all values must be in the range [0, 255].
+     * @param red The red component
+     * @param green The green component
+     * @param blue The blue component
+     */
+    public void setCustomColor(byte red, byte green, byte blue) {
+        writeCommand(Operation.CUSTOM_COLOR_RED, red);
+        writeCommand(Operation.CUSTOM_COLOR_GREEN, green);
+        writeCommand(Operation.CUSTOM_COLOR_BLUE, blue);
+    }
+
+    /**
      * Constructs a new BeautifulRobot&#8482;. This also calls {@link #init()}.
      */
     public BeautifulRobot() {
