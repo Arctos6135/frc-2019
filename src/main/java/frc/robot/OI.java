@@ -20,6 +20,7 @@ import frc.robot.commands.AutoCargoIntake;
 import frc.robot.commands.FlashBeautifulRobot;
 import frc.robot.commands.OperateEssie;
 import frc.robot.commands.OperateHank;
+import frc.robot.commands.RestartVisionServer;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
@@ -117,6 +118,7 @@ public class OI {
         
         public static final int DEBUG = ControllerMap.BUTTON_START;
         public static final int SKIP_VISION_INIT = ControllerMap.BUTTON_START;
+        public static final int RESTART_VISION_SERVER = ControllerMap.BUTTON_START;
         
         public static final int VISION_ALIGN_ADVANCED = ControllerMap.BUTTON_Y;
         public static final int VISION_ALIGN_BASIC = ControllerMap.BUTTON_RSTICK;
@@ -166,6 +168,7 @@ public class OI {
         JoystickButton turn180 = new JoystickButton(driverController, Controls.TURN_180);
         JoystickButton gearShiftHigh = new JoystickButton(driverController, Controls.GEARSHIFT_HIGH);
         JoystickButton gearShiftLow = new JoystickButton(driverController, Controls.GEARSHIFT_LOW);
+        JoystickButton restartVisionServer = new JoystickButton(operatorController, Controls.RESTART_VISION_SERVER);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
             RobotMap.essieMotorHigh.overrideBlacklist();
@@ -274,5 +277,7 @@ public class OI {
                 TeleopDrive.setPrecisionDrive(false);
             }
         }));
+
+        restartVisionServer.whenPressed(new RestartVisionServer());
     }
 }

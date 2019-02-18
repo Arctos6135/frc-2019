@@ -283,4 +283,9 @@ public class Vision extends Subsystem {
         shutdown.setBoolean(true);
         visionOnline.setBoolean(false);
     }
+
+    public void restartServer() {
+        NetworkTableEntry restart = table.getEntry("restart-server");
+        restart.setBoolean(true);
+    }
 }

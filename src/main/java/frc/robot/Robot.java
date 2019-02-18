@@ -51,8 +51,8 @@ public class Robot extends TimedRobot {
 
     public static boolean isInDebugMode = false;
 
-    static final String FRONT_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/main_camera/image_raw&quality=60&width=640&height=360";
-    static final String REAR_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/secondary_camera/image_raw&quality=30;";
+    static final String FRONT_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/main_camera/image_raw&quality=30&width=640&height=360";
+    static final String REAR_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/secondary_camera/image_raw&quality=30";
     static final NetworkTableEntry mainCameraUrl = NetworkTableInstance.getDefault().getTable("SmartDashboard").getEntry("main-stream-url");
     static final NetworkTableEntry secondaryCameraUrl = NetworkTableInstance.getDefault().getTable("SmartDashboard").getEntry("secondary-stream-url");
 
