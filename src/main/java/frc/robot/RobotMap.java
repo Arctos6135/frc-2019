@@ -64,8 +64,8 @@ public class RobotMap {
 	public static final TalonSRX lTalon2 = new TalonSRX(5);
 
     // Essie motors
-    public static final VictorSPX essieMotorLowUnprotected = new VictorSPX(6);
-    public static final VictorSP essieMotorHighUnprotected = new VictorSP(1);
+    public static final VictorSPX essieMotorLowUnprotected = new VictorSPX(7);
+    public static final VictorSP essieMotorHighUnprotected = new VictorSP(0);
     public static final ProtectedMotor essieMotorLow = new ProtectedMotor((speed) -> {
         essieMotorLowUnprotected.set(ControlMode.PercentOutput, speed);
     }, 6, 35, 2, OI.errorRumbleOperatorMajor::execute);
