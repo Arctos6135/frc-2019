@@ -79,9 +79,9 @@ public class Robot extends TimedRobot {
 
         AutoPaths.generateAll();
 
-        PowerManager.startCompressorPowerManagement(11.0);
-        PowerManager.startDrivetrainPowerManagement(8.5, 0.4);
-        PowerManager.startEssiePowerManagement();
+        //PowerManager.startCompressorPowerManagement(11.0);
+        //PowerManager.startDrivetrainPowerManagement(8.5, 0.4);
+        //PowerManager.startEssiePowerManagement();
 
         beautifulRobot.init();
         beautifulRobot.setEnabled(true);
