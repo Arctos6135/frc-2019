@@ -38,6 +38,13 @@ public class EssieDefault extends Command {
             Robot.essie.startOuttakeHigh();
         }
         else {
+            val = OI.operatorController.getRawAxis(OI.Controls.ESSIE_INTAKE);
+            if(val >= THRESHOLD) {
+                Robot.essie.startIntakeFromMiddle();
+            }
+            else if(val <= -THRESHOLD) {
+                Robot.essie.reverseIntake();
+            }
             Robot.essie.stop();
         }
     }

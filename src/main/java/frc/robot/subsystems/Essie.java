@@ -55,6 +55,13 @@ public class Essie extends Subsystem {
             RobotMap.compressor.stop();
         }
     }
+    public void startIntakeFromMiddle() {
+        RobotMap.essieMotorHigh.set(1.0);
+        RobotMap.essieMotorLow.set(-1.0);
+        if(disableCompressor) {
+            RobotMap.compressor.stop();
+        }
+    }
     /**
      * Sets Essie's motors to start outtaking through the lower exit (rocket ship level 1).
      */

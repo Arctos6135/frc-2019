@@ -107,6 +107,7 @@ public class OI {
 
         public static final int ESSIE_AUTOPICKUP = ControllerMap.BUTTON_X;
         public static final int ESSIE_REVERSE_INTAKE = ControllerMap.BUTTON_Y;
+        public static final int ESSIE_INTAKE = ControllerMap.RSTICK_Y_AXIS;
         public static final int ESSIE_OUTTAKE_LOW = ControllerMap.LBUMPER;
         public static final int ESSIE_OUTTAKE_HIGH = ControllerMap.RBUMPER;
         public static final int ESSIE_OUTTAKE = ControllerMap.LSTICK_Y_AXIS;
