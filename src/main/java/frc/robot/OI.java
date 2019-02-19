@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.buttons.POVButton;
 import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.AdvancedVisionAlign;
 import frc.robot.commands.AutoCargoIntake;
 import frc.robot.commands.FlashBeautifulRobot;
@@ -127,6 +128,8 @@ public class OI {
 
         public static final int POV_LED_FLASH_GREEN = ControllerMap.POV_UP;
         public static final int POV_LED_FLASH_YELLOW = ControllerMap.POV_DOWN;
+
+        public static final int POV_COMPRESSOR_TOGGLE = ControllerMap.POV_UP;
         
         public static final int REVERSE_DRIVE = ControllerMap.BUTTON_LSTICK;
 
@@ -160,6 +163,7 @@ public class OI {
         JoystickButton operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
         POVButton ledFlashGreen = new POVButton(operatorController, Controls.POV_LED_FLASH_GREEN);
         POVButton ledFlashYellow = new POVButton(operatorController, Controls.POV_LED_FLASH_YELLOW);
+        POVButton compressorToggle = new POVButton(driverController, Controls.POV_COMPRESSOR_TOGGLE);
         JoystickButton precisionDrive = new JoystickButton(driverController, Controls.PRECISION_DRIVE);
         JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
         JoystickButton visionAlignAdvanced = new JoystickButton(driverController, Controls.VISION_ALIGN_ADVANCED);
@@ -291,5 +295,17 @@ public class OI {
         }));
 
         restartVisionServer.whenPressed(new RestartVisionServer());
+
+        SmartDashboard.putBoolean("Compressor Enabled", true);
+        compressorToggle.whenPressed(new InstantCommand(() -> {
+            if(RobotMap.compressor.enabled()) {
+                RobotMap.compressor.stop();
+                SmartDashboard.putBoolean("Compressor Enabled", false);
+            }
+            else {
+                RobotMap.compressor.start();
+                SmartDashboard.putBoolean("Compressor Enabled", true);
+            }
+        }));
     }
 }
