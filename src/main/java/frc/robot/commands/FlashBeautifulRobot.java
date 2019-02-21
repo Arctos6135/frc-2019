@@ -10,6 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import frc.robot.misc.BeautifulRobotDriver;
+import frc.robot.misc.RobotLogger;
 
 /**
  * Flashes the BeautifulRobot&#8482; a number of times.
@@ -46,6 +47,7 @@ public class FlashBeautifulRobot extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
+        RobotLogger.logInfoFine("FlashBeautifulRobot started");
         count = initCount;
         initMode = Robot.beautifulRobot.getPattern();
         initColor = Robot.beautifulRobot.getColor();
@@ -92,6 +94,7 @@ public class FlashBeautifulRobot extends Command {
     // Called once after isFinished returns true
     @Override
     protected void end() {
+        RobotLogger.logInfoFine("FlashBeautifulRobot ended");
         // Reset the mode, colour and on/off state if they were changed
         if(initMode != BeautifulRobotDriver.Pattern.SOLID) {
             Robot.beautifulRobot.setPattern(initMode);
