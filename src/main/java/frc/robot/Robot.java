@@ -166,7 +166,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Vision Status", vision.ready());
 
         if(!vision.ready()) {
-            Robot.error("Wait for vision initialization timed out");
+            RobotLogger.logError("Wait for vision initialization timed out");
             OI.errorRumbleDriverMajor.execute();
             OI.errorRumbleOperatorMajor.execute();
         }
@@ -175,7 +175,7 @@ public class Robot extends TimedRobot {
                 vision.setVisionEnabled(false);
             }
             catch(VisionException e) {
-                Robot.error("Vision went offline unexpectedly");
+                RobotLogger.logError("Vision went offline unexpectedly");
             }
         }
 
@@ -265,7 +265,7 @@ public class Robot extends TimedRobot {
                     SmartDashboard.putNumber("Angle Offset", vision.getTargetAngleOffset());
                 }
                 catch(VisionException e) {
-                    Robot.error("Vision went offline unexpectedly");
+                    RobotLogger.logError("Vision went offline unexpectedly");
                 }
             }
         }
@@ -302,7 +302,7 @@ public class Robot extends TimedRobot {
             autoCommand.start();
         }
         catch(AutoDispatcher.AutoNotFoundException e) {
-            Robot.warning("No auto exists for the specified configuration");
+            RobotLogger.logWarning("No auto exists for the specified configuration");
             OI.errorRumbleDriverMinor.execute();
             OI.errorRumbleDriverMajor.execute();
             autoCommand = null;
@@ -378,14 +378,5 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void testPeriodic() {
-    }
-
-    public static void error(String error) {
-        SmartDashboard.putString("Last Error", error);
-        DriverStation.reportError(error, true);
-    }
-    public static void warning(String warning) {
-        SmartDashboard.putString("Last Warning", warning);
-        DriverStation.reportWarning(warning, true);
     }
 }
