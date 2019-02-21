@@ -99,6 +99,7 @@ public class Robot extends TimedRobot {
             e.printStackTrace();
             SmartDashboard.putString("Last Error", "Failed to initialize logger!");
         }
+        RobotLogger.logInfo("Logger initialized");
 
         beautifulRobot.init();
         beautifulRobot.setEnabled(true);
@@ -145,6 +146,8 @@ public class Robot extends TimedRobot {
         
         // 
         SmartDashboard.putNumber("Final Generation Time", finalGenerationTime);
+
+        RobotLogger.logInfo("Basic initialization complete. Waiting for vision to come online...");
         
         // Wait for vision to be ready if it's not already
         SmartDashboard.putBoolean("Vision Status", false);
@@ -182,6 +185,8 @@ public class Robot extends TimedRobot {
         if(isInDebugMode) {
             putTuningEntries();
         }
+
+        RobotLogger.logInfo("Robot initialization complete");
     }
 
     /**
@@ -210,6 +215,7 @@ public class Robot extends TimedRobot {
         // Change the gear to use in autos
         // If the option was changed, the auto paths have to be regenerated
         if(FollowTrajectory.gearToUse != newGearToUse) {
+            RobotLogger.logInfoFine("Auto gear has been changed to " + newGearToUse.toString() + ". Regenerating trajectories...");
             FollowTrajectory.gearToUse = newGearToUse;
             AutoPaths.generateAll();
         }
@@ -281,13 +287,16 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
-        if(beautifulRobot.getColor() != BeautifulRobotDriver.Color.RED && beautifulRobot.getColor() != BeautifulRobotDriver.Color.BLUE) {
+        RobotLogger.logInfo("Autonomous mode enabled");
+        if(beautifulRobot.getColor() != BeautifulRobotDriver.Color.fromAlliance(DriverStation.getInstance().getAlliance())) {
             // If the alliance colour is not set, do it here
             beautifulRobot.setColor(BeautifulRobotDriver.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
+            RobotLogger.logInfoFine("BeautifulRobot alliance colour changed to " + beautifulRobot.getColor().toString());
         }
         // Set the initial gear
         Drivetrain.Gear matchStartGear = matchStartGearChooser.getSelected();
         if(matchStartGear != null) {
+            RobotLogger.logInfoFine("Match start gear is " + matchStartGear.toString());
             Robot.drivetrain.setGear(matchStartGear);
         }
         // Un-reverse driving
@@ -300,6 +309,7 @@ public class Robot extends TimedRobot {
         try {
             autoCommand = AutoDispatcher.getAuto(level, mode);
             autoCommand.start();
+            RobotLogger.logInfo("Autonomous command started: " + autoCommand.getClass().getName());
         }
         catch(AutoDispatcher.AutoNotFoundException e) {
             RobotLogger.logWarning("No auto exists for the specified configuration");
@@ -324,9 +334,11 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        if(beautifulRobot.getColor() != BeautifulRobotDriver.Color.RED && beautifulRobot.getColor() != BeautifulRobotDriver.Color.BLUE) {
+        RobotLogger.logInfo("Teleop mode enabled");
+        if(beautifulRobot.getColor() != BeautifulRobotDriver.Color.fromAlliance(DriverStation.getInstance().getAlliance())) {
             // If the alliance colour is not set, do it here
             beautifulRobot.setColor(BeautifulRobotDriver.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
+            RobotLogger.logInfoFine("BeautifulRobot alliance colour changed to " + beautifulRobot.getColor().toString());
         }
         beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.MOVING_PULSE);
         // This makes sure that the autonomous stops running when
@@ -353,6 +365,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
+        RobotLogger.logInfo("Robot disabled");
         beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.RAINBOW);
     }
 

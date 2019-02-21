@@ -45,6 +45,10 @@ public class RobotLogger {
         isInitialized = true;
     }
 
+    public static void setLevel(Level level) {
+        logger.setLevel(level);
+    }
+
     public static void logError(String error) {
         if(isInitialized) {
             SmartDashboard.putString("Last Error", error);
