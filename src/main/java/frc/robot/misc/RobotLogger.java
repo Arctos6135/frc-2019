@@ -16,6 +16,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
+/**
+ * This class logs messages to a log file and/or the Driver Station/SmartDashboard.
+ */
 public class RobotLogger {
     static Handler fileHandler;
     static Formatter formatter;
@@ -24,6 +27,9 @@ public class RobotLogger {
 
     static boolean isInitialized = false;
 
+    /**
+     * Initializes the logger. If not initialized, logging will not have any affect.
+     */
     public static void init() throws IOException {
         // Get logger for robot class
         logger = Logger.getLogger(Robot.class.getName());
@@ -45,6 +51,13 @@ public class RobotLogger {
         isInitialized = true;
     }
 
+    /**
+     * Sets the logging level. Generally, levels SEVERE and WARNING contain error and warning messages;
+     * level INFO contains basic info such as enabled/disabled state; level FINE contains even more info
+     * such as joystick state.
+     * 
+     * @param level The logging level.
+     */
     public static void setLevel(Level level) {
         logger.setLevel(level);
     }
