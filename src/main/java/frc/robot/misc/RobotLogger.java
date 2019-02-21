@@ -22,6 +22,8 @@ public class RobotLogger {
 
     static Logger logger;
 
+    static boolean isInitialized = false;
+
     public static void init() throws IOException {
         // Get logger for robot class
         logger = Logger.getLogger(Robot.class.getName());
@@ -39,25 +41,35 @@ public class RobotLogger {
         formatter = new SimpleFormatter();
         fileHandler.setFormatter(formatter);
         logger.addHandler(fileHandler);
+
+        isInitialized = true;
     }
 
     public static void logError(String error) {
-        SmartDashboard.putString("Last Error", error);
-        DriverStation.reportError(error, false);
-        logger.severe(error);
+        if(isInitialized) {
+            SmartDashboard.putString("Last Error", error);
+            DriverStation.reportError(error, false);
+            logger.severe(error);
+        }
     }
     
     public static void logWarning(String warning) {
-        SmartDashboard.putString("Last Warning", warning);
-        DriverStation.reportWarning(warning, false);
-        logger.warning(warning);
+        if(isInitialized) {
+            SmartDashboard.putString("Last Warning", warning);
+            DriverStation.reportWarning(warning, false);
+            logger.warning(warning);
+        }
     }
 
     public static void logInfo(String info) {
-        logger.info(info);
+        if(isInitialized) {
+            logger.info(info);
+        }
     }
 
     public static void logInfoFine(String infoFine) {
-        logger.fine(infoFine);
+        if(isInitialized) {
+            logger.fine(infoFine);
+        }
     }
 }
