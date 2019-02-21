@@ -9,23 +9,37 @@ import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
 /**
- * This class logs messages to a log file and/or the Driver Station/SmartDashboard.
+ * This class logs messages to a log file and/or the Driver
+ * Station/SmartDashboard.
  */
 public class RobotLogger {
     static Handler fileHandler;
     static Formatter formatter;
-
     static Logger logger;
 
+    static DateFormat dateFormat;
+
     static boolean isInitialized = false;
+
+    static class RobotLoggerFormatter extends Formatter {
+
+        static DateFormat format = new SimpleDateFormat("(yyyy/MM/dd hh:mm:ss)");
+
+        @Override
+        public String format(LogRecord record) {
+            StringBuilder builder = new StringBuilder(format.format(new Date()));
+            builder.append(" [").append(record.getLevel().toString()).append("]: ").append(record.getMessage()).append("\n");
+            return builder.toString();
+        }
+    }
 
     /**
      * Initializes the logger. If not initialized, logging will not have any affect.
@@ -33,6 +47,7 @@ public class RobotLogger {
     public static void init() throws IOException {
         // Get logger for robot class
         logger = Logger.getLogger(Robot.class.getName());
+        logger.setUseParentHandlers(false);
         // Logging level fine
         logger.setLevel(Level.FINE);
         // Get a date string (for naming the log file)
@@ -44,7 +59,7 @@ public class RobotLogger {
         logDir.mkdirs();
         // Create handler and formatter
         fileHandler = new FileHandler("/home/lvuser/frc2019-logs/" + format.format(date) + ".log");
-        formatter = new SimpleFormatter();
+        formatter = new RobotLoggerFormatter();
         fileHandler.setFormatter(formatter);
         logger.addHandler(fileHandler);
 
