@@ -12,6 +12,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
 public class RobotLogger {
@@ -37,5 +39,25 @@ public class RobotLogger {
         formatter = new SimpleFormatter();
         fileHandler.setFormatter(formatter);
         logger.addHandler(fileHandler);
+    }
+
+    public static void logError(String error) {
+        SmartDashboard.putString("Last Error", error);
+        DriverStation.reportError(error, false);
+        logger.severe(error);
+    }
+    
+    public static void logWarning(String warning) {
+        SmartDashboard.putString("Last Warning", warning);
+        DriverStation.reportWarning(warning, false);
+        logger.warning(warning);
+    }
+
+    public static void logInfo(String info) {
+        logger.info(info);
+    }
+
+    public static void logInfoFine(String infoFine) {
+        logger.fine(infoFine);
     }
 }
