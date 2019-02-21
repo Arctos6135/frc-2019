@@ -43,6 +43,7 @@ public class AdvancedVisionAlign extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
+        RobotLogger.logInfoFine("Advanced vision align started");
         error = false;
         // First check if vision is ready
         if(!Robot.vision.ready()) {
@@ -224,6 +225,7 @@ public class AdvancedVisionAlign extends Command {
     @Override
     protected boolean isFinished() {
         if(error) {
+            RobotLogger.logWarning("Advanced vision align encountered an error");
             return true;
         }
         return followerCommand.isFinished() /*|| visionYOffset < 20*/;
@@ -244,6 +246,7 @@ public class AdvancedVisionAlign extends Command {
                 OI.errorRumbleDriverMinor.execute();
             }
         }
+        RobotLogger.logInfoFine("Advanced vision align ended");
     }
 
     // Called when another command which requires one or more of the same
@@ -262,5 +265,6 @@ public class AdvancedVisionAlign extends Command {
                 OI.errorRumbleDriverMinor.execute();
             }
         }
+        RobotLogger.logInfoFine("Advanced vision align interrupted");
     }
 }

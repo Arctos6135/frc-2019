@@ -366,6 +366,8 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledInit() {
         RobotLogger.logInfo("Robot disabled");
+        // Flush the log buffer when the robot is disabled
+        RobotLogger.flush();
         beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.RAINBOW);
     }
 

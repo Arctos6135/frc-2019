@@ -95,4 +95,8 @@ public class RobotLogger {
             logger.finer(infoFiner);
         }
     }
+
+    public static void flush() {
+        fileHandler.flush();
+    }
 }

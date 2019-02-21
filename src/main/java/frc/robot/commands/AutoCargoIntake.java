@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
 import frc.robot.Robot;
 import frc.robot.misc.BeautifulRobotDriver;
+import frc.robot.misc.RobotLogger;
 
 /**
  * Runs Essie to intake cargo until the sensor inside it is activated.
@@ -27,6 +28,7 @@ public class AutoCargoIntake extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
+        RobotLogger.logInfoFine("Essie autointake started");
         Robot.essie.startIntake();
     }
 
@@ -45,6 +47,7 @@ public class AutoCargoIntake extends Command {
             @SuppressWarnings("resource")
             Command pulse = new PulseBeautifulRobot(1.5, 10, BeautifulRobotDriver.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
             pulse.start();
+            RobotLogger.logInfoFine("Essie autopickup ended");
             return true;
         }
         else {
