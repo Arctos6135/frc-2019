@@ -31,6 +31,7 @@ public class VisionAlign extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
+        RobotLogger.logInfoFine("Basic vision align started");
         error = false;
         // Check that vision is ready
         if(!Robot.vision.ready()) {
@@ -127,6 +128,7 @@ public class VisionAlign extends Command {
                 OI.errorRumbleDriverMinor.execute();
             }
         }
+        RobotLogger.logInfoFine("Basic vision align ended");
     }
 
     // Called when another command which requires one or more of the same
@@ -145,5 +147,6 @@ public class VisionAlign extends Command {
                 OI.errorRumbleDriverMinor.execute();
             }
         }
+        RobotLogger.logInfoFine("Basic vision align interrupted");
     }
 }

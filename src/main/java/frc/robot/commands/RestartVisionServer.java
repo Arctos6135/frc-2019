@@ -9,6 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.Robot;
+import frc.robot.misc.RobotLogger;
 
 public class RestartVisionServer extends InstantCommand {
     public RestartVisionServer() {
@@ -23,8 +24,10 @@ public class RestartVisionServer extends InstantCommand {
     @Override
     protected void initialize() {
         if(!Robot.vision.ready()) {
+            RobotLogger.logWarning("Attempting to restart vision server, but vision is not up!");
             return;
         }
         Robot.vision.restartServer();
+        RobotLogger.logInfoFine("Vision server restarted");
     }
 }

@@ -10,6 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.command.TimedCommand;
 import frc.robot.Robot;
 import frc.robot.misc.BeautifulRobotDriver;
+import frc.robot.misc.RobotLogger;
 
 public class PulseBeautifulRobot extends TimedCommand {
 
@@ -32,6 +33,7 @@ public class PulseBeautifulRobot extends TimedCommand {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
+        RobotLogger.logInfoFine("PulseBeautifulRobot started");
         pattern = Robot.beautifulRobot.getPattern();
         initColor = Robot.beautifulRobot.getColor();
         if(pattern != BeautifulRobotDriver.Pattern.PULSATING) {
@@ -51,6 +53,7 @@ public class PulseBeautifulRobot extends TimedCommand {
     // Called once after isFinished returns true
     @Override
     protected void end() {
+        RobotLogger.logInfoFine("PulseBeautifulRobot ended");
         Robot.beautifulRobot.writeCommand(BeautifulRobotDriver.Operation.SPEED_HIGH, (byte) 1);
         if(initColor != color) {
             Robot.beautifulRobot.setColor(initColor);

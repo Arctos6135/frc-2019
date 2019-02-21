@@ -10,6 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
+import frc.robot.misc.RobotLogger;
 
 /**
  * Shuts down the Jetson. <b>Use with extreme care!!</b>
@@ -31,9 +32,11 @@ public class ShutdownJetson extends InstantCommand {
     @Override
     protected void initialize() {
         if(!Robot.vision.ready()) {
+            RobotLogger.logWarning("Attempting to shutdown the Jetson, but it is not up!");
             return;
         }
         Robot.vision.shutdownJetson();
         SmartDashboard.putBoolean("Vision Status", false);
+        RobotLogger.logInfoFine("Jetson has been shutdown");
     }
 }
