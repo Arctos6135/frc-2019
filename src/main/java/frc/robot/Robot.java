@@ -272,7 +272,7 @@ public class Robot extends TimedRobot {
             autoCommand.start();
         }
         catch(AutoDispatcher.AutoNotFoundException e) {
-            Robot.error("No auto exists for the specified configuration");
+            Robot.warning("No auto exists for the specified configuration");
             OI.errorRumbleDriverMinor.execute();
             OI.errorRumbleDriverMajor.execute();
             autoCommand = null;

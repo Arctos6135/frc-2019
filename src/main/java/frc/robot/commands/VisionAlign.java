@@ -60,7 +60,7 @@ public class VisionAlign extends Command {
                 try {
                     // If we exceeded the time limit, signal an error
                     if(System.currentTimeMillis() - start >= RESPONSE_TIMEOUT) {
-                        Robot.error("Could not find vision target");
+                        Robot.warning("Could not find vision target");
                         OI.errorRumbleDriverMinor.execute();
                         error = true;
                         return;
