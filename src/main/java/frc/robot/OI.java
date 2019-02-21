@@ -7,19 +7,28 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.POVButton;
+import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.AdvancedVisionAlign;
 import frc.robot.commands.AutoCargoIntake;
 import frc.robot.commands.FlashBeautifulRobot;
-import frc.robot.commands.HighCargoOuttake;
-import frc.robot.commands.LowCargoOuttake;
+import frc.robot.commands.OperateEssie;
 import frc.robot.commands.OperateHank;
+import frc.robot.commands.RestartVisionServer;
+import frc.robot.commands.RotateToAngle;
+import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
+import frc.robot.commands.VisionAlign;
+import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.misc.Rumble;
-import frc.robot.subsystems.BeautifulRobot;
+import frc.robot.subsystems.Drivetrain;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -99,24 +108,36 @@ public class OI {
 
         public static final int ESSIE_AUTOPICKUP = ControllerMap.BUTTON_X;
         public static final int ESSIE_REVERSE_INTAKE = ControllerMap.BUTTON_Y;
+        public static final int ESSIE_INTAKE = ControllerMap.RSTICK_Y_AXIS;
         public static final int ESSIE_OUTTAKE_LOW = ControllerMap.LBUMPER;
         public static final int ESSIE_OUTTAKE_HIGH = ControllerMap.RBUMPER;
         public static final int ESSIE_OUTTAKE = ControllerMap.LSTICK_Y_AXIS;
-
         // This will cancel Essie's auto intake
-        // If auto vision align is used it will cancel that as well
-        public static final int CANCEL = ControllerMap.BUTTON_B;
+        public static final int CANCEL_ESSIE = ControllerMap.BUTTON_B;
 
         public static final int OVERRIDE_MOTOR_BLACKLIST = ControllerMap.BUTTON_BACK;
         public static final int OPERATE_HANK = ControllerMap.BUTTON_A;
+        
         public static final int DEBUG = ControllerMap.BUTTON_START;
+        public static final int SKIP_VISION_INIT = ControllerMap.BUTTON_START;
+        public static final int RESTART_VISION_SERVER = ControllerMap.BUTTON_START;
+        
+        public static final int VISION_ALIGN_ADVANCED = ControllerMap.BUTTON_Y;
+        public static final int VISION_ALIGN_BASIC = ControllerMap.BUTTON_RSTICK;
+        public static final int CANCEL_ALIGN = ControllerMap.BUTTON_B;
 
         public static final int POV_LED_FLASH_GREEN = ControllerMap.POV_UP;
         public static final int POV_LED_FLASH_YELLOW = ControllerMap.POV_DOWN;
+
+        public static final int POV_COMPRESSOR_TOGGLE = ControllerMap.POV_UP;
         
         public static final int REVERSE_DRIVE = ControllerMap.BUTTON_LSTICK;
 
         public static final int PRECISION_DRIVE = ControllerMap.BUTTON_X;
+
+        public static final int STOP_AUTO = ControllerMap.BUTTON_B;
+
+        public static final int TURN_180 = ControllerMap.BUTTON_A;
     }
 
     public static final XboxController driverController = new XboxController(0);
@@ -128,21 +149,32 @@ public class OI {
     public static final Rumble errorRumbleOperatorMinor = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 400, 2);
     public static final Rumble pickupRumbleDriver = new Rumble(driverController, Rumble.SIDE_BOTH, 1, 200);
     public static final Rumble pickupRumbleOperator = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 200);
+    public static final Rumble noGearShiftRumble = new Rumble(driverController, Rumble.SIDE_BOTH, 0.75, 300);
     
     @SuppressWarnings("resource")
     public OI() {
         JoystickButton overrideMotorBlacklist1 = new JoystickButton(driverController, Controls.OVERRIDE_MOTOR_BLACKLIST);
         JoystickButton overrideMotorBlacklist2 = new JoystickButton(operatorController, Controls.OVERRIDE_MOTOR_BLACKLIST);
         JoystickButton essieAutoIntake = new JoystickButton(operatorController, Controls.ESSIE_AUTOPICKUP);
-        JoystickButton cancel = new JoystickButton(operatorController, Controls.CANCEL);
+        JoystickButton cancelEssie = new JoystickButton(operatorController, Controls.CANCEL_ESSIE);
+        JoystickButton essieHigh = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH);
+        JoystickButton essieLow = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_LOW);
+        JoystickButton essieReverse = new JoystickButton(operatorController, Controls.ESSIE_REVERSE_INTAKE);
         JoystickButton operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
         POVButton ledFlashGreen = new POVButton(operatorController, Controls.POV_LED_FLASH_GREEN);
         POVButton ledFlashYellow = new POVButton(operatorController, Controls.POV_LED_FLASH_YELLOW);
+        POVButton compressorToggle = new POVButton(driverController, Controls.POV_COMPRESSOR_TOGGLE);
         JoystickButton precisionDrive = new JoystickButton(driverController, Controls.PRECISION_DRIVE);
         JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
-		JoystickButton reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
-		JoystickButton essieOuttakeHigh = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH);
-		JoystickButton essieOuttakeLow = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_LOW);
+        JoystickButton visionAlignAdvanced = new JoystickButton(driverController, Controls.VISION_ALIGN_ADVANCED);
+        JoystickButton visionAlignBasic = new JoystickButton(driverController, Controls.VISION_ALIGN_BASIC);
+        JoystickButton cancelAlign = new JoystickButton(driverController, Controls.CANCEL_ALIGN);
+        JoystickButton reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
+        JoystickButton stopAuto = new JoystickButton(driverController, Controls.STOP_AUTO);
+        JoystickButton turn180 = new JoystickButton(driverController, Controls.TURN_180);
+        JoystickButton gearShiftHigh = new JoystickButton(driverController, Controls.GEARSHIFT_HIGH);
+        JoystickButton gearShiftLow = new JoystickButton(driverController, Controls.GEARSHIFT_LOW);
+        JoystickButton restartVisionServer = new JoystickButton(operatorController, Controls.RESTART_VISION_SERVER);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
             RobotMap.essieMotorHigh.overrideBlacklist();
@@ -153,43 +185,127 @@ public class OI {
             RobotMap.essieMotorLow.overrideBlacklist();
         }));
 
-        // Intake Essie until cargo sensor is triggered
-		essieAutoIntake.whenPressed(new AutoCargoIntake());
-		
-        // Outtake Essie through the lower or higher cargo outputs
-        essieOuttakeHigh.whileHeld(new HighCargoOuttake());
-        essieOuttakeLow.whileHeld(new LowCargoOuttake());
+        essieAutoIntake.whenPressed(new AutoCargoIntake());
+        essieHigh.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_HIGH));
+        essieLow.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_LOW));
+        essieReverse.whileHeld(new OperateEssie(OperateEssie.Mode.REVERSE));
 
-        cancel.whenActive(new InstantCommand(() -> {
+        cancelEssie.whenActive(new InstantCommand(() -> {
             Command essieCommand = Robot.essie.getCurrentCommand();
             if(essieCommand != null && essieCommand instanceof AutoCargoIntake) {
                 essieCommand.cancel();
             }
         }));
 
-        // Push hank out with a timeout of infinity
-        // This means that hank will never retract unless the button is released
-        operateHank.whileHeld(new OperateHank(Double.POSITIVE_INFINITY));
+        operateHank.whileHeld(new OperateHank());
 
-        // Toggles precision drive
-        precisionDrive.whenPressed(new InstantCommand(() -> {
-            TeleopDrive.togglePrecisionDrive();
-        }));
-
-        Command debugCmd = new InstantCommand() {
+        // User button on the rio shuts down the Jetson
+        Trigger shutdownJetson = new Trigger() {
             @Override
-            protected void initialize() {
-                Robot.isInDebugMode = !Robot.isInDebugMode;
+            public boolean get() {
+                return RobotController.getUserButton();
             }
         };
+        shutdownJetson.whileActive(new ShutdownJetson());
+
+        visionAlignAdvanced.whenPressed(new AdvancedVisionAlign());
+        visionAlignBasic.whenPressed(new VisionAlign());
+        cancelAlign.whenPressed(new InstantCommand(() -> {
+            // Since all vision align commands must require the vision subsystem, this will cancel any vision align command.
+            if(Robot.vision.getCurrentCommand() != null) {
+                Robot.vision.getCurrentCommand().cancel();
+            }
+        }));
+        precisionDrive.whenPressed(new InstantCommand(() -> {
+            // Precision drive is disabled when the robot is in low gear,
+            // as the robot already goes very slowly anyways.
+            if(Robot.drivetrain.getGear() != Drivetrain.Gear.LOW) {
+                TeleopDrive.togglePrecisionDrive();
+            }
+        }));
+
+        Command debugCmd = new InstantCommand(() -> {
+            Robot.isInDebugMode = !Robot.isInDebugMode;
+            if(Robot.isInDebugMode) {
+                Robot.putTuningEntries();
+            }
+        });
         debugCmd.setRunWhenDisabled(true);
         debug.whenPressed(debugCmd);
         
-        ledFlashGreen.whenPressed(new FlashBeautifulRobot(BeautifulRobot.Color.GREEN, 150, 5));
-        ledFlashYellow.whenPressed(new FlashBeautifulRobot(BeautifulRobot.Color.YELLOW, 150, 5));
+        ledFlashGreen.whenPressed(new FlashBeautifulRobot(BeautifulRobotDriver.Color.GREEN, 150, 5));
+        ledFlashYellow.whenPressed(new FlashBeautifulRobot(BeautifulRobotDriver.Color.CUSTOM, 150, 5));
 
+        stopAuto.whenPressed(new InstantCommand(() -> {
+            if(DriverStation.getInstance().isAutonomous() && Robot.autoCommand != null) {
+                Robot.autoCommand.cancel();
+            }
+        }));
         reverse.whenPressed(new InstantCommand(() -> {
             TeleopDrive.reverse();
+        }));
+
+        // This trigger is activated when the drive controls are active
+        Trigger interruptAdvancedVisionAlign = new Trigger() {
+            @Override
+            public boolean get() {
+                return Math.abs(OI.driverController.getRawAxis(Controls.DRIVE_FWD_REV)) > TeleopDrive.DEADZONE
+                        || Math.abs(OI.driverController.getRawAxis(Controls.DRIVE_LEFT_RIGHT)) > TeleopDrive.DEADZONE;
+            }
+        };
+        // When activated, it will cancel the currently running command on the drivetrain
+        interruptAdvancedVisionAlign.whenActive(new InstantCommand(() -> {
+            Command cmd = Robot.drivetrain.getCurrentCommand();
+            if(cmd != null && !(cmd instanceof TeleopDrive)) {
+                Robot.drivetrain.getCurrentCommand().cancel();
+            }
+        }));
+
+        // Turns 180 degrees in place
+        turn180.whenPressed(new RotateToAngle(187, RotateToAngle.Direction.LEFT));
+
+        gearShiftHigh.whenPressed(new InstantCommand(() -> {
+            // Do nothing if the current gear is already high
+            if(Robot.drivetrain.getGear() != Drivetrain.Gear.HIGH) {
+                // Disable shifting when the robot is going too fast to reduce stress on the gearbox
+                if(Math.abs(Robot.drivetrain.getLeftSpeed()) <= RobotMap.SHIFT_LOW_TO_HIGH_MAX
+                        && Math.abs(Robot.drivetrain.getRightSpeed()) <= RobotMap.SHIFT_LOW_TO_HIGH_MAX) {
+                    Robot.drivetrain.setGear(Drivetrain.Gear.HIGH);
+                }
+                else {
+                    noGearShiftRumble.execute();
+                }
+            }
+        }));
+        gearShiftLow.whenPressed(new InstantCommand(() -> {
+            if(Robot.drivetrain.getGear() != Drivetrain.Gear.LOW) {
+                if(Math.abs(Robot.drivetrain.getLeftSpeed()) <= RobotMap.SHIFT_HIGH_TO_LOW_MAX
+                        && Math.abs(Robot.drivetrain.getRightSpeed()) <= RobotMap.SHIFT_HIGH_TO_LOW_MAX) {
+                    Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
+                    // When setting gear from high to low, check if precision mode is enabled
+                    // Disable precision mode as it is useless in low gear and there is no way to disable it
+                    if(TeleopDrive.isPrecisionDrive()) {
+                        TeleopDrive.setPrecisionDrive(false);
+                    }
+                }
+                else {
+                    noGearShiftRumble.execute();
+                }
+            }
+        }));
+
+        restartVisionServer.whenPressed(new RestartVisionServer());
+
+        SmartDashboard.putBoolean("Compressor Enabled", true);
+        compressorToggle.whenPressed(new InstantCommand(() -> {
+            if(RobotMap.compressor.enabled()) {
+                RobotMap.compressor.stop();
+                SmartDashboard.putBoolean("Compressor Enabled", false);
+            }
+            else {
+                RobotMap.compressor.start();
+                SmartDashboard.putBoolean("Compressor Enabled", true);
+            }
         }));
     }
 }

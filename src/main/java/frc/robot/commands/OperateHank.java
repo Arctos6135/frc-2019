@@ -7,32 +7,32 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 
 /**
- * Operates Hank.
+ * This command operates Hank. When started, it pushes Hank out, and when ending/interrupted, it retracts Hank.
+ * 
+ * <b>Note that this command will never terminate on its own.</b>
+ * As a result, it must be manually interrupted, or used with the {@link Button#whileHeld(Command)} or 
+ * {@link Trigger#whileActive(Command)}.
  */
 public class OperateHank extends Command {
 
-    final double timeout;
-
     /**
-     * Toggles Hank.
+     * This command operates Hank. When started, it pushes Hank out, and when ending/interrupted, it retracts Hank.
+     * 
+     * <b>Note that this command will never terminate on its own.</b>
+     * As a result, it must be manually interrupted, or used with the {@link Button#whileHeld(Command)} or 
+     * {@link Trigger#whileActive(Command)}.
      */
     public OperateHank() {
         super();
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
         requires(Robot.hank);
-        timeout = 0.6;
-    }
-
-    public OperateHank(double timeout) {
-        super();
-
-        requires(Robot.hank);
-        this.timeout = timeout;
     }
 
     // Called once when the command executes
@@ -47,7 +47,7 @@ public class OperateHank extends Command {
 
     @Override
     protected boolean isFinished() {
-        return timeSinceInitialized() > 0.6;
+        return false;
     }
 
     @Override

@@ -14,5 +14,7 @@
     "**/.settings": true,
     "**/.factorypath": true
 },
-  "wpilib.online": true
+"wpilib.online": true,
+"search.usePCRE2": true,
+"cSpell.language": "en"
 }

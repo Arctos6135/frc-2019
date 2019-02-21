@@ -9,7 +9,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.RobotMap;
 import robot.pathfinder.core.trajectory.TankDriveTrajectory;
 import robot.pathfinder.core.trajectory.TrajectoryGenerator;
 
@@ -41,7 +40,8 @@ public class RotateToAngle extends Command {
         requires(Robot.drivetrain);
 
         // Use a RobotPathfinder trajectory here to save time and improve accuracy with the already tuned PIDs
-        trajectory = TrajectoryGenerator.generateRotationTank(RobotMap.specs, direction == Direction.LEFT ? Math.toRadians(angle) : Math.toRadians(-angle));
+        trajectory = TrajectoryGenerator.generateRotationTank(FollowTrajectory.getSpecs(), 
+                direction == Direction.LEFT ? Math.toRadians(angle) : Math.toRadians(-angle));
         followerCommand = new FollowTrajectory(trajectory);
     }
 

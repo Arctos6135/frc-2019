@@ -9,14 +9,14 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.subsystems.BeautifulRobot;
+import frc.robot.misc.BeautifulRobotDriver;
 
 /**
  * Flashes the BeautifulRobot&#8482; a number of times.
  */
 public class FlashBeautifulRobot extends Command {
 
-    private final BeautifulRobot.Color color;
+    private final BeautifulRobotDriver.Color color;
     private final int duration;
     private int count;
     private final int initCount;
@@ -29,7 +29,7 @@ public class FlashBeautifulRobot extends Command {
      * @param duration The time the LEDs stay on/off
      * @param count The number of flashes
      */
-    public FlashBeautifulRobot(BeautifulRobot.Color color, int duration, int count) {
+    public FlashBeautifulRobot(BeautifulRobotDriver.Color color, int duration, int count) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
         requires(Robot.beautifulRobot);
@@ -39,8 +39,8 @@ public class FlashBeautifulRobot extends Command {
         this.initCount = count;
     }
 
-    private BeautifulRobot.Pattern initMode;
-    private BeautifulRobot.Color initColor;
+    private BeautifulRobotDriver.Pattern initMode;
+    private BeautifulRobotDriver.Color initColor;
     private boolean initState;
 
     // Called just before this Command runs the first time
@@ -52,8 +52,8 @@ public class FlashBeautifulRobot extends Command {
         initState = Robot.beautifulRobot.isOn();
 
         // Set mode, colour and turn on
-        if(initMode != BeautifulRobot.Pattern.SOLID) {
-            Robot.beautifulRobot.setPattern(BeautifulRobot.Pattern.SOLID);
+        if(initMode != BeautifulRobotDriver.Pattern.SOLID) {
+            Robot.beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.SOLID);
         }
         if(initColor != color) {
             Robot.beautifulRobot.setColor(color);
@@ -93,7 +93,7 @@ public class FlashBeautifulRobot extends Command {
     @Override
     protected void end() {
         // Reset the mode, colour and on/off state if they were changed
-        if(initMode != BeautifulRobot.Pattern.SOLID) {
+        if(initMode != BeautifulRobotDriver.Pattern.SOLID) {
             Robot.beautifulRobot.setPattern(initMode);
         }
         if(initColor != color) {

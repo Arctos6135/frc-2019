@@ -36,7 +36,7 @@ public class Essie extends Subsystem {
      * @return Whether there is cargo inside of Essie
      */
     public boolean hasCargo() {
-        return RobotMap.essieSwitch1.get() || RobotMap.essieSwitch2.get();
+        return !RobotMap.essiePhotoElectric.get();
     }
     /**
      * Sets Essie's motors to start intaking cargo.
@@ -50,6 +50,13 @@ public class Essie extends Subsystem {
     }
     public void reverseIntake() {
         RobotMap.essieMotorHigh.set(-1.0);
+        RobotMap.essieMotorLow.set(-1.0);
+        if(disableCompressor) {
+            RobotMap.compressor.stop();
+        }
+    }
+    public void startIntakeFromMiddle() {
+        RobotMap.essieMotorHigh.set(1.0);
         RobotMap.essieMotorLow.set(-1.0);
         if(disableCompressor) {
             RobotMap.compressor.stop();

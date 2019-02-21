@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
 import frc.robot.Robot;
-import frc.robot.subsystems.BeautifulRobot;
+import frc.robot.misc.BeautifulRobotDriver;
 
 /**
  * Runs Essie to intake cargo until the sensor inside it is activated.
@@ -40,11 +40,11 @@ public class AutoCargoIntake extends Command {
     protected boolean isFinished() {
         // When this command finishes, rumble the controller and flash the LEDs
         if(Robot.essie.hasCargo()) {
-            @SuppressWarnings("resource")
-            Command pulse = new PulseBeautifulRobot(1.5, 10, BeautifulRobot.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
-            pulse.start();
             OI.pickupRumbleOperator.execute();
             OI.pickupRumbleDriver.execute();
+            @SuppressWarnings("resource")
+            Command pulse = new PulseBeautifulRobot(1.5, 10, BeautifulRobotDriver.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
+            pulse.start();
             return true;
         }
         else {

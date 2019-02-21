@@ -10,14 +10,13 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.command.TimedCommand;
 import frc.robot.Robot;
 import frc.robot.misc.BeautifulRobotDriver;
-import frc.robot.subsystems.BeautifulRobot;
 
 public class PulseBeautifulRobot extends TimedCommand {
 
     private final int speed;
-    private final BeautifulRobot.Color color;
+    private final BeautifulRobotDriver.Color color;
 
-    public PulseBeautifulRobot(double timeout, int speed, BeautifulRobot.Color color) {
+    public PulseBeautifulRobot(double timeout, int speed, BeautifulRobotDriver.Color color) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
         super(timeout);
@@ -27,16 +26,16 @@ public class PulseBeautifulRobot extends TimedCommand {
         this.color = color;
     }
 
-    private BeautifulRobot.Pattern pattern;
-    private BeautifulRobot.Color initColor;
+    private BeautifulRobotDriver.Pattern pattern;
+    private BeautifulRobotDriver.Color initColor;
 
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
         pattern = Robot.beautifulRobot.getPattern();
         initColor = Robot.beautifulRobot.getColor();
-        if(pattern != BeautifulRobot.Pattern.PULSATING) {
-            Robot.beautifulRobot.setPattern(BeautifulRobot.Pattern.PULSATING);
+        if(pattern != BeautifulRobotDriver.Pattern.PULSATING) {
+            Robot.beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.PULSATING);
         }
         if(initColor != color) {
             Robot.beautifulRobot.setColor(color);

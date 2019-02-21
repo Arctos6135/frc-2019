@@ -8,6 +8,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SerialPort;
 
 /**
@@ -34,7 +36,8 @@ public class BeautifulRobotDriver {
     public enum Operation {
 
         ENABLE(0x01), BRIGHTNESS(0x02), MODE(0x03), COLOR(0x04), DIRECTION(0x05), LED_COUNT(0x06),
-        SPEED_HIGH(0x07), SPEED_LOW(0x08), RESET(0x09), PROGRESS_HIGH(0x0A), PROGRESS_LOW(0x0B);
+        SPEED_HIGH(0x07), SPEED_LOW(0x08), RESET(0x09), PROGRESS_HIGH(0x0A), PROGRESS_LOW(0x0B),
+        CUSTOM_COLOR_RED(0x0C), CUSTOM_COLOR_GREEN(0x0D), CUSTOM_COLOR_BLUE(0x0E);
 
         private byte code;
         Operation(int code) {
@@ -45,6 +48,49 @@ public class BeautifulRobotDriver {
         }
         byte getCode() {
             return this.code;
+        }
+    }
+
+    /**
+     * All the different patterns the BeautifulRobot&#8482; has.
+     */
+    public enum Pattern {
+        SOLID((byte) 0), PULSATING((byte) 1), RAINBOW((byte) 2), MOVING_PULSE((byte) 3), PROGRESS_BAR((byte) 4);
+
+        private byte value;
+        Pattern(byte value) {
+            this.value = value;
+        }
+        public byte getValue() {
+            return value;
+        }
+    }
+
+    /**
+     * A colour of the BeautifulRobot&#8482;.
+     */
+    public enum Color {
+        RED((byte) 0), BLUE((byte) 1), GREEN((byte) 2), YELLOW((byte) 3), 
+        // Purple and Pink are the same
+        PURPLE((byte) 4), PINK((byte) 4), CUSTOM((byte) 5);
+
+        byte code;
+        Color(byte code) {
+            this.code = code;
+        }
+        public static Color fromAlliance(DriverStation.Alliance alliance) {
+            if(alliance == Alliance.Red) {
+                return Color.RED;
+            }
+            else if(alliance == Alliance.Blue) {
+                return Color.BLUE;
+            }
+            else {
+                return Color.GREEN;
+            }
+        }
+        public byte getCode() {
+            return code;
         }
     }
     

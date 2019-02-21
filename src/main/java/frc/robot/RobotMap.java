@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
@@ -49,9 +50,6 @@ public class RobotMap {
 	public static final double WHEEL_CIRCUMFRENCE = WHEEL_DIAMETER*Math.PI;
 	public static final double DRIVE_ENCODER_PPR = 256;
     public static final double DISTANCE_PER_PULSE = WHEEL_CIRCUMFRENCE/DRIVE_ENCODER_PPR*5/48;
-    
-    // Drivetrain parameters
-    public static final double BASEPLATE_WIDTH = 25.716;
 
     public static final DoubleSolenoid hankSolenoid = new DoubleSolenoid(2, 3);
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
@@ -65,20 +63,14 @@ public class RobotMap {
 	public static final TalonSRX lTalon2 = new TalonSRX(5);
 
     // Essie motors
-    public static final VictorSP essieMotorLowUnprotected = new VictorSP(0);
-    public static final VictorSP essieMotorHighUnprotected = new VictorSP(1);
+    public static final VictorSPX essieMotorLowUnprotected = new VictorSPX(7);
+    public static final VictorSP essieMotorHighUnprotected = new VictorSP(0);
     public static final ProtectedMotor essieMotorLow = new ProtectedMotor((speed) -> {
-        essieMotorLowUnprotected.set(speed);
-    }, 6, 35, 2, () -> {
-        OI.errorRumbleOperatorMajor.execute();
-    });
-    public static final ProtectedMotor essieMotorHigh = new ProtectedMotor((speed) -> {
-        essieMotorHighUnprotected.set(speed);
-    }, 7, 35, 2, () -> {
-        OI.errorRumbleOperatorMajor.execute();
-    });
-    public static final DigitalInput essieSwitch1 = new DigitalInput(4);
-    public static final DigitalInput essieSwitch2 = new DigitalInput(5);
+        essieMotorLowUnprotected.set(ControlMode.PercentOutput, speed);
+    }, 6, 35, 2, OI.errorRumbleOperatorMajor::execute);
+    public static final ProtectedMotor essieMotorHigh = new ProtectedMotor(essieMotorHighUnprotected::set,
+            7, 35, 2, OI.errorRumbleOperatorMajor::execute);
+    public static final DigitalInput essiePhotoElectric = new DigitalInput(4);
 
     // navX
     public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
@@ -87,10 +79,34 @@ public class RobotMap {
 	
     public static final BeautifulRobotDriver beautifulRobotDriver = new BeautifulRobotDriver(Port.kMXP);
     
-    public static final RobotSpecs specs = new RobotSpecs(45, 53, BASEPLATE_WIDTH);
+    /**
+     * Holds robot dimensions.
+     */
+    public static final class RobotDimensions {
+        public static final double BASEPLATE_WIDTH = 25.716;
+        public static final double LENGTH = 40;
+        public static final double WIDTH = 36;
+    }
+
+    /**
+     * Holds field dimensions (duh).
+     * All units are in inches.
+     */
+    public static final class FieldDimensions {
+        public static final double HAB_LVL1_TO_CARGO_SHIP = 172.5;
+        public static final double HAB_LVL1_TO_CARGO_SHIP_SIDE = 213.2200787;
+        public static final double HAB_LVL1_EDGE_TO_CARGO_SHIP_SIDE = 42.96;
+        public static final double HAB_LVL2_LENGTH = 48;
+    }
+    public static final RobotSpecs specsHigh = new RobotSpecs(42.5, 53, RobotDimensions.BASEPLATE_WIDTH);
+    public static final RobotSpecs specsLow = new RobotSpecs(150, 50, RobotDimensions.BASEPLATE_WIDTH);
+
+    public static final int SHIFT_LOW_TO_HIGH_MAX = 36;
+    public static final int SHIFT_HIGH_TO_LOW_MAX = 48;
   
     public static void init() {
         essieMotorLowUnprotected.setInverted(true);
+        essieMotorHighUnprotected.setInverted(false);
 
         // Set the motors to follow
         lTalon1.follow(lVictor);

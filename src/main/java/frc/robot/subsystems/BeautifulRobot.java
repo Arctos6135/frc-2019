@@ -7,11 +7,12 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
 import frc.robot.misc.BeautifulRobotDriver.Operation;
+import frc.robot.misc.BeautifulRobotDriver.Pattern;
+import frc.robot.misc.BeautifulRobotDriver.Color;
 
 /**
  * BeautifulRobot&#8482; WS2812 RGB LED Strip Controller Subsystem.
@@ -72,7 +73,7 @@ public class BeautifulRobot extends Subsystem {
      */
     public void init() {
         // Set brightness to 20%
-        writeCommand(Operation.BRIGHTNESS, (byte) 20);
+        writeCommand(Operation.BRIGHTNESS, (byte) 50);
         // Set mode to solid colour
         writeCommand(Operation.MODE, (byte) 0);
     }
@@ -85,31 +86,6 @@ public class BeautifulRobot extends Subsystem {
         setColor(Color.fromAlliance(color));
     }
 
-    /**
-     * A colour of the BeautifulRobot&#8482;.
-     */
-    public enum Color {
-        RED((byte) 0), BLUE((byte) 1), GREEN((byte) 2), YELLOW((byte) 3);
-
-        byte code;
-        Color(byte code) {
-            this.code = code;
-        }
-        public static Color fromAlliance(DriverStation.Alliance alliance) {
-            if(alliance == Alliance.Red) {
-                return Color.RED;
-            }
-            else if(alliance == Alliance.Blue) {
-                return Color.BLUE;
-            }
-            else {
-                return Color.GREEN;
-            }
-        }
-        public byte getCode() {
-            return code;
-        }
-    }
     private Color color = Color.GREEN;
 
     /**
@@ -151,20 +127,6 @@ public class BeautifulRobot extends Subsystem {
     public boolean isOn() {
         return on;
     }
-    /**
-     * All the different patterns the BeautifulRobot&#8482; has.
-     */
-    public enum Pattern {
-        SOLID((byte) 0), PULSATING((byte) 1), RAINBOW((byte) 2), MOVING_PULSE((byte) 3), PROGRESS_BAR((byte) 4);
-
-        private byte value;
-        Pattern(byte value) {
-            this.value = value;
-        }
-        public byte getValue() {
-            return value;
-        }
-    }
 
     private Pattern pattern = Pattern.SOLID;
     /**
@@ -184,6 +146,20 @@ public class BeautifulRobot extends Subsystem {
      */
     public Pattern getPattern() {
         return pattern;
+    }
+
+    /**
+     * Sets the RGB values of the custom colour of the BeautifulRobot&#8482;.
+     * 
+     * Note that all values must be in the range [0, 255].
+     * @param red The red component
+     * @param green The green component
+     * @param blue The blue component
+     */
+    public void setCustomColor(byte red, byte green, byte blue) {
+        writeCommand(Operation.CUSTOM_COLOR_RED, red);
+        writeCommand(Operation.CUSTOM_COLOR_GREEN, green);
+        writeCommand(Operation.CUSTOM_COLOR_BLUE, blue);
     }
 
     /**
