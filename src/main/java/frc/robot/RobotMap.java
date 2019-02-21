@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.VictorSP;
 import frc.robot.misc.BeautifulRobotDriver;
+import frc.robot.misc.RobotLogger;
 import frc.robot.misc.protectedmotor.ProtectedMotor;
 import robot.pathfinder.core.RobotSpecs;
 
@@ -67,9 +68,15 @@ public class RobotMap {
     public static final VictorSP essieMotorHighUnprotected = new VictorSP(0);
     public static final ProtectedMotor essieMotorLow = new ProtectedMotor((speed) -> {
         essieMotorLowUnprotected.set(ControlMode.PercentOutput, speed);
-    }, 6, 35, 2, OI.errorRumbleOperatorMajor::execute);
-    public static final ProtectedMotor essieMotorHigh = new ProtectedMotor(essieMotorHighUnprotected::set,
-            7, 35, 2, OI.errorRumbleOperatorMajor::execute);
+    }, 6, 35, 2, () -> {
+        OI.errorRumbleOperatorMajor.execute();
+        RobotLogger.logError("Critical error: Essie low motor protection tripped");
+    });
+    public static final ProtectedMotor essieMotorHigh = new ProtectedMotor(essieMotorHighUnprotected::set, 7, 35, 2, 
+    () -> {
+        OI.errorRumbleOperatorMajor.execute();
+        RobotLogger.logError("Critical error: Essie high motor protection tripped");
+    });
     public static final DigitalInput essiePhotoElectric = new DigitalInput(4);
 
     // navX

@@ -27,6 +27,7 @@ import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.commands.VisionAlign;
 import frc.robot.misc.BeautifulRobotDriver;
+import frc.robot.misc.RobotLogger;
 import frc.robot.misc.Rumble;
 import frc.robot.subsystems.Drivetrain;
 
@@ -179,10 +180,12 @@ public class OI {
         overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
             RobotMap.essieMotorHigh.overrideBlacklist();
             RobotMap.essieMotorLow.overrideBlacklist();
+            RobotLogger.logWarning("Motor protection manually overridden");
         }));
         overrideMotorBlacklist2.whenActive(new InstantCommand(() -> {
             RobotMap.essieMotorHigh.overrideBlacklist();
             RobotMap.essieMotorLow.overrideBlacklist();
+            RobotLogger.logWarning("Motor protection manually overridden");
         }));
 
         essieAutoIntake.whenPressed(new AutoCargoIntake());
@@ -194,6 +197,7 @@ public class OI {
             Command essieCommand = Robot.essie.getCurrentCommand();
             if(essieCommand != null && essieCommand instanceof AutoCargoIntake) {
                 essieCommand.cancel();
+                RobotLogger.logInfoFiner("Essie autopickup cancelled");
             }
         }));
 
@@ -214,6 +218,7 @@ public class OI {
             // Since all vision align commands must require the vision subsystem, this will cancel any vision align command.
             if(Robot.vision.getCurrentCommand() != null) {
                 Robot.vision.getCurrentCommand().cancel();
+                RobotLogger.logInfoFine("Current vision command cancelled");
             }
         }));
         precisionDrive.whenPressed(new InstantCommand(() -> {
@@ -221,6 +226,7 @@ public class OI {
             // as the robot already goes very slowly anyways.
             if(Robot.drivetrain.getGear() != Drivetrain.Gear.LOW) {
                 TeleopDrive.togglePrecisionDrive();
+                RobotLogger.logInfoFine("Precision drive changed to " + TeleopDrive.isPrecisionDrive());
             }
         }));
 

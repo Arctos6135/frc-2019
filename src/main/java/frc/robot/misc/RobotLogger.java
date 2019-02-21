@@ -54,7 +54,7 @@ public class RobotLogger {
     /**
      * Sets the logging level. Generally, levels SEVERE and WARNING contain error and warning messages;
      * level INFO contains basic info such as enabled/disabled state; level FINE contains even more info
-     * such as joystick state.
+     * such as option changes; level FINER contains all info, including joystick data.
      * 
      * @param level The logging level.
      */
@@ -87,6 +87,12 @@ public class RobotLogger {
     public static void logInfoFine(String infoFine) {
         if(isInitialized) {
             logger.fine(infoFine);
+        }
+    }
+
+    public static void logInfoFiner(String infoFiner) {
+        if(isInitialized) {
+            logger.finer(infoFiner);
         }
     }
 }
