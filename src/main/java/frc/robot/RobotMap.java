@@ -8,8 +8,8 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.Compressor;
@@ -55,15 +55,15 @@ public class RobotMap {
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
 
     // Drive motors
-    public static final VictorSPX rVictor = new VictorSPX(0);
-    public static final TalonSRX rTalon1 = new TalonSRX(1);
-    public static final TalonSRX rTalon2 = new TalonSRX(2);
-    public static final VictorSPX lVictor = new VictorSPX(3);
-    public static final TalonSRX lTalon1 = new TalonSRX(4);
-	public static final TalonSRX lTalon2 = new TalonSRX(5);
+    public static final WPI_VictorSPX rVictor = new WPI_VictorSPX(0);
+    public static final WPI_VictorSPX lVictor = new WPI_VictorSPX(3);
+    public static final WPI_TalonSRX lTalon1 = new WPI_TalonSRX(4);
+	public static final WPI_TalonSRX lTalon2 = new WPI_TalonSRX(5);
+    public static final WPI_TalonSRX rTalon1 = new WPI_TalonSRX(1);
+    public static final WPI_TalonSRX rTalon2 = new WPI_TalonSRX(2);
 
     // Essie motors
-    public static final VictorSPX essieMotorLowUnprotected = new VictorSPX(7);
+    public static final WPI_VictorSPX essieMotorLowUnprotected = new WPI_VictorSPX(7);
     public static final VictorSP essieMotorHighUnprotected = new VictorSP(0);
     public static final ProtectedMotor essieMotorLow = new ProtectedMotor((speed) -> {
         essieMotorLowUnprotected.set(ControlMode.PercentOutput, speed);
@@ -105,6 +105,15 @@ public class RobotMap {
     public static final int SHIFT_HIGH_TO_LOW_MAX = 48;
   
     public static void init() {
+        lVictor.setSafetyEnabled(true);
+        rVictor.setSafetyEnabled(true);
+        lTalon1.setSafetyEnabled(true);
+        lTalon2.setSafetyEnabled(true);
+        rTalon1.setSafetyEnabled(true);
+        rTalon2.setSafetyEnabled(true);
+        essieMotorHighUnprotected.setSafetyEnabled(true);
+        essieMotorLowUnprotected.setSafetyEnabled(true);
+
         essieMotorLowUnprotected.setInverted(true);
         essieMotorHighUnprotected.setInverted(false);
 
