@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
+import frc.robot.misc.RobotLogger;
 import frc.robot.subsystems.Drivetrain;
 import robot.pathfinder.core.RobotSpecs;
 import robot.pathfinder.core.TrajectoryParams;
@@ -60,6 +61,7 @@ public class FollowTrajectory extends Command {
     // Note we made this method public! This is so that Commands that wrap around this one have an easier time.
     @Override
     public void initialize() {
+        RobotLogger.logInfoFine("FollowTrajectory started");
         Robot.drivetrain.setNeutralMode(NeutralMode.Brake);
         // If the gear to use is not null, make sure the robot is in the correct gear
         if(gearToUse != null) {
@@ -119,6 +121,8 @@ public class FollowTrajectory extends Command {
         if(gearToUse != null) {
             Robot.drivetrain.setGear(startingGear);
         }
+
+        RobotLogger.logInfoFine("FollowTrajectory ended");
     }
 
     // Called when another command which requires one or more of the same
@@ -131,6 +135,8 @@ public class FollowTrajectory extends Command {
         if(gearToUse != null) {
             Robot.drivetrain.setGear(startingGear);
         }
+
+        RobotLogger.logInfoFine("FollowTrajectory interrupted");
     }
 
     /**

@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.OI;
 import frc.robot.Robot;
+import frc.robot.misc.RobotLogger;
 import frc.robot.subsystems.Vision.VisionException;
 import robot.pathfinder.core.TrajectoryParams;
 import robot.pathfinder.core.Waypoint;
@@ -42,10 +43,11 @@ public class AdvancedVisionAlign extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
+        RobotLogger.logInfoFine("Advanced vision align started");
         error = false;
         // First check if vision is ready
         if(!Robot.vision.ready()) {
-            Robot.error("Vision is offline");
+            RobotLogger.logError("Vision is offline");
             OI.errorRumbleDriverMinor.execute();
             error = true;
             return;
@@ -57,7 +59,7 @@ public class AdvancedVisionAlign extends Command {
                 Thread.sleep(400);
             }
             catch(VisionException | InterruptedException e) {
-                Robot.error(e.getMessage());
+                RobotLogger.logError(e.getMessage());
                 OI.errorRumbleDriverMinor.execute();
                 error = true;
                 return;
@@ -73,7 +75,7 @@ public class AdvancedVisionAlign extends Command {
                 try {
                     // If we exceeded the time limit, signal an error
                     if(System.currentTimeMillis() - start >= RESPONSE_TIMEOUT) {
-                        Robot.error("Could not find vision target");
+                        RobotLogger.logError("Could not find vision target");
                         OI.errorRumbleDriverMinor.execute();
                         error = true;
                         return;
@@ -83,7 +85,7 @@ public class AdvancedVisionAlign extends Command {
                     Thread.sleep(20);
                 }
                 catch(InterruptedException e) {
-                    Robot.error("Unexpected InterruptedException");
+                    RobotLogger.logError("Unexpected InterruptedException");
                     OI.errorRumbleDriverMinor.execute();
                     error = true;
                     return;
@@ -93,7 +95,7 @@ public class AdvancedVisionAlign extends Command {
             visionYOffset = Robot.vision.getTargetYOffset();
         }
         catch(VisionException e) {
-            Robot.error("Vision went offline unexpectedly");
+            RobotLogger.logError("Vision went offline unexpectedly");
             OI.errorRumbleDriverMajor.execute();
             error = true;
             return;
@@ -122,6 +124,10 @@ public class AdvancedVisionAlign extends Command {
             SmartDashboard.putNumber("Auto Align X Offset", visionXOffset);
             SmartDashboard.putNumber("Auto Align Y Offset", visionYOffset);
             SmartDashboard.putNumber("Auto Align Angle Offset", visionAngleOffset);
+
+            RobotLogger.logInfoFiner("Auto align X offset: " + visionXOffset);
+            RobotLogger.logInfoFiner("Auto align Y offset: " + visionYOffset);
+            RobotLogger.logInfoFiner("Auto align angle offset: " + visionAngleOffset);
         }
     }
     
@@ -158,13 +164,13 @@ public class AdvancedVisionAlign extends Command {
                 }
                 // Catch a crap ton of exceptions
                 catch(InterruptedException e) {
-                    Robot.error("New trajectory generation was interrupted");
+                    RobotLogger.logError("New trajectory generation was interrupted");
                 }
                 catch(ExecutionException e) {
-                    Robot.error("Exception in new trajectory generation: " + e.getMessage());
+                    RobotLogger.logError("Exception in new trajectory generation: " + e.getMessage());
                 }
                 catch(CancellationException e) {
-                    Robot.error("New trajectory generation was cancelled");
+                    RobotLogger.logError("New trajectory generation was cancelled");
                 }
                 
                 // Start a new generation thread
@@ -210,7 +216,7 @@ public class AdvancedVisionAlign extends Command {
         }
         catch(VisionException e) {
             // Report the error, but don't cause the current command to finish
-            Robot.error("Vision went offline unexpectedly");
+            RobotLogger.logError("Vision went offline unexpectedly");
         }*/
 
         // Execute the follower for one cycle
@@ -223,6 +229,7 @@ public class AdvancedVisionAlign extends Command {
     @Override
     protected boolean isFinished() {
         if(error) {
+            RobotLogger.logWarning("Advanced vision align encountered an error");
             return true;
         }
         return followerCommand.isFinished() /*|| visionYOffset < 20*/;
@@ -239,10 +246,11 @@ public class AdvancedVisionAlign extends Command {
                 Robot.vision.setVisionEnabled(false);
             }
             catch(VisionException e) {
-                Robot.error("Failed to disable vision");
+                RobotLogger.logError("Failed to disable vision");
                 OI.errorRumbleDriverMinor.execute();
             }
         }
+        RobotLogger.logInfoFine("Advanced vision align ended");
     }
 
     // Called when another command which requires one or more of the same
@@ -257,9 +265,10 @@ public class AdvancedVisionAlign extends Command {
                 Robot.vision.setVisionEnabled(false);
             }
             catch(VisionException e) {
-                Robot.error("Failed to disable vision");
+                RobotLogger.logError("Failed to disable vision");
                 OI.errorRumbleDriverMinor.execute();
             }
         }
+        RobotLogger.logInfoFine("Advanced vision align interrupted");
     }
 }

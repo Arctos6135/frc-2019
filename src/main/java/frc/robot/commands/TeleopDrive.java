@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
 import frc.robot.Robot;
+import frc.robot.misc.RobotLogger;
 import frc.robot.subsystems.Drivetrain;
 
 public class TeleopDrive extends Command {
@@ -97,6 +98,10 @@ public class TeleopDrive extends Command {
         // Handle regular driving
         double x = OI.driverController.getRawAxis(OI.Controls.DRIVE_LEFT_RIGHT);
         double y = -OI.driverController.getRawAxis(OI.Controls.DRIVE_FWD_REV);
+
+        if(Robot.isInDebugMode) {
+            RobotLogger.logInfoFiner("Raw drive values: x=" + x + " y=" + y);
+        }
         
         // See if the absolute value of X is greater than the deadzone
         if(Math.abs(x) > DEADZONE) {
@@ -140,13 +145,16 @@ public class TeleopDrive extends Command {
             l = Math.max(Robot.drivetrain.getPrevLeft() - rampBand, Math.min(Robot.drivetrain.getPrevLeft() + rampBand, l));
             r = Math.max(Robot.drivetrain.getPrevRight() - rampBand, Math.min(Robot.drivetrain.getPrevRight() + rampBand, r));
         }
-
         if(precisionDrive) {
-            Robot.drivetrain.setMotors(l / 2, r / 2);
+            l /= 2;
+            r /= 2;
         }
-        else {
-            Robot.drivetrain.setMotors(l, r);
+
+        if(Robot.isInDebugMode) {
+            RobotLogger.logInfoFiner("Drive output values: l=" + l + " r=" + r);
         }
+
+        Robot.drivetrain.setMotors(l, r);
     }
 
     // Make this return true when this Command no longer needs to run execute()

@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import java.io.IOException;
+
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -21,7 +23,7 @@ import frc.robot.commands.TeleopDrive;
 import frc.robot.commands.sandstorm.AutoDispatcher;
 import frc.robot.misc.AutoPaths;
 import frc.robot.misc.BeautifulRobotDriver;
-import frc.robot.misc.powermanagement.PowerManager;
+import frc.robot.misc.RobotLogger;
 import frc.robot.subsystems.BeautifulRobot;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Essie;
@@ -43,7 +45,7 @@ public class Robot extends TimedRobot {
     public static Vision vision;
     public static BeautifulRobot beautifulRobot;
     public static OI oi;
-    
+
     public static Command autoCommand;
 
     static SendableChooser<AutoDispatcher.Mode> modeChooser = new SendableChooser<>();
@@ -55,12 +57,14 @@ public class Robot extends TimedRobot {
 
     public static final String FRONT_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/main_camera/image_raw&quality=30&width=640&height=360";
     public static final String REAR_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/secondary_camera/image_raw&quality=30";
-    public static final NetworkTableEntry mainCameraUrl = NetworkTableInstance.getDefault().getTable("SmartDashboard").getEntry("main-stream-url");
-    public static final NetworkTableEntry secondaryCameraUrl = NetworkTableInstance.getDefault().getTable("SmartDashboard").getEntry("secondary-stream-url");
+    public static final NetworkTableEntry mainCameraUrl = NetworkTableInstance.getDefault().getTable("SmartDashboard")
+            .getEntry("main-stream-url");
+    public static final NetworkTableEntry secondaryCameraUrl = NetworkTableInstance.getDefault()
+            .getTable("SmartDashboard").getEntry("secondary-stream-url");
 
     /**
-     * This function is run when the robot is first started up and should be
-     * used for any initialization code.
+     * This function is run when the robot is first started up and should be used
+     * for any initialization code.
      */
     @Override
     public void robotInit() {
@@ -71,23 +75,50 @@ public class Robot extends TimedRobot {
         essie = new Essie();
         beautifulRobot = new BeautifulRobot();
         oi = new OI();
-        // Clear the last error
-        SmartDashboard.putString("Last Error", "");
 
-        mainCameraUrl.setString(FRONT_CAMERA_URL);
-        secondaryCameraUrl.setString(REAR_CAMERA_URL);
-
+        // Warm up RobotPathfinder and generate auto paths
+        long finalGenerationTime = FollowTrajectory.warmupRobotPathfinder(10);
         AutoPaths.generateAll();
 
-        //PowerManager.startCompressorPowerManagement(11.0);
-        //PowerManager.startDrivetrainPowerManagement(8.5, 0.4);
-        //PowerManager.startEssiePowerManagement();
+        // Wait for the DS to connect before starting the logger
+        // This is important as the roboRIO's system time is only updated when the DS is
+        // connected
+        while (!DriverStation.getInstance().isDSAttached()) {
+            try {
+                Thread.sleep(300);
+            }
+            catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try {
+            RobotLogger.init();
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+            SmartDashboard.putString("Last Error", "Failed to initialize logger!");
+        }
+        RobotLogger.logInfo("Logger initialized");
 
         beautifulRobot.init();
         beautifulRobot.setEnabled(true);
         beautifulRobot.setAlliance(DriverStation.getInstance().getAlliance());
         beautifulRobot.setCustomColor((byte) 255, (byte) 102, (byte) 0);
+        beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.RAINBOW);
         beautifulRobot.turnOn();
+
+        // Clear the last error and warning
+        SmartDashboard.putString("Last Error", "");
+        SmartDashboard.putString("Last Warning", "");
+
+        mainCameraUrl.setString(FRONT_CAMERA_URL);
+        secondaryCameraUrl.setString(REAR_CAMERA_URL);
+
+
+        //PowerManager.startCompressorPowerManagement(11.0);
+        //PowerManager.startDrivetrainPowerManagement(8.5, 0.4);
+        //PowerManager.startEssiePowerManagement();
 
         SmartDashboard.putData("Shutdown Jetson", new ShutdownJetson());
 
@@ -113,8 +144,10 @@ public class Robot extends TimedRobot {
         SmartDashboard.putData("Starting Hab Level", habLevelChooser);
         SmartDashboard.putData("Match Start Gear", matchStartGearChooser);
         
-        // Warm up RobotPathfinder
-        SmartDashboard.putNumber("Final Generation Time", FollowTrajectory.warmupRobotPathfinder(10));
+        // 
+        SmartDashboard.putNumber("Final Generation Time", finalGenerationTime);
+
+        RobotLogger.logInfo("Basic initialization complete. Waiting for vision to come online...");
         
         // Wait for vision to be ready if it's not already
         SmartDashboard.putBoolean("Vision Status", false);
@@ -136,7 +169,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Vision Status", vision.ready());
 
         if(!vision.ready()) {
-            Robot.error("Wait for vision initialization timed out");
+            RobotLogger.logError("Wait for vision initialization timed out");
             OI.errorRumbleDriverMajor.execute();
             OI.errorRumbleOperatorMajor.execute();
         }
@@ -145,13 +178,15 @@ public class Robot extends TimedRobot {
                 vision.setVisionEnabled(false);
             }
             catch(VisionException e) {
-                Robot.error("Vision went offline unexpectedly");
+                RobotLogger.logError("Vision went offline unexpectedly");
             }
         }
 
         if(isInDebugMode) {
             putTuningEntries();
         }
+
+        RobotLogger.logInfo("Robot initialization complete");
     }
 
     /**
@@ -180,6 +215,7 @@ public class Robot extends TimedRobot {
         // Change the gear to use in autos
         // If the option was changed, the auto paths have to be regenerated
         if(FollowTrajectory.gearToUse != newGearToUse) {
+            RobotLogger.logInfoFine("Auto gear has been changed to " + newGearToUse.toString() + ". Regenerating trajectories...");
             FollowTrajectory.gearToUse = newGearToUse;
             AutoPaths.generateAll();
         }
@@ -235,7 +271,7 @@ public class Robot extends TimedRobot {
                     SmartDashboard.putNumber("Angle Offset", vision.getTargetAngleOffset());
                 }
                 catch(VisionException e) {
-                    Robot.error("Vision went offline unexpectedly");
+                    RobotLogger.logError("Vision went offline unexpectedly");
                 }
             }
         }
@@ -251,13 +287,16 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
-        if(beautifulRobot.getColor() != BeautifulRobotDriver.Color.RED && beautifulRobot.getColor() != BeautifulRobotDriver.Color.BLUE) {
+        RobotLogger.logInfo("Autonomous mode enabled");
+        if(beautifulRobot.getColor() != BeautifulRobotDriver.Color.fromAlliance(DriverStation.getInstance().getAlliance())) {
             // If the alliance colour is not set, do it here
             beautifulRobot.setColor(BeautifulRobotDriver.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
+            RobotLogger.logInfoFine("BeautifulRobot alliance colour changed to " + beautifulRobot.getColor().toString());
         }
         // Set the initial gear
         Drivetrain.Gear matchStartGear = matchStartGearChooser.getSelected();
         if(matchStartGear != null) {
+            RobotLogger.logInfoFine("Match start gear is " + matchStartGear.toString());
             Robot.drivetrain.setGear(matchStartGear);
         }
         // Un-reverse driving
@@ -270,9 +309,10 @@ public class Robot extends TimedRobot {
         try {
             autoCommand = AutoDispatcher.getAuto(level, mode);
             autoCommand.start();
+            RobotLogger.logInfo("Autonomous command started: " + autoCommand.getClass().getName());
         }
         catch(AutoDispatcher.AutoNotFoundException e) {
-            Robot.error("No auto exists for the specified configuration");
+            RobotLogger.logWarning("No auto exists for the specified configuration");
             OI.errorRumbleDriverMinor.execute();
             OI.errorRumbleDriverMajor.execute();
             autoCommand = null;
@@ -294,9 +334,11 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        if(beautifulRobot.getColor() != BeautifulRobotDriver.Color.RED && beautifulRobot.getColor() != BeautifulRobotDriver.Color.BLUE) {
+        RobotLogger.logInfo("Teleop mode enabled");
+        if(beautifulRobot.getColor() != BeautifulRobotDriver.Color.fromAlliance(DriverStation.getInstance().getAlliance())) {
             // If the alliance colour is not set, do it here
             beautifulRobot.setColor(BeautifulRobotDriver.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
+            RobotLogger.logInfoFine("BeautifulRobot alliance colour changed to " + beautifulRobot.getColor().toString());
         }
         beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.MOVING_PULSE);
         // This makes sure that the autonomous stops running when
@@ -323,6 +365,9 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
+        RobotLogger.logInfo("Robot disabled");
+        // Flush the log buffer when the robot is disabled
+        RobotLogger.flush();
         beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.RAINBOW);
     }
 
@@ -348,14 +393,5 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void testPeriodic() {
-    }
-
-    public static void error(String error) {
-        SmartDashboard.putString("Last Error", error);
-        DriverStation.reportError(error, true);
-    }
-    public static void warning(String warning) {
-        SmartDashboard.putString("Last Warning", warning);
-        DriverStation.reportWarning(warning, true);
     }
 }
