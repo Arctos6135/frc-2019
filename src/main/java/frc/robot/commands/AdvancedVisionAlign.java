@@ -124,6 +124,10 @@ public class AdvancedVisionAlign extends Command {
             SmartDashboard.putNumber("Auto Align X Offset", visionXOffset);
             SmartDashboard.putNumber("Auto Align Y Offset", visionYOffset);
             SmartDashboard.putNumber("Auto Align Angle Offset", visionAngleOffset);
+
+            RobotLogger.logInfoFiner("Auto align X offset: " + visionXOffset);
+            RobotLogger.logInfoFiner("Auto align Y offset: " + visionYOffset);
+            RobotLogger.logInfoFiner("Auto align angle offset: " + visionAngleOffset);
         }
     }
     
