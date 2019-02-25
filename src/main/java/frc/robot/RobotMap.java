@@ -112,23 +112,24 @@ public class RobotMap {
     public static final int SHIFT_HIGH_TO_LOW_MAX = 48;
   
     public static void init() {
-        lVictor.setSafetyEnabled(true);
-        rVictor.setSafetyEnabled(true);
-        lTalon1.setSafetyEnabled(true);
-        lTalon2.setSafetyEnabled(true);
-        rTalon1.setSafetyEnabled(true);
-        rTalon2.setSafetyEnabled(true);
-        essieMotorHighUnprotected.setSafetyEnabled(true);
-        essieMotorLowUnprotected.setSafetyEnabled(true);
-
-        essieMotorLowUnprotected.setInverted(true);
-        essieMotorHighUnprotected.setInverted(false);
-
         // Set the motors to follow
         lTalon1.follow(lVictor);
         lTalon2.follow(lVictor);
         rTalon1.follow(rVictor);
         rTalon2.follow(rVictor);
+
+        lVictor.setSafetyEnabled(true);
+        rVictor.setSafetyEnabled(true);
+        //lTalon1.setSafetyEnabled(true);
+        //lTalon2.setSafetyEnabled(true);
+        //rTalon1.setSafetyEnabled(true);
+        //rTalon2.setSafetyEnabled(true);
+
+        essieMotorHighUnprotected.setSafetyEnabled(true);
+        essieMotorLowUnprotected.setSafetyEnabled(true);
+
+        essieMotorLowUnprotected.setInverted(true);
+        essieMotorHighUnprotected.setInverted(false);
 		
 		leftEncoder.setDistancePerPulse(DISTANCE_PER_PULSE);
 		rightEncoder.setDistancePerPulse(DISTANCE_PER_PULSE);

@@ -49,7 +49,7 @@ public class RobotLogger {
         logger = Logger.getLogger(Robot.class.getName());
         logger.setUseParentHandlers(false);
         // Logging level fine
-        logger.setLevel(Level.FINE);
+        logger.setLevel(Level.FINER);
         // Get a date string (for naming the log file)
         DateFormat format = new SimpleDateFormat("yyyy_MM_dd-hh_mm_ss");
         Date date = new Date();
