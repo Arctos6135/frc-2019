@@ -118,9 +118,6 @@ public class RobotMap {
         rTalon1.follow(rVictor);
         rTalon2.follow(rVictor);
 
-        lVictor.setSafetyEnabled(true);
-        rVictor.setSafetyEnabled(true);
-
         essieMotorLowUnprotected.setInverted(true);
         essieMotorHighUnprotected.setInverted(false);
 		
