@@ -15,9 +15,24 @@ public class TriggerButton extends Button {
         this.threshold = threshold;
     }
 
+    int counter = 0;
+    static final int COUNT_REQUIRED = 5;
+
     @Override
     public boolean get() {
-        return joystick.getRawAxis(axis) >= threshold;
+        if(joystick.getRawAxis(axis) >= threshold) {
+            if(counter >= COUNT_REQUIRED) {
+                return true;
+            }
+            else {
+                counter ++;
+                return false;
+            }
+        }
+        else {
+            counter = 0;
+            return false;
+        }
     }
 
 }
