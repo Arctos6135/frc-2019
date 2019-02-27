@@ -22,14 +22,14 @@ public class ToggleClimber extends InstantCommand {
         super();
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-        requires(Robot.climber);
+        requires(Robot.climberPistons);
     }
 
     // Called once when the command executes
     @Override
     protected void initialize() {
-        Robot.climber.toggle();
-        RobotLogger.logInfoFiner("Climber pistons toggled to " + Robot.climber.getState().toString());
+        Robot.climberPistons.toggle();
+        RobotLogger.logInfoFiner("Climber pistons toggled to " + Robot.climberPistons.getState().toString());
     }
 
 }

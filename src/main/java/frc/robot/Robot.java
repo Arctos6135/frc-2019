@@ -25,7 +25,7 @@ import frc.robot.misc.AutoPaths;
 import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.misc.RobotLogger;
 import frc.robot.subsystems.BeautifulRobot;
-import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.ClimberPistons;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Essie;
 import frc.robot.subsystems.Hank;
@@ -45,7 +45,7 @@ public class Robot extends TimedRobot {
     public static Essie essie;
     public static Vision vision;
     public static BeautifulRobot beautifulRobot;
-    public static Climber climber;
+    public static ClimberPistons climberPistons;
     public static OI oi;
 
     public static Command autoCommand;
@@ -75,7 +75,7 @@ public class Robot extends TimedRobot {
         vision = new Vision();
         drivetrain = new Drivetrain();
         essie = new Essie();
-        climber = new Climber();
+        climberPistons = new ClimberPistons();
         beautifulRobot = new BeautifulRobot();
         oi = new OI();
 
