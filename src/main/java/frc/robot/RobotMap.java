@@ -80,6 +80,9 @@ public class RobotMap {
     });
     public static final DigitalInput essiePhotoElectric = new DigitalInput(4);
 
+    // Climber motor
+    public static final VictorSP climberMotor = new VictorSP(2);
+
     // navX
     public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
 	public static Encoder rightEncoder = new Encoder(0, 1, false, EncodingType.k4X);
