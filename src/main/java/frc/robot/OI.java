@@ -140,7 +140,7 @@ public class OI {
 
         public static final int STOP_AUTO = ControllerMap.BUTTON_B;
 
-        public static final int CLIMBER_TOGGLE = ControllerMap.RTRIGGER;
+        public static final int POV_CLIMBER_TOGGLE = ControllerMap.POV_DOWN;
 
         public static final int TURN_180 = ControllerMap.BUTTON_A;
     }
@@ -169,6 +169,7 @@ public class OI {
         POVButton ledFlashGreen = new POVButton(operatorController, Controls.POV_LED_FLASH_GREEN);
         POVButton ledFlashYellow = new POVButton(operatorController, Controls.POV_LED_FLASH_YELLOW);
         POVButton compressorToggle = new POVButton(driverController, Controls.POV_COMPRESSOR_TOGGLE);
+        POVButton climberPistonToggle = new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE);
         JoystickButton precisionDrive = new JoystickButton(driverController, Controls.PRECISION_DRIVE);
         JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
         JoystickButton visionAlignAdvanced = new JoystickButton(driverController, Controls.VISION_ALIGN_ADVANCED);
@@ -180,7 +181,6 @@ public class OI {
         JoystickButton gearShiftHigh = new JoystickButton(driverController, Controls.GEARSHIFT_HIGH);
         JoystickButton gearShiftLow = new JoystickButton(driverController, Controls.GEARSHIFT_LOW);
         JoystickButton restartVisionServer = new JoystickButton(operatorController, Controls.RESTART_VISION_SERVER);
-        TriggerButton climberPistonToggle = new TriggerButton(driverController, Controls.CLIMBER_TOGGLE, 0.8);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
             RobotMap.essieMotorHigh.overrideBlacklist();
