@@ -10,6 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
 import frc.robot.Robot;
+import frc.robot.misc.RobotLogger;
 
 public class TeleopClimber extends Command {
     public TeleopClimber() {
@@ -39,9 +40,11 @@ public class TeleopClimber extends Command {
         }
         else if(up != 0) {
             Robot.theL.set(up);
+            RobotLogger.logInfoFiner("The L is going up with speed " + up);
         }
         else if(down != 0) {
             Robot.theL.set(-down);
+            RobotLogger.logInfoFiner("The L is down up with speed " + down);
         }
         else {
             Robot.theL.set(0);
