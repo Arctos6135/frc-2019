@@ -54,6 +54,7 @@ public class RobotMap {
 
     public static final DoubleSolenoid hankSolenoid = new DoubleSolenoid(2, 3);
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
+    public static final DoubleSolenoid climberSolenoid = new DoubleSolenoid(4, 5);
 
     // Drive motors
     public static final WPI_VictorSPX rVictor = new WPI_VictorSPX(0);
@@ -78,6 +79,9 @@ public class RobotMap {
         RobotLogger.logError("Critical error: Essie high motor protection tripped");
     });
     public static final DigitalInput essiePhotoElectric = new DigitalInput(4);
+
+    // Climber motor
+    public static final VictorSP climberMotor = new VictorSP(2);
 
     // navX
     public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
