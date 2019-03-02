@@ -8,10 +8,12 @@
 package frc.robot;
 
 import java.io.IOException;
+import java.util.TimerTask;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -113,6 +115,14 @@ public class Robot extends TimedRobot {
         }
         RobotLogger.logInfo("Logger initialized");
         beautifulRobot.setAlliance(DriverStation.getInstance().getAlliance());
+
+        java.util.Timer timer = new java.util.Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                RobotLogger.logInfoFine("Battery Voltage: " + RobotController.getBatteryVoltage());
+            }
+        }, 10, 2000);
 
         // Clear the last error and warning
         SmartDashboard.putString("Last Error", "");
@@ -257,6 +267,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Debug", isInDebugMode);
         
         SmartDashboard.putBoolean("Essie Cargo", essie.hasCargo());
+
         if(isInDebugMode) {     
             SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
 

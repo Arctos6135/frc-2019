@@ -93,14 +93,16 @@ public class TeleopDrive extends Command {
         Robot.drivetrain.enableSafety();
     }
 
+    int logCounter = 0;
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
+        logCounter ++;
         // Handle regular driving
         double x = OI.driverController.getRawAxis(OI.Controls.DRIVE_LEFT_RIGHT);
         double y = -OI.driverController.getRawAxis(OI.Controls.DRIVE_FWD_REV);
 
-        if(Robot.isInDebugMode) {
+        if(logCounter >= 20) {
             RobotLogger.logInfoFiner("Raw drive values: x=" + x + " y=" + y);
         }
         
@@ -151,8 +153,9 @@ public class TeleopDrive extends Command {
             r /= 2;
         }
 
-        if(Robot.isInDebugMode) {
+        if(logCounter >= 20) {
             RobotLogger.logInfoFiner("Drive output values: l=" + l + " r=" + r);
+            logCounter = 0;
         }
 
         Robot.drivetrain.setMotors(l, r);
