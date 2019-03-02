@@ -87,6 +87,12 @@ public class Robot extends TimedRobot {
         // Warm up RobotPathfinder and generate auto paths
         long finalGenerationTime = FollowTrajectory.warmupRobotPathfinder(10);
         AutoPaths.generateAll();
+        
+        beautifulRobot.init();
+        beautifulRobot.setEnabled(true);
+        beautifulRobot.setCustomColor((byte) 255, (byte) 102, (byte) 0);
+        beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.SOLID);
+        beautifulRobot.turnOn();
 
         // Wait for the DS to connect before starting the logger
         // This is important as the roboRIO's system time is only updated when the DS is
@@ -100,12 +106,8 @@ public class Robot extends TimedRobot {
             }
         }
 
-        beautifulRobot.init();
-        beautifulRobot.setEnabled(true);
-        beautifulRobot.setCustomColor((byte) 255, (byte) 102, (byte) 0);
         beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.RAINBOW);
-        beautifulRobot.turnOn();
-
+        
         try {
             RobotLogger.init();
         }
