@@ -112,7 +112,7 @@ public class RobotMap {
     public static final RobotSpecs specsHigh = new RobotSpecs(42.5, 53, RobotDimensions.BASEPLATE_WIDTH);
     public static final RobotSpecs specsLow = new RobotSpecs(150, 50, RobotDimensions.BASEPLATE_WIDTH);
 
-    public static final int SHIFT_LOW_TO_HIGH_MAX = 36;
+    public static final int SHIFT_LOW_TO_HIGH_MAX = Integer.MAX_VALUE;
     public static final int SHIFT_HIGH_TO_LOW_MAX = 48;
   
     public static void init() {
