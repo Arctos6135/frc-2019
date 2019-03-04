@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
 import frc.robot.Robot;
+import frc.robot.misc.RobotLogger;
 import frc.robot.subsystems.Drivetrain;
 
 public class TeleopDrive extends Command {
@@ -89,14 +90,21 @@ public class TeleopDrive extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
+        Robot.drivetrain.enableSafety();
     }
 
+    int logCounter = 0;
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
+        logCounter ++;
         // Handle regular driving
         double x = OI.driverController.getRawAxis(OI.Controls.DRIVE_LEFT_RIGHT);
         double y = -OI.driverController.getRawAxis(OI.Controls.DRIVE_FWD_REV);
+
+        if(logCounter >= 20) {
+            RobotLogger.logInfoFiner("Raw drive values: x=" + x + " y=" + y);
+        }
         
         // See if the absolute value of X is greater than the deadzone
         if(Math.abs(x) > DEADZONE) {
@@ -140,13 +148,17 @@ public class TeleopDrive extends Command {
             l = Math.max(Robot.drivetrain.getPrevLeft() - rampBand, Math.min(Robot.drivetrain.getPrevLeft() + rampBand, l));
             r = Math.max(Robot.drivetrain.getPrevRight() - rampBand, Math.min(Robot.drivetrain.getPrevRight() + rampBand, r));
         }
-
         if(precisionDrive) {
-            Robot.drivetrain.setMotors(l / 2, r / 2);
+            l /= 2;
+            r /= 2;
         }
-        else {
-            Robot.drivetrain.setMotors(l, r);
+
+        if(logCounter >= 20) {
+            RobotLogger.logInfoFiner("Drive output values: l=" + l + " r=" + r);
+            logCounter = 0;
         }
+
+        Robot.drivetrain.setMotors(l, r);
     }
 
     // Make this return true when this Command no longer needs to run execute()
@@ -158,6 +170,7 @@ public class TeleopDrive extends Command {
     // Called once after isFinished returns true
     @Override
     protected void end() {
+        Robot.drivetrain.disableSafety();
         Robot.drivetrain.setMotors(0, 0);
     }
 
@@ -165,6 +178,7 @@ public class TeleopDrive extends Command {
     // subsystems is scheduled to run
     @Override
     protected void interrupted() {
+        Robot.drivetrain.disableSafety();
         Robot.drivetrain.setMotors(0, 0);
     }
 }

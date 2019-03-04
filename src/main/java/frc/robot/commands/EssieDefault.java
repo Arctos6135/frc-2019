@@ -45,7 +45,9 @@ public class EssieDefault extends Command {
             else if(val <= -THRESHOLD) {
                 Robot.essie.reverseIntake();
             }
-            Robot.essie.stop();
+            else {
+                Robot.essie.stop();
+            }
         }
     }
 

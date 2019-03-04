@@ -7,64 +7,64 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
 import frc.robot.Robot;
-import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.misc.RobotLogger;
 
-/**
- * Runs Essie to intake cargo until the sensor inside it is activated.
- * Note that if there is no cargo, this command will never terminate.
- */
-public class AutoCargoIntake extends Command {
-    public AutoCargoIntake() {
+public class TeleopClimber extends Command {
+    public TeleopClimber() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-        requires(Robot.essie);
+        requires(Robot.theL);
     }
+
+    static final double DEADZONE = 0.15;
 
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        RobotLogger.logInfoFine("Essie autointake started");
-        Robot.essie.startIntake();
     }
 
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
+        double up = OI.driverController.getRawAxis(OI.Controls.THE_L_UP);
+        double down = OI.driverController.getRawAxis(OI.Controls.THE_L_DOWN);
+        // These values will never be negative
+        up = up > DEADZONE ? up : 0;
+        down = down > DEADZONE ? down : 0;
+        
+        if(up != 0 && down != 0) {
+            return;
+        }
+        else if(up != 0) {
+            Robot.theL.set(up);
+            RobotLogger.logInfoFiner("The L is going up with speed " + up);
+        }
+        else if(down != 0) {
+            Robot.theL.set(-down);
+            RobotLogger.logInfoFiner("The L is down up with speed " + down);
+        }
+        else {
+            Robot.theL.set(0);
+        }
     }
 
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        // When this command finishes, rumble the controller and flash the LEDs
-        if(Robot.essie.hasCargo()) {
-            OI.pickupRumbleOperator.execute();
-            OI.pickupRumbleDriver.execute();
-            @SuppressWarnings("resource")
-            Command pulse = new PulseBeautifulRobot(1.5, 10, BeautifulRobotDriver.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
-            pulse.start();
-            RobotLogger.logInfoFine("Essie autopickup ended");
-            return true;
-        }
-        else {
-            return false;
-        }
+        return false;
     }
 
     // Called once after isFinished returns true
     @Override
     protected void end() {
-        Robot.essie.stop();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     @Override
     protected void interrupted() {
-        Robot.essie.stop();
     }
 }

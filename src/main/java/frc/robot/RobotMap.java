@@ -8,8 +8,8 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.Compressor;
@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.VictorSP;
 import frc.robot.misc.BeautifulRobotDriver;
+import frc.robot.misc.RobotLogger;
 import frc.robot.misc.protectedmotor.ProtectedMotor;
 import robot.pathfinder.core.RobotSpecs;
 
@@ -53,24 +54,34 @@ public class RobotMap {
 
     public static final DoubleSolenoid hankSolenoid = new DoubleSolenoid(2, 3);
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
+    public static final DoubleSolenoid climberSolenoid = new DoubleSolenoid(4, 5);
 
     // Drive motors
-    public static final VictorSPX rVictor = new VictorSPX(0);
-    public static final TalonSRX rTalon1 = new TalonSRX(1);
-    public static final TalonSRX rTalon2 = new TalonSRX(2);
-    public static final VictorSPX lVictor = new VictorSPX(3);
-    public static final TalonSRX lTalon1 = new TalonSRX(4);
-	public static final TalonSRX lTalon2 = new TalonSRX(5);
+    public static final WPI_VictorSPX rVictor = new WPI_VictorSPX(0);
+    public static final WPI_VictorSPX lVictor = new WPI_VictorSPX(3);
+    public static final WPI_TalonSRX lTalon1 = new WPI_TalonSRX(4);
+	public static final WPI_TalonSRX lTalon2 = new WPI_TalonSRX(5);
+    public static final WPI_TalonSRX rTalon1 = new WPI_TalonSRX(1);
+    public static final WPI_TalonSRX rTalon2 = new WPI_TalonSRX(2);
 
     // Essie motors
-    public static final VictorSPX essieMotorLowUnprotected = new VictorSPX(7);
+    public static final WPI_VictorSPX essieMotorLowUnprotected = new WPI_VictorSPX(7);
     public static final VictorSP essieMotorHighUnprotected = new VictorSP(0);
     public static final ProtectedMotor essieMotorLow = new ProtectedMotor((speed) -> {
         essieMotorLowUnprotected.set(ControlMode.PercentOutput, speed);
-    }, 6, 35, 2, OI.errorRumbleOperatorMajor::execute);
-    public static final ProtectedMotor essieMotorHigh = new ProtectedMotor(essieMotorHighUnprotected::set,
-            7, 35, 2, OI.errorRumbleOperatorMajor::execute);
+    }, 6, 35, 2, () -> {
+        OI.errorRumbleOperatorMajor.execute();
+        RobotLogger.logError("Critical error: Essie low motor protection tripped");
+    });
+    public static final ProtectedMotor essieMotorHigh = new ProtectedMotor(essieMotorHighUnprotected::set, 7, 35, 2, 
+    () -> {
+        OI.errorRumbleOperatorMajor.execute();
+        RobotLogger.logError("Critical error: Essie high motor protection tripped");
+    });
     public static final DigitalInput essiePhotoElectric = new DigitalInput(4);
+
+    // Climber motor
+    public static final VictorSP climberMotor = new VictorSP(2);
 
     // navX
     public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
@@ -105,14 +116,14 @@ public class RobotMap {
     public static final int SHIFT_HIGH_TO_LOW_MAX = 48;
   
     public static void init() {
-        essieMotorLowUnprotected.setInverted(true);
-        essieMotorHighUnprotected.setInverted(false);
-
         // Set the motors to follow
         lTalon1.follow(lVictor);
         lTalon2.follow(lVictor);
         rTalon1.follow(rVictor);
         rTalon2.follow(rVictor);
+
+        essieMotorLowUnprotected.setInverted(true);
+        essieMotorHighUnprotected.setInverted(false);
 		
 		leftEncoder.setDistancePerPulse(DISTANCE_PER_PULSE);
 		rightEncoder.setDistancePerPulse(DISTANCE_PER_PULSE);

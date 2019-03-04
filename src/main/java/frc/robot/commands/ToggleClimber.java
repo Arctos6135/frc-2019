@@ -7,27 +7,37 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.Robot;
 import frc.robot.misc.RobotLogger;
+import frc.robot.subsystems.Drivetrain;
 
-public class RestartVisionServer extends InstantCommand {
-    public RestartVisionServer() {
+/**
+  * Add your docs here.
+  */
+public class ToggleClimber extends InstantCommand {
+    /**
+      * Add your docs here.
+      */
+    public ToggleClimber() {
+        super();
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-        requires(Robot.vision);
-
-        setRunWhenDisabled(true);
+        requires(Robot.climberPistons);
+        requires(Robot.drivetrain);
     }
 
-    // Called just before this Command runs the first time
+    // Called once when the command executes
     @Override
     protected void initialize() {
-        if(!Robot.vision.ready()) {
-            RobotLogger.logWarning("Attempting to restart vision server, but vision is not up!");
-            return;
+        // When extending, go into low gear
+        if(Robot.climberPistons.getState() == DoubleSolenoid.Value.kReverse) {
+            RobotLogger.logInfoFiner("Putting robot into low gear for climbing");
+            Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
         }
-        Robot.vision.restartServer();
-        RobotLogger.logInfoFine("Vision server restarted");
+        Robot.climberPistons.toggle();
+        RobotLogger.logInfoFiner("Climber pistons toggled to " + Robot.climberPistons.getState().toString());
     }
+
 }
