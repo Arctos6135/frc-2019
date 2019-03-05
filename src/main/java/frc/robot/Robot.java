@@ -91,7 +91,9 @@ public class Robot extends TimedRobot {
         beautifulRobot.init();
         beautifulRobot.setEnabled(true);
         beautifulRobot.setCustomColor((byte) 255, (byte) 102, (byte) 0);
-        beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.SOLID);
+        beautifulRobot.writeCommand(BeautifulRobotDriver.Operation.SPEED_HIGH, (byte) 0);
+        beautifulRobot.writeCommand(BeautifulRobotDriver.Operation.SPEED_LOW, (byte) 0x80);
+        beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.RAINBOW_DASH);
         beautifulRobot.turnOn();
 
         // Wait for the DS to connect before starting the logger
@@ -107,7 +109,9 @@ public class Robot extends TimedRobot {
         }
 
         beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.RAINBOW);
-        
+        beautifulRobot.writeCommand(BeautifulRobotDriver.Operation.SPEED_HIGH, (byte) 0x01);
+        beautifulRobot.writeCommand(BeautifulRobotDriver.Operation.SPEED_LOW, (byte) 0x00);
+
         try {
             RobotLogger.init();
         }
@@ -132,11 +136,6 @@ public class Robot extends TimedRobot {
 
         mainCameraUrl.setString(FRONT_CAMERA_URL);
         secondaryCameraUrl.setString(REAR_CAMERA_URL);
-
-
-        //PowerManager.startCompressorPowerManagement(11.0);
-        //PowerManager.startDrivetrainPowerManagement(8.5, 0.4);
-        //PowerManager.startEssiePowerManagement();
 
         SmartDashboard.putData("Shutdown Jetson", new ShutdownJetson());
 
