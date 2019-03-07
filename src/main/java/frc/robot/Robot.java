@@ -27,11 +27,10 @@ import frc.robot.misc.AutoPaths;
 import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.misc.RobotLogger;
 import frc.robot.subsystems.BeautifulRobot;
-import frc.robot.subsystems.ClimberPistons;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Essie;
 import frc.robot.subsystems.Hank;
-import frc.robot.subsystems.TheL;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Vision.VisionException;
 
@@ -48,8 +47,7 @@ public class Robot extends TimedRobot {
     public static Essie essie;
     public static Vision vision;
     public static BeautifulRobot beautifulRobot;
-    public static ClimberPistons climberPistons;
-    public static TheL theL;
+    public static Climber climber;
     public static OI oi;
 
     public static Command autoCommand;
@@ -79,9 +77,8 @@ public class Robot extends TimedRobot {
         vision = new Vision();
         drivetrain = new Drivetrain();
         essie = new Essie();
-        climberPistons = new ClimberPistons();
+        climber = new Climber();
         beautifulRobot = new BeautifulRobot();
-        theL = new TheL();
         oi = new OI();
 
         // Warm up RobotPathfinder and generate auto paths
@@ -91,7 +88,9 @@ public class Robot extends TimedRobot {
         beautifulRobot.init();
         beautifulRobot.setEnabled(true);
         beautifulRobot.setCustomColor((byte) 255, (byte) 102, (byte) 0);
-        beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.SOLID);
+        beautifulRobot.writeCommand(BeautifulRobotDriver.Operation.SPEED_HIGH, (byte) 0);
+        beautifulRobot.writeCommand(BeautifulRobotDriver.Operation.SPEED_LOW, (byte) 0x80);
+        beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.RAINBOW_DASH);
         beautifulRobot.turnOn();
 
         // Wait for the DS to connect before starting the logger
@@ -107,7 +106,9 @@ public class Robot extends TimedRobot {
         }
 
         beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.RAINBOW);
-        
+        beautifulRobot.writeCommand(BeautifulRobotDriver.Operation.SPEED_HIGH, (byte) 0x01);
+        beautifulRobot.writeCommand(BeautifulRobotDriver.Operation.SPEED_LOW, (byte) 0x00);
+
         try {
             RobotLogger.init();
         }
@@ -132,11 +133,6 @@ public class Robot extends TimedRobot {
 
         mainCameraUrl.setString(FRONT_CAMERA_URL);
         secondaryCameraUrl.setString(REAR_CAMERA_URL);
-
-
-        //PowerManager.startCompressorPowerManagement(11.0);
-        //PowerManager.startDrivetrainPowerManagement(8.5, 0.4);
-        //PowerManager.startEssiePowerManagement();
 
         SmartDashboard.putData("Shutdown Jetson", new ShutdownJetson());
 

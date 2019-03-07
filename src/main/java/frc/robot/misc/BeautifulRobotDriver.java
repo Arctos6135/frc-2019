@@ -55,7 +55,7 @@ public class BeautifulRobotDriver {
      * All the different patterns the BeautifulRobot&#8482; has.
      */
     public enum Pattern {
-        SOLID((byte) 0), PULSATING((byte) 1), RAINBOW((byte) 2), MOVING_PULSE((byte) 3), PROGRESS_BAR((byte) 4);
+        SOLID((byte) 0), PULSATING((byte) 1), RAINBOW((byte) 2), MOVING_PULSE((byte) 3), PROGRESS_BAR((byte) 4), RAINBOW_DASH((byte) 5);
 
         private byte value;
         Pattern(byte value) {

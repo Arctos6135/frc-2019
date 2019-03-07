@@ -17,27 +17,40 @@ import frc.robot.subsystems.Drivetrain;
   * Add your docs here.
   */
 public class ToggleClimber extends InstantCommand {
+
+    final Side side;
     /**
       * Add your docs here.
       */
-    public ToggleClimber() {
+    public ToggleClimber(Side side) {
         super();
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
-        requires(Robot.climberPistons);
+        requires(Robot.climber);
         requires(Robot.drivetrain);
+        this.side = side;
+    }
+
+    public enum Side {
+        FRONT, BACK;
     }
 
     // Called once when the command executes
     @Override
     protected void initialize() {
         // When extending, go into low gear
-        if(Robot.climberPistons.getState() == DoubleSolenoid.Value.kReverse) {
+        if(Robot.climber.getFrontState() == DoubleSolenoid.Value.kReverse) {
             RobotLogger.logInfoFiner("Putting robot into low gear for climbing");
             Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
         }
-        Robot.climberPistons.toggle();
-        RobotLogger.logInfoFiner("Climber pistons toggled to " + Robot.climberPistons.getState().toString());
+        if(side == Side.FRONT) {
+            Robot.climber.toggleFront();
+            RobotLogger.logInfoFiner("Front climber pistons toggled to " + Robot.climber.getFrontState().toString());
+        }
+        else {
+            Robot.climber.toggleBack();
+            RobotLogger.logInfoFiner("Back climber pistons toggled to " + Robot.climber.getBackState().toString());
+        }
     }
 
 }
