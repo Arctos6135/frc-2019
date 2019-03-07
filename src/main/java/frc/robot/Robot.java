@@ -29,7 +29,6 @@ import frc.robot.subsystems.ClimberPistons;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Essie;
 import frc.robot.subsystems.Hank;
-import frc.robot.subsystems.TheL;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Vision.VisionException;
 
@@ -47,7 +46,6 @@ public class Robot extends TimedRobot {
     public static Vision vision;
     public static BeautifulRobot beautifulRobot;
     public static ClimberPistons climberPistons;
-    public static TheL theL;
     public static OI oi;
 
     public static Command autoCommand;
@@ -79,7 +77,6 @@ public class Robot extends TimedRobot {
         essie = new Essie();
         climberPistons = new ClimberPistons();
         beautifulRobot = new BeautifulRobot();
-        theL = new TheL();
         oi = new OI();
 
         // Warm up RobotPathfinder and generate auto paths
