@@ -14,7 +14,7 @@ import frc.robot.RobotMap;
 /**
   * Add your docs here.
   */
-public class ClimberPistons extends Subsystem {
+public class Climber extends Subsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
 
@@ -36,11 +36,11 @@ public class ClimberPistons extends Subsystem {
         }
     }
 
-    public ClimberPistons() {
+    public Climber() {
         super();
         setFrontState(DoubleSolenoid.Value.kReverse);
     }
-    public ClimberPistons(String name) {
+    public Climber(String name) {
         super(name);
         setFrontState(DoubleSolenoid.Value.kReverse);
     }
