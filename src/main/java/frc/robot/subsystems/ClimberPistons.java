@@ -18,31 +18,31 @@ public class ClimberPistons extends Subsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
 
-    DoubleSolenoid.Value state;
+    DoubleSolenoid.Value frontState;
 
-    public void setState(DoubleSolenoid.Value state) {
-        this.state = state;
-        RobotMap.climberSolenoid.set(state);
+    public void setFrontState(DoubleSolenoid.Value state) {
+        this.frontState = state;
+        RobotMap.frontClimber.set(state);
     }
-    public DoubleSolenoid.Value getState() {
-        return state;
+    public DoubleSolenoid.Value getFrontState() {
+        return frontState;
     }
-    public void toggle() {
-        if(state == DoubleSolenoid.Value.kForward) {
-            setState(DoubleSolenoid.Value.kReverse);
+    public void toggleFront() {
+        if(frontState == DoubleSolenoid.Value.kForward) {
+            setFrontState(DoubleSolenoid.Value.kReverse);
         }
         else {
-            setState(DoubleSolenoid.Value.kForward);
+            setFrontState(DoubleSolenoid.Value.kForward);
         }
     }
 
     public ClimberPistons() {
         super();
-        setState(DoubleSolenoid.Value.kReverse);
+        setFrontState(DoubleSolenoid.Value.kReverse);
     }
     public ClimberPistons(String name) {
         super(name);
-        setState(DoubleSolenoid.Value.kReverse);
+        setFrontState(DoubleSolenoid.Value.kReverse);
     }
 
     @Override

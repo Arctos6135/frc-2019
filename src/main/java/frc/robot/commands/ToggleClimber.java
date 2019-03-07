@@ -32,12 +32,12 @@ public class ToggleClimber extends InstantCommand {
     @Override
     protected void initialize() {
         // When extending, go into low gear
-        if(Robot.climberPistons.getState() == DoubleSolenoid.Value.kReverse) {
+        if(Robot.climberPistons.getFrontState() == DoubleSolenoid.Value.kReverse) {
             RobotLogger.logInfoFiner("Putting robot into low gear for climbing");
             Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
         }
-        Robot.climberPistons.toggle();
-        RobotLogger.logInfoFiner("Climber pistons toggled to " + Robot.climberPistons.getState().toString());
+        Robot.climberPistons.toggleFront();
+        RobotLogger.logInfoFiner("Climber pistons toggled to " + Robot.climberPistons.getFrontState().toString());
     }
 
 }
