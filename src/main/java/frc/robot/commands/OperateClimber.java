@@ -14,14 +14,13 @@ import frc.robot.misc.RobotLogger;
 import frc.robot.subsystems.Drivetrain;
 
 /**
-  * Add your docs here.
+  * Operates the climber.
   */
 public class OperateClimber extends InstantCommand {
 
     final Side side;
-    /**
-      * Add your docs here.
-      */
+    final DoubleSolenoid.Value state;
+    
     public OperateClimber(Side side) {
         super();
         // Use requires() here to declare subsystem dependencies
@@ -29,6 +28,15 @@ public class OperateClimber extends InstantCommand {
         requires(Robot.climber);
         requires(Robot.drivetrain);
         this.side = side;
+        this.state = null;
+    }
+
+    public OperateClimber(Side side, DoubleSolenoid.Value state) {
+        super();
+        requires(Robot.climber);
+        requires(Robot.drivetrain);
+        this.side = side;
+        this.state = state;
     }
 
     public enum Side {
@@ -43,13 +51,25 @@ public class OperateClimber extends InstantCommand {
             RobotLogger.logInfoFiner("Putting robot into low gear for climbing");
             Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
         }
-        if(side == Side.FRONT) {
-            Robot.climber.toggleFront();
-            RobotLogger.logInfoFiner("Front climber pistons toggled to " + Robot.climber.getFrontState().toString());
+        if(state == null) {
+            if(side == Side.FRONT) {
+                Robot.climber.toggleFront();
+                RobotLogger.logInfoFiner("Front climber pistons toggled to " + Robot.climber.getFrontState().toString());
+            }
+            else {
+                Robot.climber.toggleBack();
+                RobotLogger.logInfoFiner("Back climber pistons toggled to " + Robot.climber.getBackState().toString());
+            }
         }
         else {
-            Robot.climber.toggleBack();
-            RobotLogger.logInfoFiner("Back climber pistons toggled to " + Robot.climber.getBackState().toString());
+            if(side == Side.FRONT) {
+                Robot.climber.setFrontState(state);
+                RobotLogger.logInfoFiner("Front climber pistons set to " + state.toString());
+            }
+            else {
+                Robot.climber.setBackState(state);
+                RobotLogger.logInfoFiner("Back climber pistons set to " + state.toString());
+            }
         }
     }
 
