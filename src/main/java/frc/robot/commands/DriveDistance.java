@@ -12,14 +12,14 @@ import frc.robot.Robot;
 import robot.pathfinder.core.trajectory.TankDriveTrajectory;
 import robot.pathfinder.core.trajectory.TrajectoryGenerator;
 
-public class DriveForward extends Command {
+public class DriveDistance extends Command {
 
     final double distance;
 
     TankDriveTrajectory trajectory;
     FollowTrajectory followerCommand;
 
-    public DriveForward(double distance) {
+    public DriveDistance(double distance) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
         requires(Robot.drivetrain);
@@ -30,7 +30,12 @@ public class DriveForward extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        trajectory = TrajectoryGenerator.generateStraightTank(FollowTrajectory.getSpecs(), distance);
+        if(distance >= 0) {
+            trajectory = TrajectoryGenerator.generateStraightTank(FollowTrajectory.getSpecs(), distance);
+        }
+        else {
+            trajectory = TrajectoryGenerator.generateStraightTank(FollowTrajectory.getSpecs(), -distance).retrace();
+        }
         // Wrap around a FollowTrajectory
         followerCommand = new FollowTrajectory(trajectory);
         followerCommand.initialize();
