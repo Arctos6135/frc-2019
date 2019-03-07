@@ -136,7 +136,8 @@ public class OI {
 
         public static final int STOP_AUTO = ControllerMap.BUTTON_B;
 
-        public static final int POV_CLIMBER_TOGGLE = ControllerMap.POV_DOWN;
+        public static final int POV_CLIMBER_TOGGLE_FRONT = ControllerMap.POV_DOWN;
+        public static final int POV_CLIMBER_TOGGLE_BACK = ControllerMap.POV_UP;
 
         public static final int TURN_180 = ControllerMap.BUTTON_A;
     }
@@ -164,7 +165,8 @@ public class OI {
         JoystickButton operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
         POVButton ledFlashGreen = new POVButton(operatorController, Controls.POV_LED_FLASH_GREEN);
         POVButton ledFlashYellow = new POVButton(operatorController, Controls.POV_LED_FLASH_YELLOW);
-        POVButton climberPistonToggle = new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE);
+        POVButton climberPistonToggleFront = new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_FRONT);
+        POVButton climberPistonToggleBack = new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_BACK);
         JoystickButton precisionDrive = new JoystickButton(driverController, Controls.PRECISION_DRIVE);
         JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
         JoystickButton visionAlignAdvanced = new JoystickButton(driverController, Controls.VISION_ALIGN_ADVANCED);
@@ -316,6 +318,7 @@ public class OI {
 
         restartVisionServer.whenPressed(new RestartVisionServer());
 
-        climberPistonToggle.whenPressed(new ToggleClimber(ToggleClimber.Side.FRONT));
+        climberPistonToggleFront.whenPressed(new ToggleClimber(ToggleClimber.Side.FRONT));
+        climberPistonToggleBack.whenPressed(new ToggleClimber(ToggleClimber.Side.BACK));
     }
 }
