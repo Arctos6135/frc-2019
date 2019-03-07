@@ -19,6 +19,7 @@ public class Climber extends Subsystem {
     // here. Call these from Commands.
 
     DoubleSolenoid.Value frontState;
+    DoubleSolenoid.Value backState;
 
     public void setFrontState(DoubleSolenoid.Value state) {
         this.frontState = state;
@@ -36,13 +37,31 @@ public class Climber extends Subsystem {
         }
     }
 
+    public void setBackState(DoubleSolenoid.Value state) {
+        this.backState = state;
+        RobotMap.backClimber.set(state);
+    }
+    public DoubleSolenoid.Value getBackState() {
+        return backState;
+    }
+    public void toggleBack() {
+        if(backState == DoubleSolenoid.Value.kForward) {
+            setBackState(DoubleSolenoid.Value.kReverse);
+        }
+        else {
+            setBackState(DoubleSolenoid.Value.kForward);
+        }
+    }
+
     public Climber() {
         super();
         setFrontState(DoubleSolenoid.Value.kReverse);
+        setBackState(DoubleSolenoid.Value.kReverse);
     }
     public Climber(String name) {
         super(name);
         setFrontState(DoubleSolenoid.Value.kReverse);
+        setBackState(DoubleSolenoid.Value.kReverse);
     }
 
     @Override

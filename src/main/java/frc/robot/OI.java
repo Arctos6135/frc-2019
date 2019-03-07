@@ -316,6 +316,6 @@ public class OI {
 
         restartVisionServer.whenPressed(new RestartVisionServer());
 
-        climberPistonToggle.whenPressed(new ToggleClimber());
+        climberPistonToggle.whenPressed(new ToggleClimber(ToggleClimber.Side.FRONT));
     }
 }
