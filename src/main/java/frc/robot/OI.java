@@ -24,7 +24,7 @@ import frc.robot.commands.RestartVisionServer;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
-import frc.robot.commands.ToggleClimber;
+import frc.robot.commands.OperateClimber;
 import frc.robot.commands.VisionAlign;
 import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.misc.RobotLogger;
@@ -318,7 +318,7 @@ public class OI {
 
         restartVisionServer.whenPressed(new RestartVisionServer());
 
-        climberPistonToggleFront.whenPressed(new ToggleClimber(ToggleClimber.Side.FRONT));
-        climberPistonToggleBack.whenPressed(new ToggleClimber(ToggleClimber.Side.BACK));
+        climberPistonToggleFront.whenPressed(new OperateClimber(OperateClimber.Side.FRONT));
+        climberPistonToggleBack.whenPressed(new OperateClimber(OperateClimber.Side.BACK));
     }
 }

@@ -16,13 +16,13 @@ import frc.robot.subsystems.Drivetrain;
 /**
   * Add your docs here.
   */
-public class ToggleClimber extends InstantCommand {
+public class OperateClimber extends InstantCommand {
 
     final Side side;
     /**
       * Add your docs here.
       */
-    public ToggleClimber(Side side) {
+    public OperateClimber(Side side) {
         super();
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
