@@ -250,6 +250,15 @@ public class Drivetrain extends Subsystem {
         return neutralMode;
     }
 
+    public void enableSafety() {
+        //RobotMap.lVictor.setSafetyEnabled(true);
+        //RobotMap.rVictor.setSafetyEnabled(true);
+    }
+    public void disableSafety() {
+        //RobotMap.lVictor.setSafetyEnabled(false);
+        //RobotMap.rVictor.setSafetyEnabled(false);
+    }
+
     public Drivetrain() {
         super();
 

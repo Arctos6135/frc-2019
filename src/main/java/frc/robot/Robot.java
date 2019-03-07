@@ -8,10 +8,12 @@
 package frc.robot;
 
 import java.io.IOException;
+import java.util.TimerTask;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -57,8 +59,8 @@ public class Robot extends TimedRobot {
 
     public static boolean isInDebugMode = false;
 
-    public static final String FRONT_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/main_camera/image_raw&quality=30&width=640&height=360";
-    public static final String REAR_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/secondary_camera/image_raw&quality=30";
+    public static final String FRONT_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/main_camera/image_raw&quality=25&width=640&height=360";
+    public static final String REAR_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/secondary_camera/image_raw&quality=20";
     public static final NetworkTableEntry mainCameraUrl = NetworkTableInstance.getDefault().getTable("SmartDashboard")
             .getEntry("main-stream-url");
     public static final NetworkTableEntry secondaryCameraUrl = NetworkTableInstance.getDefault()
@@ -82,6 +84,14 @@ public class Robot extends TimedRobot {
         // Warm up RobotPathfinder and generate auto paths
         long finalGenerationTime = FollowTrajectory.warmupRobotPathfinder(10);
         AutoPaths.generateAll();
+        
+        beautifulRobot.init();
+        beautifulRobot.setEnabled(true);
+        beautifulRobot.setCustomColor((byte) 255, (byte) 102, (byte) 0);
+        beautifulRobot.writeCommand(BeautifulRobotDriver.Operation.SPEED_HIGH, (byte) 0);
+        beautifulRobot.writeCommand(BeautifulRobotDriver.Operation.SPEED_LOW, (byte) 0x80);
+        beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.RAINBOW_DASH);
+        beautifulRobot.turnOn();
 
         // Wait for the DS to connect before starting the logger
         // This is important as the roboRIO's system time is only updated when the DS is
@@ -95,6 +105,10 @@ public class Robot extends TimedRobot {
             }
         }
 
+        beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.RAINBOW);
+        beautifulRobot.writeCommand(BeautifulRobotDriver.Operation.SPEED_HIGH, (byte) 0x01);
+        beautifulRobot.writeCommand(BeautifulRobotDriver.Operation.SPEED_LOW, (byte) 0x00);
+
         try {
             RobotLogger.init();
         }
@@ -103,13 +117,15 @@ public class Robot extends TimedRobot {
             SmartDashboard.putString("Last Error", "Failed to initialize logger!");
         }
         RobotLogger.logInfo("Logger initialized");
-
-        beautifulRobot.init();
-        beautifulRobot.setEnabled(true);
         beautifulRobot.setAlliance(DriverStation.getInstance().getAlliance());
-        beautifulRobot.setCustomColor((byte) 255, (byte) 102, (byte) 0);
-        beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.RAINBOW);
-        beautifulRobot.turnOn();
+
+        java.util.Timer timer = new java.util.Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                RobotLogger.logInfoFine("Battery Voltage: " + RobotController.getBatteryVoltage());
+            }
+        }, 10, 2000);
 
         // Clear the last error and warning
         SmartDashboard.putString("Last Error", "");
@@ -117,11 +133,6 @@ public class Robot extends TimedRobot {
 
         mainCameraUrl.setString(FRONT_CAMERA_URL);
         secondaryCameraUrl.setString(REAR_CAMERA_URL);
-
-
-        //PowerManager.startCompressorPowerManagement(11.0);
-        //PowerManager.startDrivetrainPowerManagement(8.5, 0.4);
-        //PowerManager.startEssiePowerManagement();
 
         SmartDashboard.putData("Shutdown Jetson", new ShutdownJetson());
 
@@ -254,6 +265,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Debug", isInDebugMode);
         
         SmartDashboard.putBoolean("Essie Cargo", essie.hasCargo());
+
         if(isInDebugMode) {     
             SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
 
