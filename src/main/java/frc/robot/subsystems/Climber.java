@@ -32,6 +32,14 @@ public class Climber extends Subsystem {
                 return DoubleSolenoid.Value.kReverse;
             }
         }
+        public State opposite() {
+            if(this == EXTENDED) {
+                return RETRACTED;
+            }
+            else {
+                return EXTENDED;
+            }
+        }
     }
 
     public void setFrontState(State state) {

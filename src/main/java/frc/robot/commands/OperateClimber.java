@@ -7,7 +7,7 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import frc.robot.misc.RobotLogger;
 import frc.robot.subsystems.Climber;
@@ -16,11 +16,11 @@ import frc.robot.subsystems.Drivetrain;
 /**
   * Operates the climber.
   */
-public class OperateClimber extends InstantCommand {
+public class OperateClimber extends Command {
 
-    final Side side;
-    final Climber.State state;
-    final boolean wait;
+    Side side;
+    Climber.State state;
+    boolean wait;
     
     public OperateClimber(Side side, boolean wait) {
         super();
@@ -60,24 +60,37 @@ public class OperateClimber extends InstantCommand {
         Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
         if(state == null) {
             if(side == Side.FRONT) {
+                state = Robot.climber.getFrontState().opposite();
                 Robot.climber.toggleFront();
-                RobotLogger.logInfoFiner("Front climber pistons toggled to " + Robot.climber.getFrontState().toString());
             }
             else {
+                state = Robot.climber.getBackState().opposite();
                 Robot.climber.toggleBack();
-                RobotLogger.logInfoFiner("Back climber pistons toggled to " + Robot.climber.getBackState().toString());
             }
         }
         else {
             if(side == Side.FRONT) {
                 Robot.climber.setFrontState(state);
-                RobotLogger.logInfoFiner("Front climber pistons set to " + state.toString());
             }
             else {
                 Robot.climber.setBackState(state);
-                RobotLogger.logInfoFiner("Back climber pistons set to " + state.toString());
             }
         }
     }
 
+    @Override
+    protected boolean isFinished() {
+        if(wait) {
+            if(state == Climber.State.RETRACTED) {
+                return timeSinceInitialized() >= 0.5;
+            }
+            else {
+                Climber.State s = side == Side.FRONT ? Robot.climber.getFrontState() : Robot.climber.getBackState();
+                return s == state || timeSinceInitialized() >= 0.5;
+            }
+        }
+        else {
+            return true;
+        }
+    }
 }
