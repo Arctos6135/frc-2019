@@ -17,19 +17,21 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.AdvancedVisionAlign;
 import frc.robot.commands.AutoCargoIntake;
+import frc.robot.commands.AutoClimb;
 import frc.robot.commands.FlashBeautifulRobot;
+import frc.robot.commands.OperateClimber;
 import frc.robot.commands.OperateEssie;
 import frc.robot.commands.OperateHank;
 import frc.robot.commands.RestartVisionServer;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
-import frc.robot.commands.OperateClimber;
 import frc.robot.commands.VisionAlign;
 import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.misc.RobotLogger;
 import frc.robot.misc.Rumble;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.triggers.MultiButton;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -180,6 +182,8 @@ public class OI {
         JoystickButton gearShiftHigh = new JoystickButton(driverController, Controls.GEARSHIFT_HIGH);
         JoystickButton gearShiftLow = new JoystickButton(driverController, Controls.GEARSHIFT_LOW);
         JoystickButton restartVisionServer = new JoystickButton(operatorController, Controls.RESTART_VISION_SERVER);
+        MultiButton autoClimb = new MultiButton(new POVButton(driverController, Controls.POV_AUTO_CLIMB),
+                new POVButton(operatorController, Controls.POV_AUTO_CLIMB));
 
         overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
             RobotMap.essieMotorHigh.overrideBlacklist();
@@ -322,5 +326,7 @@ public class OI {
 
         climberPistonToggleFront.whenPressed(new OperateClimber(OperateClimber.Side.FRONT));
         climberPistonToggleBack.whenPressed(new OperateClimber(OperateClimber.Side.BACK));
+
+        autoClimb.whenPressed(new AutoClimb());
     }
 }
