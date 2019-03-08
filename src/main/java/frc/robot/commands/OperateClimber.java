@@ -20,8 +20,9 @@ public class OperateClimber extends InstantCommand {
 
     final Side side;
     final Climber.State state;
+    final boolean wait;
     
-    public OperateClimber(Side side) {
+    public OperateClimber(Side side, boolean wait) {
         super();
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
@@ -29,14 +30,22 @@ public class OperateClimber extends InstantCommand {
         requires(Robot.drivetrain);
         this.side = side;
         this.state = null;
+        this.wait = wait;
+    }
+    public OperateClimber(Side side) {
+        this(side, false);
     }
 
-    public OperateClimber(Side side, Climber.State state) {
+    public OperateClimber(Side side, Climber.State state, boolean wait) {
         super();
         requires(Robot.climber);
         requires(Robot.drivetrain);
         this.side = side;
         this.state = state;
+        this.wait = wait;
+    }
+    public OperateClimber(Side side, Climber.State state) {
+        this(side, state, false);
     }
 
     public enum Side {
