@@ -127,7 +127,6 @@ public class OI {
         
         public static final int VISION_ALIGN_ADVANCED = ControllerMap.BUTTON_Y;
         public static final int VISION_ALIGN_BASIC = ControllerMap.BUTTON_RSTICK;
-        public static final int CANCEL_ALIGN = ControllerMap.BUTTON_B;
 
         public static final int POV_LED_FLASH_GREEN = ControllerMap.POV_UP;
         public static final int POV_LED_FLASH_YELLOW = ControllerMap.POV_DOWN;
@@ -175,7 +174,6 @@ public class OI {
         JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
         JoystickButton visionAlignAdvanced = new JoystickButton(driverController, Controls.VISION_ALIGN_ADVANCED);
         JoystickButton visionAlignBasic = new JoystickButton(driverController, Controls.VISION_ALIGN_BASIC);
-        JoystickButton cancelAlign = new JoystickButton(driverController, Controls.CANCEL_ALIGN);
         JoystickButton reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
         JoystickButton stopAuto = new JoystickButton(driverController, Controls.STOP_AUTO);
         JoystickButton turn180 = new JoystickButton(driverController, Controls.TURN_180);
@@ -222,13 +220,6 @@ public class OI {
 
         visionAlignAdvanced.whenPressed(new AdvancedVisionAlign());
         visionAlignBasic.whenPressed(new VisionAlign());
-        cancelAlign.whenPressed(new InstantCommand(() -> {
-            // Since all vision align commands must require the vision subsystem, this will cancel any vision align command.
-            if(Robot.vision.getCurrentCommand() != null) {
-                Robot.vision.getCurrentCommand().cancel();
-                RobotLogger.logInfoFine("Current vision command cancelled");
-            }
-        }));
         precisionDrive.whenPressed(new InstantCommand(() -> {
             // Precision drive is disabled when the robot is in low gear,
             // as the robot already goes very slowly anyways.
@@ -252,9 +243,10 @@ public class OI {
         ledFlashYellow.whenPressed(new FlashBeautifulRobot(BeautifulRobotDriver.Color.CUSTOM, 150, 5));
 
         stopAuto.whenPressed(new InstantCommand(() -> {
-            if(DriverStation.getInstance().isAutonomous() && Robot.autoCommand != null) {
-                Robot.autoCommand.cancel();
-                RobotLogger.logInfoFine("Current auto stopped");
+            Command c = Robot.drivetrain.getCurrentCommand();
+            if(c != null && !(c instanceof TeleopDrive)) {
+                c.cancel();
+                RobotLogger.logInfoFiner("Cancelled a command of type " + c.getClass().getName());
             }
         }));
         reverse.whenPressed(new InstantCommand(() -> {
