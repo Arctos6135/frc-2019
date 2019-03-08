@@ -7,7 +7,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
@@ -255,7 +254,7 @@ public class OI {
         }));
 
         // This trigger is activated when the drive controls are active
-        Trigger interruptAdvancedVisionAlign = new Trigger() {
+        Trigger driveInput = new Trigger() {
             @Override
             public boolean get() {
                 return Math.abs(OI.driverController.getRawAxis(Controls.DRIVE_FWD_REV)) > TeleopDrive.DEADZONE
@@ -263,11 +262,11 @@ public class OI {
             }
         };
         // When activated, it will cancel the currently running command on the drivetrain
-        interruptAdvancedVisionAlign.whenActive(new InstantCommand(() -> {
-            Command cmd = Robot.drivetrain.getCurrentCommand();
-            if(cmd != null && !(cmd instanceof TeleopDrive)) {
-                Robot.drivetrain.getCurrentCommand().cancel();
-                RobotLogger.logInfoFine("Current auto stopped (joystick input)");
+        driveInput.whenActive(new InstantCommand(() -> {
+            Command c = Robot.drivetrain.getCurrentCommand();
+            if(c != null && !(c instanceof TeleopDrive)) {
+                c.cancel();
+                RobotLogger.logInfoFiner("Cancelled a command of type " + c.getClass().getName());
             }
         }));
 
