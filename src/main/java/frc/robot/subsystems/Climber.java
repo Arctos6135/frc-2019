@@ -18,50 +18,63 @@ public class Climber extends Subsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
 
-    DoubleSolenoid.Value frontState;
-    DoubleSolenoid.Value backState;
+    public enum State {
+        EXTENDED, RETRACTED;
 
-    public void setFrontState(DoubleSolenoid.Value state) {
-        this.frontState = state;
-        RobotMap.frontClimber.set(state);
+        public DoubleSolenoid.Value value() {
+            if(this == EXTENDED) {
+                return DoubleSolenoid.Value.kForward;
+            }
+            else {
+                return DoubleSolenoid.Value.kReverse;
+            }
+        }
     }
-    public DoubleSolenoid.Value getFrontState() {
+
+    State frontState;
+    State backState;
+
+    public void setFrontState(State state) {
+        this.frontState = state;
+        RobotMap.frontClimber.set(state.value());
+    }
+    public State getFrontState() {
         return frontState;
     }
     public void toggleFront() {
-        if(frontState == DoubleSolenoid.Value.kForward) {
-            setFrontState(DoubleSolenoid.Value.kReverse);
+        if(frontState == State.EXTENDED) {
+            setFrontState(State.RETRACTED);
         }
         else {
-            setFrontState(DoubleSolenoid.Value.kForward);
+            setFrontState(State.EXTENDED);
         }
     }
 
-    public void setBackState(DoubleSolenoid.Value state) {
+    public void setBackState(State state) {
         this.backState = state;
-        RobotMap.backClimber.set(state);
+        RobotMap.backClimber.set(state.value());
     }
-    public DoubleSolenoid.Value getBackState() {
+    public State getBackState() {
         return backState;
     }
     public void toggleBack() {
-        if(backState == DoubleSolenoid.Value.kForward) {
-            setBackState(DoubleSolenoid.Value.kReverse);
+        if(backState == State.EXTENDED) {
+            setBackState(State.RETRACTED);
         }
         else {
-            setBackState(DoubleSolenoid.Value.kForward);
+            setBackState(State.EXTENDED);
         }
     }
 
     public Climber() {
         super();
-        setFrontState(DoubleSolenoid.Value.kReverse);
-        setBackState(DoubleSolenoid.Value.kReverse);
+        setFrontState(State.RETRACTED);
+        setBackState(State.RETRACTED);
     }
     public Climber(String name) {
         super(name);
-        setFrontState(DoubleSolenoid.Value.kReverse);
-        setBackState(DoubleSolenoid.Value.kReverse);
+        setFrontState(State.RETRACTED);
+        setBackState(State.RETRACTED);
     }
 
     @Override

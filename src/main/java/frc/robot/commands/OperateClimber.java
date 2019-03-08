@@ -7,10 +7,10 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.Robot;
 import frc.robot.misc.RobotLogger;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 
 /**
@@ -19,7 +19,7 @@ import frc.robot.subsystems.Drivetrain;
 public class OperateClimber extends InstantCommand {
 
     final Side side;
-    final DoubleSolenoid.Value state;
+    final Climber.State state;
     
     public OperateClimber(Side side) {
         super();
@@ -31,7 +31,7 @@ public class OperateClimber extends InstantCommand {
         this.state = null;
     }
 
-    public OperateClimber(Side side, DoubleSolenoid.Value state) {
+    public OperateClimber(Side side, Climber.State state) {
         super();
         requires(Robot.climber);
         requires(Robot.drivetrain);
@@ -47,10 +47,8 @@ public class OperateClimber extends InstantCommand {
     @Override
     protected void initialize() {
         // When extending, go into low gear
-        if(Robot.climber.getFrontState() == DoubleSolenoid.Value.kReverse) {
-            RobotLogger.logInfoFiner("Putting robot into low gear for climbing");
-            Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
-        }
+        RobotLogger.logInfoFiner("Putting robot into low gear for climbing");
+        Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
         if(state == null) {
             if(side == Side.FRONT) {
                 Robot.climber.toggleFront();
