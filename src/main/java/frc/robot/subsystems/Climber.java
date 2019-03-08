@@ -88,12 +88,7 @@ public class Climber extends Subsystem {
         toggleFront(false);
     }
     public void toggleFront(boolean wait) {
-        if(getFrontState() == State.EXTENDED) {
-            setFrontState(State.RETRACTED, wait);
-        }
-        else {
-            setFrontState(State.EXTENDED, wait);
-        }
+        setFrontState(getFrontState().opposite(), wait);
     }
 
     public void setBackState(State state) {
@@ -141,12 +136,7 @@ public class Climber extends Subsystem {
         toggleBack(false);
     }
     public void toggleBack(boolean wait) {
-        if(getBackState() == State.EXTENDED) {
-            setBackState(State.RETRACTED, wait);
-        }
-        else {
-            setBackState(State.EXTENDED, wait);
-        }
+        setBackState(getBackState().opposite(), wait);
     }
 
     public Climber() {
