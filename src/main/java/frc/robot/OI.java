@@ -140,6 +140,8 @@ public class OI {
         public static final int POV_CLIMBER_TOGGLE_BACK = ControllerMap.POV_UP;
 
         public static final int TURN_180 = ControllerMap.BUTTON_A;
+
+        public static final int POV_AUTO_CLIMB = ControllerMap.POV_LEFT;
     }
 
     public static final XboxController driverController = new XboxController(0);
