@@ -31,18 +31,15 @@ public class Climber extends Subsystem {
         }
     }
 
-    State frontState;
-    State backState;
-
     public void setFrontState(State state) {
-        this.frontState = state;
         RobotMap.frontClimber.set(state.value());
     }
     public State getFrontState() {
-        return frontState;
+        // If get() returns false it means that the piston is extended
+        return !RobotMap.frontLeftMRS.get() && !RobotMap.frontRightMRS.get() ? State.EXTENDED : State.RETRACTED;
     }
     public void toggleFront() {
-        if(frontState == State.EXTENDED) {
+        if(getFrontState() == State.EXTENDED) {
             setFrontState(State.RETRACTED);
         }
         else {
@@ -51,14 +48,13 @@ public class Climber extends Subsystem {
     }
 
     public void setBackState(State state) {
-        this.backState = state;
         RobotMap.backClimber.set(state.value());
     }
     public State getBackState() {
-        return backState;
+        return !RobotMap.backleftMRS.get() && !RobotMap.backRightMRS.get() ? State.EXTENDED : State.RETRACTED;
     }
     public void toggleBack() {
-        if(backState == State.EXTENDED) {
+        if(getBackState() == State.EXTENDED) {
             setBackState(State.RETRACTED);
         }
         else {
