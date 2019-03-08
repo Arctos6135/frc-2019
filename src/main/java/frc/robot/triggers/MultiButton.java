@@ -17,7 +17,8 @@ public class MultiButton extends Button {
     public MultiButton(Button... buttons) {
         this.buttons = buttons;
     }
-
+    
+    @Override
     public boolean get() {
         boolean result = true;
         for(Button b : buttons) {
