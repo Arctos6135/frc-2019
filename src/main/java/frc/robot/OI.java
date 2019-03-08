@@ -31,6 +31,7 @@ import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.misc.RobotLogger;
 import frc.robot.misc.Rumble;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.triggers.HeldButton;
 import frc.robot.triggers.MultiButton;
 
 /**
@@ -180,8 +181,8 @@ public class OI {
         Button gearShiftHigh = new JoystickButton(driverController, Controls.GEARSHIFT_HIGH);
         Button gearShiftLow = new JoystickButton(driverController, Controls.GEARSHIFT_LOW);
         Button restartVisionServer = new JoystickButton(operatorController, Controls.RESTART_VISION_SERVER);
-        Button autoClimb = new MultiButton(new POVButton(driverController, Controls.POV_AUTO_CLIMB),
-                new POVButton(operatorController, Controls.POV_AUTO_CLIMB));
+        Button autoClimb = new HeldButton(new MultiButton(new POVButton(driverController, Controls.POV_AUTO_CLIMB),
+                new POVButton(operatorController, Controls.POV_AUTO_CLIMB)), 0.5);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
             RobotMap.essieMotorHigh.overrideBlacklist();
@@ -246,7 +247,7 @@ public class OI {
             Command c = Robot.drivetrain.getCurrentCommand();
             if(c != null && !(c instanceof TeleopDrive)) {
                 c.cancel();
-                RobotLogger.logInfoFiner("Cancelled a command of type " + c.getClass().getName());
+                RobotLogger.logInfoFine("Cancelled a command of type " + c.getClass().getName());
             }
         }));
         reverse.whenPressed(new InstantCommand(() -> {
@@ -267,7 +268,7 @@ public class OI {
             Command c = Robot.drivetrain.getCurrentCommand();
             if(c != null && !(c instanceof TeleopDrive)) {
                 c.cancel();
-                RobotLogger.logInfoFiner("Cancelled a command of type " + c.getClass().getName());
+                RobotLogger.logInfoFine("Cancelled a command of type " + c.getClass().getName());
             }
         }));
 
@@ -320,5 +321,12 @@ public class OI {
         climberPistonToggleBack.whenPressed(new OperateClimber(OperateClimber.Side.BACK));
 
         autoClimb.whenPressed(new AutoClimb());
+        autoClimb.whenReleased(new InstantCommand(() -> {
+            Command c = Robot.climber.getCurrentCommand();
+            if(c != null && c instanceof AutoClimb) {
+                c.cancel();
+                RobotLogger.logInfoFine("Auto climb was cancelled because the buttons were released");
+            }
+        }));
     }
 }
