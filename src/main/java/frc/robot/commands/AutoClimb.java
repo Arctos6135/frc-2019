@@ -7,8 +7,8 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.robot.subsystems.Climber;
 
 /**
  * Automatically does a Hab level 2 climb.
@@ -19,7 +19,7 @@ public class AutoClimb extends CommandGroup {
      */
     public AutoClimb() {
         // Push front side out
-        addParallel(new OperateClimber(OperateClimber.Side.FRONT, DoubleSolenoid.Value.kForward));
+        addParallel(new OperateClimber(OperateClimber.Side.FRONT, Climber.State.EXTENDED));
         // Delay a bit for the piston to fully extend as we don't know when it's done
         addSequential(new Delay(0.5));
 
@@ -28,16 +28,16 @@ public class AutoClimb extends CommandGroup {
         addSequential(new DriveDistance(-20));
 
         // Retract front pistons
-        addParallel(new OperateClimber(OperateClimber.Side.FRONT, DoubleSolenoid.Value.kReverse));
+        addParallel(new OperateClimber(OperateClimber.Side.FRONT, Climber.State.RETRACTED));
         // Push back side up
-        addParallel(new OperateClimber(OperateClimber.Side.BACK, DoubleSolenoid.Value.kForward));
+        addParallel(new OperateClimber(OperateClimber.Side.BACK, Climber.State.EXTENDED));
         addSequential(new Delay(0.5));
 
         // Drive the back wheels onto the platform
         addSequential(new DriveDistance(-40));
 
         // Retract back pistons
-        addParallel(new OperateClimber(OperateClimber.Side.BACK, DoubleSolenoid.Value.kReverse));
+        addParallel(new OperateClimber(OperateClimber.Side.BACK, Climber.State.RETRACTED));
         addSequential(new Delay(0.5));
 
         // Drive so that the entire robot is on the platform
