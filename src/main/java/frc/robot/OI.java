@@ -9,6 +9,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.POVButton;
 import edu.wpi.first.wpilibj.buttons.Trigger;
@@ -157,29 +158,29 @@ public class OI {
     
     @SuppressWarnings("resource")
     public OI() {
-        JoystickButton overrideMotorBlacklist1 = new JoystickButton(driverController, Controls.OVERRIDE_MOTOR_BLACKLIST);
-        JoystickButton overrideMotorBlacklist2 = new JoystickButton(operatorController, Controls.OVERRIDE_MOTOR_BLACKLIST);
-        JoystickButton essieAutoIntake = new JoystickButton(operatorController, Controls.ESSIE_AUTOPICKUP);
-        JoystickButton cancelEssie = new JoystickButton(operatorController, Controls.CANCEL_ESSIE);
-        JoystickButton essieHigh = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH);
-        JoystickButton essieLow = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_LOW);
-        JoystickButton essieReverse = new JoystickButton(operatorController, Controls.ESSIE_REVERSE_INTAKE);
-        JoystickButton operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
-        POVButton ledFlashGreen = new POVButton(operatorController, Controls.POV_LED_FLASH_GREEN);
-        POVButton ledFlashYellow = new POVButton(operatorController, Controls.POV_LED_FLASH_YELLOW);
-        POVButton climberPistonToggleFront = new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_FRONT);
-        POVButton climberPistonToggleBack = new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_BACK);
-        JoystickButton precisionDrive = new JoystickButton(driverController, Controls.PRECISION_DRIVE);
-        JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
-        JoystickButton visionAlignAdvanced = new JoystickButton(driverController, Controls.VISION_ALIGN_ADVANCED);
-        JoystickButton visionAlignBasic = new JoystickButton(driverController, Controls.VISION_ALIGN_BASIC);
-        JoystickButton reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
-        JoystickButton stopAuto = new JoystickButton(driverController, Controls.STOP_AUTO);
-        JoystickButton turn180 = new JoystickButton(driverController, Controls.TURN_180);
-        JoystickButton gearShiftHigh = new JoystickButton(driverController, Controls.GEARSHIFT_HIGH);
-        JoystickButton gearShiftLow = new JoystickButton(driverController, Controls.GEARSHIFT_LOW);
-        JoystickButton restartVisionServer = new JoystickButton(operatorController, Controls.RESTART_VISION_SERVER);
-        MultiButton autoClimb = new MultiButton(new POVButton(driverController, Controls.POV_AUTO_CLIMB),
+        Button overrideMotorBlacklist1 = new JoystickButton(driverController, Controls.OVERRIDE_MOTOR_BLACKLIST);
+        Button overrideMotorBlacklist2 = new JoystickButton(operatorController, Controls.OVERRIDE_MOTOR_BLACKLIST);
+        Button essieAutoIntake = new JoystickButton(operatorController, Controls.ESSIE_AUTOPICKUP);
+        Button cancelEssie = new JoystickButton(operatorController, Controls.CANCEL_ESSIE);
+        Button essieHigh = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH);
+        Button essieLow = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_LOW);
+        Button essieReverse = new JoystickButton(operatorController, Controls.ESSIE_REVERSE_INTAKE);
+        Button operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
+        Button ledFlashGreen = new POVButton(operatorController, Controls.POV_LED_FLASH_GREEN);
+        Button ledFlashYellow = new POVButton(operatorController, Controls.POV_LED_FLASH_YELLOW);
+        Button climberPistonToggleFront = new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_FRONT);
+        Button climberPistonToggleBack = new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_BACK);
+        Button precisionDrive = new JoystickButton(driverController, Controls.PRECISION_DRIVE);
+        Button debug = new JoystickButton(driverController, Controls.DEBUG);
+        Button visionAlignAdvanced = new JoystickButton(driverController, Controls.VISION_ALIGN_ADVANCED);
+        Button visionAlignBasic = new JoystickButton(driverController, Controls.VISION_ALIGN_BASIC);
+        Button reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
+        Button stopAuto = new JoystickButton(driverController, Controls.STOP_AUTO);
+        Button turn180 = new JoystickButton(driverController, Controls.TURN_180);
+        Button gearShiftHigh = new JoystickButton(driverController, Controls.GEARSHIFT_HIGH);
+        Button gearShiftLow = new JoystickButton(driverController, Controls.GEARSHIFT_LOW);
+        Button restartVisionServer = new JoystickButton(operatorController, Controls.RESTART_VISION_SERVER);
+        Button autoClimb = new MultiButton(new POVButton(driverController, Controls.POV_AUTO_CLIMB),
                 new POVButton(operatorController, Controls.POV_AUTO_CLIMB));
 
         overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
