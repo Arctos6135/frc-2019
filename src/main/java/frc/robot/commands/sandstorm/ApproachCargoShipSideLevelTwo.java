@@ -10,14 +10,12 @@ package frc.robot.commands.sandstorm;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.commands.FollowTrajectory;
 import frc.robot.misc.AutoPaths;
-import robot.pathfinder.core.trajectory.TankDriveTrajectory;
 
-public class ApproachCargoShipSideLevelOne extends CommandGroup {
-    
-    public ApproachCargoShipSideLevelOne(AutoDispatcher.Side side, boolean reverse) {
-        TankDriveTrajectory t = side == AutoDispatcher.Side.LEFT
-                ? reverse ? AutoPaths.approachCargoShipSideLevelOneL.mirrorFrontBack() : AutoPaths.approachCargoShipSideLevelOneL
-                : reverse ? AutoPaths.approachCargoShipSideLevelOneR.mirrorFrontBack() : AutoPaths.approachCargoShipSideLevelOneR;
-        addSequential(new FollowTrajectory(t));
+public class ApproachCargoShipSideLevelTwo extends CommandGroup {
+
+    public ApproachCargoShipSideLevelTwo(AutoDispatcher.Side side, boolean reverse) {
+        addSequential(new FollowTrajectory(reverse ? AutoPaths.driveOffHabLevelTwo.mirrorFrontBack() 
+                : AutoPaths.driveOffHabLevelTwo));
+        addSequential(new ApproachCargoShipSideLevelOne(side, reverse));
     }
 }

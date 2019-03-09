@@ -57,7 +57,7 @@ public final class AutoDispatcher {
                 return new ApproachCargoShipSideLevelOne(side, robotSide != RobotSide.HANK);
             }
             else {
-                return null;
+                return new ApproachCargoShipSideLevelTwo(side, robotSide != RobotSide.HANK);
             }
         default: return null;
         }

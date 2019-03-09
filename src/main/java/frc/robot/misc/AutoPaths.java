@@ -7,6 +7,7 @@ import robot.pathfinder.core.TrajectoryParams;
 import robot.pathfinder.core.Waypoint;
 import robot.pathfinder.core.path.PathType;
 import robot.pathfinder.core.trajectory.TankDriveTrajectory;
+import robot.pathfinder.core.trajectory.TrajectoryGenerator;
 
 /**
  * This class holds all the trajectories used in auto.
@@ -21,6 +22,7 @@ public final class AutoPaths {
     public static TankDriveTrajectory approachCargoShipFrontLevelOneR;
     public static TankDriveTrajectory approachCargoShipSideLevelOneL;
     public static TankDriveTrajectory approachCargoShipSideLevelOneR;
+    public static TankDriveTrajectory driveOffHabLevelTwo;
     
     public static void generateAll() {
         RobotSpecs specs = FollowTrajectory.getSpecs();
@@ -46,5 +48,7 @@ public final class AutoPaths {
         params.alpha = 350;
         approachCargoShipSideLevelOneR = new TankDriveTrajectory(specs, params);
         approachCargoShipSideLevelOneR = approachCargoShipSideLevelOneL.mirrorLeftRight();
+
+        driveOffHabLevelTwo = TrajectoryGenerator.generateStraightTank(specs, RobotMap.FieldDimensions.HAB_LVL2_LENGTH);
     }
 }
