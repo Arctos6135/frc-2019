@@ -2,6 +2,7 @@ package frc.robot.commands.sandstorm;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.robot.commands.AdvancedVisionAlign;
 
 /**
  * Finds the correct autonomous command based on parameters.
@@ -19,7 +20,7 @@ public final class AutoDispatcher {
      * Auto mode.
      */
     public enum Mode {
-        NONE, FRONT, SIDE, DEBUG;
+        NONE, FRONT, SIDE, VISION, DEBUG;
     }
 
     /**
@@ -58,6 +59,13 @@ public final class AutoDispatcher {
             }
             else {
                 return new ApproachCargoShipSideLevelTwo(side, robotSide != RobotSide.HANK);
+            }
+        case VISION:
+            if(level == HabLevel.ONE) {
+                return new AdvancedVisionAlign();
+            }
+            else {
+                return new ApproachCargoShipVisionLevelTwo();
             }
         default: return null;
         }
