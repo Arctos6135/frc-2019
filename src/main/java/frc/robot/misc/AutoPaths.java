@@ -19,9 +19,12 @@ public final class AutoPaths {
     public static TankDriveTrajectory debug;
     public static TankDriveTrajectory approachCargoShipFrontLevelOneL;
     public static TankDriveTrajectory approachCargoShipFrontLevelOneR;
+    public static TankDriveTrajectory approachCargoShipSideLevelOneL;
+    public static TankDriveTrajectory approachCargoShipSideLevelOneR;
     
     public static void generateAll() {
         RobotSpecs specs = FollowTrajectory.getSpecs();
+
         TrajectoryParams params = new TrajectoryParams();
         params.waypoints = new Waypoint[] {
             new Waypoint(0, 0, Math.PI / 2),
@@ -34,5 +37,14 @@ public final class AutoPaths {
         params.segmentCount = 200;
         approachCargoShipFrontLevelOneR = new TankDriveTrajectory(specs, params);
         approachCargoShipFrontLevelOneL = approachCargoShipFrontLevelOneR.mirrorLeftRight();
+
+        params.waypoints = new Waypoint[] {
+            new Waypoint(0, 0, Math.PI / 2),
+            new Waypoint(RobotMap.FieldDimensions.HAB_LVL1_EDGE_TO_CARGO_SHIP_SIDE - RobotMap.RobotDimensions.LENGTH,
+                    RobotMap.FieldDimensions.HAB_LVL1_TO_CARGO_SHIP_SIDE - RobotMap.RobotDimensions.LENGTH / 2, 0.0),
+        };
+        params.alpha = 350;
+        approachCargoShipSideLevelOneR = new TankDriveTrajectory(specs, params);
+        approachCargoShipSideLevelOneR = approachCargoShipSideLevelOneL.mirrorLeftRight();
     }
 }
