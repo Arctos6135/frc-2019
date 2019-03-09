@@ -54,6 +54,8 @@ public class Robot extends TimedRobot {
 
     static SendableChooser<AutoDispatcher.Mode> modeChooser = new SendableChooser<>();
     static SendableChooser<AutoDispatcher.HabLevel> habLevelChooser = new SendableChooser<>();
+    static SendableChooser<AutoDispatcher.Side> sideChooser = new SendableChooser<>();
+    static SendableChooser<AutoDispatcher.RobotSide> robotSideChooser = new SendableChooser<>();
     static SendableChooser<Drivetrain.Gear> followerGearChooser = new SendableChooser<>();
     static SendableChooser<Drivetrain.Gear> matchStartGearChooser = new SendableChooser<>();
 
@@ -138,24 +140,28 @@ public class Robot extends TimedRobot {
 
         // Create auto chooser
         modeChooser.setDefaultOption("None", AutoDispatcher.Mode.NONE);
-        modeChooser.addOption("Left Side", AutoDispatcher.Mode.LEFT);
-        modeChooser.addOption("Right Side", AutoDispatcher.Mode.RIGHT);
-        modeChooser.addOption("Aligned", AutoDispatcher.Mode.ALIGNED);
-        modeChooser.addOption("Vision", AutoDispatcher.Mode.VISION);
-        modeChooser.addOption("Debug", AutoDispatcher.Mode.DEBUG);
+        modeChooser.addOption("Cargo Ship Front", AutoDispatcher.Mode.FRONT);
+        modeChooser.addOption("Cargo Ship Side", AutoDispatcher.Mode.SIDE);
+        SmartDashboard.putData("Auto Mode", modeChooser);
         habLevelChooser.setDefaultOption("Level 1", AutoDispatcher.HabLevel.ONE);
         habLevelChooser.addOption("Level 2", AutoDispatcher.HabLevel.TWO);
+        SmartDashboard.putData("Auto Start Hab Level", habLevelChooser);
+        sideChooser.setDefaultOption("Left", AutoDispatcher.Side.LEFT);
+        sideChooser.addOption("Right", AutoDispatcher.Side.RIGHT);
+        SmartDashboard.putData("Auto Side", sideChooser);
+        robotSideChooser.setDefaultOption("Hank Side", AutoDispatcher.RobotSide.HANK);
+        robotSideChooser.addOption("Essie Side", AutoDispatcher.RobotSide.ESSIE);
+        SmartDashboard.putData("Auto Robot Side", robotSideChooser);
         
+        // Create follower gear chooser and match start gear chooser
         followerGearChooser.setDefaultOption("Low Gear", Drivetrain.Gear.LOW);
         followerGearChooser.addOption("High Gear", Drivetrain.Gear.HIGH);
         followerGearChooser.addOption("All Gears", null);
+        SmartDashboard.putData("Trajectory Follower Gear", followerGearChooser);
 
         matchStartGearChooser.setDefaultOption("Low Gear", Drivetrain.Gear.LOW);
         matchStartGearChooser.addOption("High Gear", Drivetrain.Gear.HIGH);
         matchStartGearChooser.addOption("Current Gear", null);
-
-        SmartDashboard.putData("Auto Mode", modeChooser);
-        SmartDashboard.putData("Starting Hab Level", habLevelChooser);
         SmartDashboard.putData("Match Start Gear", matchStartGearChooser);
         
         // 
@@ -318,10 +324,9 @@ public class Robot extends TimedRobot {
         TeleopDrive.setReversed(false);
 
         beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.PULSATING);
-        AutoDispatcher.Mode mode = modeChooser.getSelected();
-        AutoDispatcher.HabLevel level = habLevelChooser.getSelected();
 
-        autoCommand = AutoDispatcher.getAuto(level, mode);
+        autoCommand = AutoDispatcher.getAuto(modeChooser.getSelected(), habLevelChooser.getSelected(),
+                sideChooser.getSelected(), robotSideChooser.getSelected());
         if(autoCommand != null) {
             autoCommand.start();
             RobotLogger.logInfo("Autonomous command started: " + autoCommand.getClass().getName());
@@ -390,7 +395,8 @@ public class Robot extends TimedRobot {
         Scheduler.getInstance().run();
 
         // Check if the auto configuration is valid
-        SmartDashboard.putBoolean("Valid Auto Configuration", AutoDispatcher.getAuto(habLevelChooser.getSelected(), modeChooser.getSelected()) != null);
+        SmartDashboard.putBoolean("Valid Auto Configuration", AutoDispatcher.getAuto(modeChooser.getSelected(), 
+                habLevelChooser.getSelected(), sideChooser.getSelected(), robotSideChooser.getSelected()) != null);
         if(isInDebugMode) {
             getTuningEntries();
         }

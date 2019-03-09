@@ -12,11 +12,11 @@ import frc.robot.commands.FollowTrajectory;
 import frc.robot.misc.AutoPaths;
 import robot.pathfinder.core.trajectory.TankDriveTrajectory;
 
-public class ApproachCargoShipSideLevelOneSide extends CommandGroup {
+public class ApproachCargoShipSideLevelOne extends CommandGroup {
     /**
      * Add your docs here.
      */
-    public ApproachCargoShipSideLevelOneSide(AutoDispatcher.Side side, boolean reverse) {
+    public ApproachCargoShipSideLevelOne(AutoDispatcher.Side side, boolean reverse) {
         TankDriveTrajectory t = side == AutoDispatcher.Side.LEFT
                 ? reverse ? AutoPaths.approachCargoShipSideLevelOneL.mirrorFrontBack() : AutoPaths.approachCargoShipSideLevelOneL
                 : reverse ? AutoPaths.approachCargoShipSideLevelOneR.mirrorFrontBack() : AutoPaths.approachCargoShipSideLevelOneR;

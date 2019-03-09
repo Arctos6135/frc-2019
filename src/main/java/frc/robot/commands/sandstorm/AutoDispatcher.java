@@ -9,32 +9,57 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 public final class AutoDispatcher {
 
     /**
-     * Levels of the hab.
+     * Levels of the hab to start on.
      */
     public enum HabLevel {
-        ONE, TWO, THREE;
+        ONE, TWO;
     }
 
     /**
-     * For auto choosing.
-     * Left, right aligned/middle or vision, plus other special options.
+     * Auto mode.
      */
     public enum Mode {
-        NONE, LEFT, RIGHT, ALIGNED, VISION, DEBUG;
+        NONE, FRONT, SIDE, DEBUG;
     }
 
+    /**
+     * Left or right side.
+     */
     public enum Side {
         LEFT, RIGHT;
     }
 
     /**
-     * Gets the corresponding auto command based on parameters.
-     * @param level The hab level to start on
-     * @param mode The side of the auto, or aligned, or vision
-     * @return The corresponding auto
-     * @throws AutoNotFoundException If no matching auto command is found
+     * Hank side or Essie side of the robot.
      */
-    public static final Command getAuto(HabLevel level, Mode mode) {
-        return new InstantCommand();
+    public enum RobotSide {
+        HANK, ESSIE;
+    }
+
+    
+    public static final Command getAuto(Mode mode, HabLevel level, Side side, RobotSide robotSide) {
+        switch(mode) {
+        case NONE:
+            return new InstantCommand();
+        case DEBUG:
+            return /*new FollowTrajectory(AutoPaths.debug)*/ null;
+        case FRONT:
+            if(level == HabLevel.ONE) {
+                // The auto is reversed if the robot side is not hank
+                return new ApproachCargoShipFrontLevelOne(side, robotSide != RobotSide.HANK);
+            }
+            else {
+                return null;
+            }
+        case SIDE:
+            if(level == HabLevel.ONE) {
+                // The auto is reversed if the robot side is not hank
+                return new ApproachCargoShipSideLevelOne(side, robotSide != RobotSide.HANK);
+            }
+            else {
+                return null;
+            }
+        default: return null;
+        }
     }
 }
