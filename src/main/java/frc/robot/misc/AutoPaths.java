@@ -20,6 +20,8 @@ public final class AutoPaths {
     public static TankDriveTrajectory debug;
     public static TankDriveTrajectory approachCargoShipFrontLevelOneL;
     public static TankDriveTrajectory approachCargoShipFrontLevelOneR;
+    public static TankDriveTrajectory approachCargoShipFrontLevelOneSideL;
+    public static TankDriveTrajectory approachCargoShipFrontLevelOneSideR;
     public static TankDriveTrajectory approachCargoShipSideLevelOneL;
     public static TankDriveTrajectory approachCargoShipSideLevelOneR;
     public static TankDriveTrajectory driveOffHabLevelTwo;
@@ -42,12 +44,21 @@ public final class AutoPaths {
 
         params.waypoints = new Waypoint[] {
             new Waypoint(0, 0, Math.PI / 2),
+            new Waypoint(-RobotMap.FieldDimensions.CARGOSHIP_FRONT_OFFSET_SIDE, 
+                    RobotMap.FieldDimensions.HAB_LVL1_TO_CARGO_SHIP - RobotMap.RobotDimensions.LENGTH, Math.PI / 2),
+        };
+        params.alpha = 150;
+        approachCargoShipFrontLevelOneSideR = new TankDriveTrajectory(specs, params);
+        approachCargoShipFrontLevelOneSideL = approachCargoShipFrontLevelOneSideR.mirrorLeftRight();
+
+        params.waypoints = new Waypoint[] {
+            new Waypoint(0, 0, Math.PI / 2),
             new Waypoint(RobotMap.FieldDimensions.HAB_LVL1_EDGE_TO_CARGO_SHIP_SIDE - RobotMap.RobotDimensions.LENGTH,
                     RobotMap.FieldDimensions.HAB_LVL1_TO_CARGO_SHIP_SIDE - RobotMap.RobotDimensions.LENGTH / 2, 0.0),
         };
         params.alpha = 350;
         approachCargoShipSideLevelOneR = new TankDriveTrajectory(specs, params);
-        approachCargoShipSideLevelOneR = approachCargoShipSideLevelOneL.mirrorLeftRight();
+        approachCargoShipSideLevelOneL = approachCargoShipSideLevelOneR.mirrorLeftRight();
 
         driveOffHabLevelTwo = TrajectoryGenerator.generateStraightTank(specs, RobotMap.FieldDimensions.HAB_LVL2_LENGTH);
     }

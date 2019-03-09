@@ -49,7 +49,7 @@ public final class AutoDispatcher {
                 return new ApproachCargoShipFrontLevelOne(side, robotSide != RobotSide.HANK);
             }
             else {
-                return null;
+                return new ApproachCargoShipFrontLevelTwo(side, robotSide != RobotSide.HANK);
             }
         case SIDE:
             if(level == HabLevel.ONE) {
