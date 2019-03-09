@@ -7,7 +7,6 @@ import robot.pathfinder.core.TrajectoryParams;
 import robot.pathfinder.core.Waypoint;
 import robot.pathfinder.core.path.PathType;
 import robot.pathfinder.core.trajectory.TankDriveTrajectory;
-import robot.pathfinder.core.trajectory.TrajectoryGenerator;
 
 /**
  * This class holds all the trajectories used in auto.
@@ -16,44 +15,24 @@ import robot.pathfinder.core.trajectory.TrajectoryGenerator;
  * starts up.
  */
 public final class AutoPaths {
-    
-    public static TankDriveTrajectory hatchAutoHabLevel1AlignedFront;
-    public static TankDriveTrajectory hatchAutoHabLevel1SideLeft;
-    public static TankDriveTrajectory hatchAutoHabLevel1SideRight;
-    public static TankDriveTrajectory dropFromHabLevel2;
-    public static TankDriveTrajectory driveBack;
 
     public static TankDriveTrajectory debug;
+    public static TankDriveTrajectory approachCargoShipFrontLevelOneL;
+    public static TankDriveTrajectory approachCargoShipFrontLevelOneR;
     
     public static void generateAll() {
         RobotSpecs specs = FollowTrajectory.getSpecs();
-        hatchAutoHabLevel1AlignedFront = TrajectoryGenerator.generateStraightTank(specs, 
-                RobotMap.FieldDimensions.HAB_LVL1_TO_CARGO_SHIP - RobotMap.RobotDimensions.LENGTH);
-        driveBack = TrajectoryGenerator.generateStraightTank(specs, 40);
-        dropFromHabLevel2 = TrajectoryGenerator.generateStraightTank(specs, RobotMap.FieldDimensions.HAB_LVL2_LENGTH);
-
         TrajectoryParams params = new TrajectoryParams();
         params.waypoints = new Waypoint[] {
-            new Waypoint(0.0, 0.0, Math.PI / 2),
-            new Waypoint(-46, 100, Math.PI / 2),
-            new Waypoint(RobotMap.FieldDimensions.HAB_LVL1_EDGE_TO_CARGO_SHIP_SIDE - RobotMap.RobotDimensions.LENGTH,
-                    RobotMap.FieldDimensions.HAB_LVL1_TO_CARGO_SHIP_SIDE - RobotMap.RobotDimensions.LENGTH / 2, 0.0),
+            new Waypoint(0, 0, Math.PI / 2),
+            new Waypoint(RobotMap.FieldDimensions.CARGOSHIP_FRONT_OFFSET, 
+                    RobotMap.FieldDimensions.HAB_LVL1_TO_CARGO_SHIP - RobotMap.RobotDimensions.LENGTH, Math.PI / 2),
         };
-        params.alpha = 350.0;
-        params.segmentCount = 200;
+        params.alpha = 150;
         params.isTank = true;
         params.pathType = PathType.QUINTIC_HERMITE;
-        hatchAutoHabLevel1SideLeft = new TankDriveTrajectory(specs, params);
-        hatchAutoHabLevel1SideRight = hatchAutoHabLevel1SideLeft.mirrorLeftRight();
-
-        params.waypoints = new Waypoint[] {
-            new Waypoint(0.0, 0.0, Math.PI / 2),
-            new Waypoint(60.0, 120.0, Math.PI / 2),
-        };
-        params.alpha = 150.0;
         params.segmentCount = 200;
-        params.isTank = true;
-        params.pathType = PathType.QUINTIC_HERMITE;
-        debug = new TankDriveTrajectory(FollowTrajectory.getSpecs(), params);
+        approachCargoShipFrontLevelOneR = new TankDriveTrajectory(specs, params);
+        approachCargoShipFrontLevelOneL = approachCargoShipFrontLevelOneR.mirrorLeftRight();
     }
 }

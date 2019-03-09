@@ -23,6 +23,10 @@ public final class AutoDispatcher {
         NONE, LEFT, RIGHT, ALIGNED, VISION, DEBUG;
     }
 
+    public enum Side {
+        LEFT, RIGHT;
+    }
+
     /**
      * This checked exception is thrown by {@link AutoDispatcher#getAuto(HabLevel, Mode) } if no auto matches the options.
      */
