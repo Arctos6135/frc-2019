@@ -28,27 +28,13 @@ public final class AutoDispatcher {
     }
 
     /**
-     * This checked exception is thrown by {@link AutoDispatcher#getAuto(HabLevel, Mode) } if no auto matches the options.
-     */
-    public static final class AutoNotFoundException extends Exception {
-        private static final long serialVersionUID = -4080978647629416633L;
-
-        public AutoNotFoundException() {
-            super();
-        }
-        public AutoNotFoundException(String msg) {
-            super(msg);
-        }
-    }
-
-    /**
      * Gets the corresponding auto command based on parameters.
      * @param level The hab level to start on
      * @param mode The side of the auto, or aligned, or vision
      * @return The corresponding auto
      * @throws AutoNotFoundException If no matching auto command is found
      */
-    public static final Command getAuto(HabLevel level, Mode mode) throws AutoNotFoundException {
+    public static final Command getAuto(HabLevel level, Mode mode) {
         return new InstantCommand();
     }
 }

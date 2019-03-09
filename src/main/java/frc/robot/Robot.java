@@ -321,16 +321,15 @@ public class Robot extends TimedRobot {
         AutoDispatcher.Mode mode = modeChooser.getSelected();
         AutoDispatcher.HabLevel level = habLevelChooser.getSelected();
 
-        try {
-            autoCommand = AutoDispatcher.getAuto(level, mode);
+        autoCommand = AutoDispatcher.getAuto(level, mode);
+        if(autoCommand != null) {
             autoCommand.start();
             RobotLogger.logInfo("Autonomous command started: " + autoCommand.getClass().getName());
         }
-        catch(AutoDispatcher.AutoNotFoundException e) {
+        else {
             RobotLogger.logWarning("No auto exists for the specified configuration");
             OI.errorRumbleDriverMinor.execute();
-            OI.errorRumbleDriverMajor.execute();
-            autoCommand = null;
+            OI.errorRumbleOperatorMinor.execute();
         }
     }
 
@@ -391,13 +390,7 @@ public class Robot extends TimedRobot {
         Scheduler.getInstance().run();
 
         // Check if the auto configuration is valid
-        try {
-            AutoDispatcher.getAuto(habLevelChooser.getSelected(), modeChooser.getSelected());
-            SmartDashboard.putBoolean("Valid Auto Configuration", true);
-        }
-        catch(AutoDispatcher.AutoNotFoundException e) {
-            SmartDashboard.putBoolean("Valid Auto Configuration", false);
-        }
+        SmartDashboard.putBoolean("Valid Auto Configuration", AutoDispatcher.getAuto(habLevelChooser.getSelected(), modeChooser.getSelected()) != null);
         if(isInDebugMode) {
             getTuningEntries();
         }
