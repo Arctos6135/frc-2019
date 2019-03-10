@@ -10,14 +10,14 @@ package frc.robot.commands.sandstorm;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.commands.FollowTrajectory;
 import frc.robot.misc.AutoPaths;
+import robot.pathfinder.core.trajectory.TankDriveTrajectory;
 
-/**
- * Hatch auto that starts from hab level 2 using vision to align.
- */
-public class HatchAutoHabLevelTwoFrontVision extends CommandGroup {
+public class ApproachCargoShipFrontLevelOne extends CommandGroup {
 
-    public HatchAutoHabLevelTwoFrontVision() {
-        addSequential(new FollowTrajectory(AutoPaths.dropFromHabLevel2));
-        addSequential(new HatchAutoHabLevelOneFrontVision());
+    public ApproachCargoShipFrontLevelOne(AutoDispatcher.Side side, boolean reverse) {
+        TankDriveTrajectory t = side == AutoDispatcher.Side.LEFT
+                ? reverse ? AutoPaths.approachCargoShipFrontLevelOneL.mirrorFrontBack() : AutoPaths.approachCargoShipFrontLevelOneL
+                : reverse ? AutoPaths.approachCargoShipFrontLevelOneR.mirrorFrontBack() : AutoPaths.approachCargoShipFrontLevelOneR;
+        addSequential(new FollowTrajectory(t));
     }
 }
