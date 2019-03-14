@@ -7,6 +7,13 @@
 
 package frc.robot.commands;
 
+import com.arctos6135.robotpathfinder.core.RobotSpecs;
+import com.arctos6135.robotpathfinder.core.trajectory.TankDriveTrajectory;
+import com.arctos6135.robotpathfinder.follower.Follower.DirectionSource;
+import com.arctos6135.robotpathfinder.follower.Follower.DistanceSource;
+import com.arctos6135.robotpathfinder.follower.Follower.Motor;
+import com.arctos6135.robotpathfinder.follower.Follower.TimestampSource;
+import com.arctos6135.robotpathfinder.follower.TankDriveFollower;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -16,16 +23,6 @@ import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.misc.RobotLogger;
 import frc.robot.subsystems.Drivetrain;
-import robot.pathfinder.core.RobotSpecs;
-import robot.pathfinder.core.TrajectoryParams;
-import robot.pathfinder.core.Waypoint;
-import robot.pathfinder.core.path.PathType;
-import robot.pathfinder.core.trajectory.TankDriveTrajectory;
-import robot.pathfinder.follower.Follower.DirectionSource;
-import robot.pathfinder.follower.Follower.DistanceSource;
-import robot.pathfinder.follower.Follower.Motor;
-import robot.pathfinder.follower.Follower.TimestampSource;
-import robot.pathfinder.follower.TankFollower;
 
 public class FollowTrajectory extends Command {
 
@@ -46,7 +43,7 @@ public class FollowTrajectory extends Command {
     public static Drivetrain.Gear gearToUse = null;
 
     public final TankDriveTrajectory trajectory;
-    public TankFollower follower;
+    public TankDriveFollower follower;
 
     public FollowTrajectory(TankDriveTrajectory trajectory) {
         // Use requires() here to declare subsystem dependencies
@@ -70,11 +67,11 @@ public class FollowTrajectory extends Command {
         }
 
         if(Robot.drivetrain.getGear() == Drivetrain.Gear.HIGH) {
-            follower = new TankFollower(trajectory, L_MOTOR, R_MOTOR, L_DISTANCE_SOURCE, R_DISTANCE_SOURCE, TIMESTAMP_SOURCE, 
+            follower = new TankDriveFollower(trajectory, L_MOTOR, R_MOTOR, L_DISTANCE_SOURCE, R_DISTANCE_SOURCE, TIMESTAMP_SOURCE, 
                     GYRO, kV_h, kA_h, kP_h, kD_h, kDP_h);
         }
         else {
-            follower = new TankFollower(trajectory, L_MOTOR, R_MOTOR, L_DISTANCE_SOURCE, R_DISTANCE_SOURCE, TIMESTAMP_SOURCE, 
+            follower = new TankDriveFollower(trajectory, L_MOTOR, R_MOTOR, L_DISTANCE_SOURCE, R_DISTANCE_SOURCE, TIMESTAMP_SOURCE, 
                     GYRO, kV_l, kA_l, kP_l, kD_l, kDP_l);
         }
 
@@ -137,34 +134,6 @@ public class FollowTrajectory extends Command {
         }
 
         RobotLogger.logInfoFine("FollowTrajectory interrupted");
-    }
-
-    /**
-     * This static method makes RobotPathfinder generate a bunch of random trajectories in an attempt to
-     * activate the JIT and improve performance. 
-     * @param count The number of random trajectories to generate
-     * @return The final time it takes to generate a trajectory
-     */
-    public static long warmupRobotPathfinder(int count) {
-        for(int i = 0; i < count; i ++) {
-            long start = System.currentTimeMillis();
-            TrajectoryParams params = new TrajectoryParams();
-            params.alpha = Math.random() * 200;
-            params.isTank = true;
-            params.pathType = PathType.QUINTIC_HERMITE;
-            params.segmentCount = 500;
-            params.waypoints = new Waypoint[] {
-                new Waypoint(0, 0, Math.PI / 2),
-                new Waypoint(Math.random() * 100, Math.random() * 100, Math.PI * 2 * Math.random()),
-            };
-            @SuppressWarnings("unused")
-            TankDriveTrajectory trajectory = new TankDriveTrajectory(getSpecs(), params);
-            if(i == count - 1) {
-                return System.currentTimeMillis() - start;
-            }
-        }
-        System.gc();
-        return -1;
     }
 
     /**

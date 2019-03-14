@@ -1,13 +1,14 @@
 package frc.robot.misc;
 
+import com.arctos6135.robotpathfinder.core.RobotSpecs;
+import com.arctos6135.robotpathfinder.core.TrajectoryParams;
+import com.arctos6135.robotpathfinder.core.Waypoint;
+import com.arctos6135.robotpathfinder.core.path.PathType;
+import com.arctos6135.robotpathfinder.core.trajectory.TankDriveTrajectory;
+import com.arctos6135.robotpathfinder.core.trajectory.TrajectoryGenerator;
+
 import frc.robot.RobotMap;
 import frc.robot.commands.FollowTrajectory;
-import robot.pathfinder.core.RobotSpecs;
-import robot.pathfinder.core.TrajectoryParams;
-import robot.pathfinder.core.Waypoint;
-import robot.pathfinder.core.path.PathType;
-import robot.pathfinder.core.trajectory.TankDriveTrajectory;
-import robot.pathfinder.core.trajectory.TrajectoryGenerator;
 
 /**
  * This class holds all the trajectories used in auto.
@@ -36,9 +37,8 @@ public final class AutoPaths {
                     RobotMap.FieldDimensions.HAB_LVL1_TO_CARGO_SHIP - RobotMap.RobotDimensions.LENGTH, Math.PI / 2),
         };
         params.alpha = 150;
-        params.isTank = true;
         params.pathType = PathType.QUINTIC_HERMITE;
-        params.segmentCount = 200;
+        params.sampleCount = 200;
         approachCargoShipFrontLevelOneR = new TankDriveTrajectory(specs, params);
         approachCargoShipFrontLevelOneL = approachCargoShipFrontLevelOneR.mirrorLeftRight();
 

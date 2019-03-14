@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import com.arctos6135.robotpathfinder.core.RobotSpecs;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -24,7 +25,6 @@ import edu.wpi.first.wpilibj.VictorSP;
 import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.misc.RobotLogger;
 import frc.robot.misc.protectedmotor.ProtectedMotor;
-import robot.pathfinder.core.RobotSpecs;
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into

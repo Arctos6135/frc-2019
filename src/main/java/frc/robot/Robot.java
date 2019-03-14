@@ -82,10 +82,6 @@ public class Robot extends TimedRobot {
         climber = new Climber();
         beautifulRobot = new BeautifulRobot();
         oi = new OI();
-
-        // Warm up RobotPathfinder and generate auto paths
-        long finalGenerationTime = FollowTrajectory.warmupRobotPathfinder(10);
-        AutoPaths.generateAll();
         
         beautifulRobot.init();
         beautifulRobot.setEnabled(true);
@@ -163,9 +159,6 @@ public class Robot extends TimedRobot {
         matchStartGearChooser.addOption("High Gear", Drivetrain.Gear.HIGH);
         matchStartGearChooser.addOption("Current Gear", null);
         SmartDashboard.putData("Match Start Gear", matchStartGearChooser);
-        
-        // 
-        SmartDashboard.putNumber("Final Generation Time", finalGenerationTime);
 
         RobotLogger.logInfo("Basic initialization complete. Waiting for vision to come online...");
         
