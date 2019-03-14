@@ -7,11 +7,12 @@
 
 package frc.robot.commands;
 
+import com.arctos6135.robotpathfinder.core.trajectory.TankDriveTrajectory;
+import com.arctos6135.robotpathfinder.core.trajectory.TrajectoryGenerator;
+
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import frc.robot.misc.RobotLogger;
-import robot.pathfinder.core.trajectory.TankDriveTrajectory;
-import robot.pathfinder.core.trajectory.TrajectoryGenerator;
 
 /**
  * Rotates the robot in place a certain number of degrees in a specified direction.
@@ -27,8 +28,8 @@ public class RotateToAngle extends Command {
         LEFT, RIGHT;
     }
 
-    final TankDriveTrajectory trajectory;
-    final FollowTrajectory followerCommand;
+    TankDriveTrajectory trajectory;
+    FollowTrajectory followerCommand;
 
     double angle;
     Direction direction;
@@ -44,16 +45,16 @@ public class RotateToAngle extends Command {
         requires(Robot.drivetrain);
         this.angle = angle;
         this.direction = direction;
-
-        // Use a RobotPathfinder trajectory here to save time and improve accuracy with the already tuned PIDs
-        trajectory = TrajectoryGenerator.generateRotationTank(FollowTrajectory.getSpecs(), 
-                direction == Direction.LEFT ? Math.toRadians(angle) : Math.toRadians(-angle));
-        followerCommand = new FollowTrajectory(trajectory);
     }
 
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
+        RobotLogger.logInfoFiner("Generating trajectory to rotate to angle...");
+        // Use a RobotPathfinder trajectory here to save time and improve accuracy with the already tuned PIDs
+        trajectory = TrajectoryGenerator.generateRotationTank(FollowTrajectory.getSpecs(), 
+                direction == Direction.LEFT ? Math.toRadians(angle) : Math.toRadians(-angle));
+        followerCommand = new FollowTrajectory(trajectory);
         RobotLogger.logInfoFine("Rotating to angle " + angle + " to " + direction.toString());
         // We cannot actually start the FollowTrajectory command, as it also requires drivetrain and will interrupt this command.
         // Therefore we must call its methods manually without handing control to WPILib.
@@ -75,13 +76,17 @@ public class RotateToAngle extends Command {
     // Called once after isFinished returns true
     @Override
     protected void end() {
+        RobotLogger.logInfoFiner("Rotate to angle ended. Freeing native resources...");
         followerCommand.end();
+        trajectory.free();
     }
 
     // Called when another command which requires one or more of the same
     // subsystems is scheduled to run
     @Override
     protected void interrupted() {
+        RobotLogger.logInfoFiner("Rotate to angle was interrupted. Freeing native resources...");
         followerCommand.interrupted();
+        trajectory.free();
     }
 }
