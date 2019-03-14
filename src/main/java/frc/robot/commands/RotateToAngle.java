@@ -55,7 +55,7 @@ public class RotateToAngle extends Command {
         trajectory = TrajectoryGenerator.generateRotationTank(FollowTrajectory.getSpecs(), 
                 direction == Direction.LEFT ? Math.toRadians(angle) : Math.toRadians(-angle));
         followerCommand = new FollowTrajectory(trajectory);
-        RobotLogger.logInfoFine("Rotating to angle " + angle + " to " + direction.toString());
+        RobotLogger.logInfoFiner("Rotating to angle " + angle + " to " + direction.toString());
         // We cannot actually start the FollowTrajectory command, as it also requires drivetrain and will interrupt this command.
         // Therefore we must call its methods manually without handing control to WPILib.
         followerCommand.initialize();
@@ -76,7 +76,6 @@ public class RotateToAngle extends Command {
     // Called once after isFinished returns true
     @Override
     protected void end() {
-        RobotLogger.logInfoFiner("Rotate to angle ended. Freeing native resources...");
         followerCommand.end();
         trajectory.free();
     }
@@ -85,7 +84,6 @@ public class RotateToAngle extends Command {
     // subsystems is scheduled to run
     @Override
     protected void interrupted() {
-        RobotLogger.logInfoFiner("Rotate to angle was interrupted. Freeing native resources...");
         followerCommand.interrupted();
         trajectory.free();
     }

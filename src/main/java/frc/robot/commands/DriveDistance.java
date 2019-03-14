@@ -7,10 +7,12 @@
 
 package frc.robot.commands;
 
+import com.arctos6135.robotpathfinder.core.trajectory.TankDriveTrajectory;
+import com.arctos6135.robotpathfinder.core.trajectory.TrajectoryGenerator;
+
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import robot.pathfinder.core.trajectory.TankDriveTrajectory;
-import robot.pathfinder.core.trajectory.TrajectoryGenerator;
+import frc.robot.misc.RobotLogger;
 
 public class DriveDistance extends Command {
 
@@ -30,6 +32,7 @@ public class DriveDistance extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
+        RobotLogger.logInfoFiner("Driving distance " + distance);
         if(distance >= 0) {
             trajectory = TrajectoryGenerator.generateStraightTank(FollowTrajectory.getSpecs(), distance);
         }
@@ -57,6 +60,7 @@ public class DriveDistance extends Command {
     @Override
     protected void end() {
         followerCommand.end();
+        trajectory.free();
     }
 
     // Called when another command which requires one or more of the same
@@ -64,5 +68,6 @@ public class DriveDistance extends Command {
     @Override
     protected void interrupted() {
         followerCommand.interrupted();
+        trajectory.free();
     }
 }
