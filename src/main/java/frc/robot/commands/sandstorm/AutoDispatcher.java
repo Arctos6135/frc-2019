@@ -37,7 +37,12 @@ public final class AutoDispatcher {
         HANK, ESSIE;
     }
 
-    
+    public static final boolean isValidAuto(Mode mode, HabLevel level, Side side, RobotSide robotSide) {
+        if(mode == Mode.DEBUG) {
+            return false;
+        }
+        return true;
+    }
     public static final Command getAuto(Mode mode, HabLevel level, Side side, RobotSide robotSide) {
         switch(mode) {
         case NONE:

@@ -388,8 +388,8 @@ public class Robot extends TimedRobot {
         Scheduler.getInstance().run();
 
         // Check if the auto configuration is valid
-        SmartDashboard.putBoolean("Valid Auto Configuration", AutoDispatcher.getAuto(modeChooser.getSelected(), 
-                habLevelChooser.getSelected(), sideChooser.getSelected(), robotSideChooser.getSelected()) != null);
+        SmartDashboard.putBoolean("Valid Auto Configuration", AutoDispatcher.isValidAuto(modeChooser.getSelected(), 
+                habLevelChooser.getSelected(), sideChooser.getSelected(), robotSideChooser.getSelected()));
         if(isInDebugMode) {
             getTuningEntries();
         }
