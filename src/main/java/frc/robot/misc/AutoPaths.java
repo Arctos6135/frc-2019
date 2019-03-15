@@ -61,5 +61,7 @@ public final class AutoPaths {
         approachCargoShipSideLevelOneL = approachCargoShipSideLevelOneR.mirrorLeftRight();
 
         driveOffHabLevelTwo = TrajectoryGenerator.generateStraightTank(specs, RobotMap.FieldDimensions.HAB_LVL2_LENGTH);
+
+        debug = TrajectoryGenerator.generateStraightTank(specs, 60);
     }
 }

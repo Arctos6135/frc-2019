@@ -3,6 +3,8 @@ package frc.robot.commands.sandstorm;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.AdvancedVisionAlign;
+import frc.robot.commands.FollowTrajectory;
+import frc.robot.misc.AutoPaths;
 
 /**
  * Finds the correct autonomous command based on parameters.
@@ -38,9 +40,7 @@ public final class AutoDispatcher {
     }
 
     public static final boolean isValidAuto(Mode mode, HabLevel level, Side side, RobotSide robotSide) {
-        if(mode == Mode.DEBUG) {
-            return false;
-        }
+        // Currently all autos are valid
         return true;
     }
     public static final Command getAuto(Mode mode, HabLevel level, Side side, RobotSide robotSide) {
@@ -48,7 +48,7 @@ public final class AutoDispatcher {
         case NONE:
             return new InstantCommand();
         case DEBUG:
-            return /*new FollowTrajectory(AutoPaths.debug)*/ null;
+            return new FollowTrajectory(AutoPaths.debug);
         case FRONT:
             if(level == HabLevel.ONE) {
                 // The auto is reversed if the robot side is not hank
