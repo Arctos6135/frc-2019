@@ -7,14 +7,23 @@
 
 package frc.robot.commands.sandstorm;
 
+import com.arctos6135.robotpathfinder.core.trajectory.TankDriveTrajectory;
+
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.commands.FollowTrajectory;
 import frc.robot.misc.AutoPaths;
-import robot.pathfinder.core.trajectory.TankDriveTrajectory;
 
 public class ApproachCargoShipFrontLevelOne extends CommandGroup {
 
     public ApproachCargoShipFrontLevelOne(AutoDispatcher.Side side, boolean reverse) {
+        /*
+         * As you may be able to tell, here we have a case of a memory leak (or at least bad memory management)
+         * due to the RobotPathfinder Native object being created but never freed.
+         * Unfortunately this issue had to be ignored. The main reasons being:
+         * * This constructor is likely only going to be called once in a single match.
+         * * There is no suitable alternative (everything else would use even more memory).
+         * * The GlobalLifeCycleManager will eventually free the native resources, though it is inefficient.
+         */
         TankDriveTrajectory t = side == AutoDispatcher.Side.LEFT
                 ? reverse ? AutoPaths.approachCargoShipFrontLevelOneL.mirrorFrontBack() : AutoPaths.approachCargoShipFrontLevelOneL
                 : reverse ? AutoPaths.approachCargoShipFrontLevelOneR.mirrorFrontBack() : AutoPaths.approachCargoShipFrontLevelOneR;
