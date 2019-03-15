@@ -7,6 +7,11 @@
 
 package frc.robot.commands;
 
+import com.arctos6135.robotpathfinder.core.TrajectoryParams;
+import com.arctos6135.robotpathfinder.core.Waypoint;
+import com.arctos6135.robotpathfinder.core.path.PathType;
+import com.arctos6135.robotpathfinder.core.trajectory.TankDriveTrajectory;
+
 //import java.util.concurrent.ExecutorService;
 //import java.util.concurrent.Executors;
 //import java.util.concurrent.Future;
@@ -17,10 +22,6 @@ import frc.robot.OI;
 import frc.robot.Robot;
 import frc.robot.misc.RobotLogger;
 import frc.robot.subsystems.Vision.VisionException;
-import robot.pathfinder.core.TrajectoryParams;
-import robot.pathfinder.core.Waypoint;
-import robot.pathfinder.core.path.PathType;
-import robot.pathfinder.core.trajectory.TankDriveTrajectory;
 
 public class AdvancedVisionAlign extends Command {
 
@@ -102,9 +103,8 @@ public class AdvancedVisionAlign extends Command {
         }
         
         params = new TrajectoryParams();
-        params.isTank = true;
         params.pathType = PathType.QUINTIC_HERMITE;
-        params.segmentCount = 100;
+        params.sampleCount = 100;
         // Set the waypoints
         params.waypoints = new Waypoint[] {
             new Waypoint(0, 0, Math.PI / 2),
@@ -250,6 +250,9 @@ public class AdvancedVisionAlign extends Command {
                 OI.errorRumbleDriverMinor.execute();
             }
         }
+        if(trajectory != null) {
+            trajectory.free();
+        }
         RobotLogger.logInfoFine("Advanced vision align ended");
     }
 
@@ -268,6 +271,9 @@ public class AdvancedVisionAlign extends Command {
                 RobotLogger.logError("Failed to disable vision");
                 OI.errorRumbleDriverMinor.execute();
             }
+        }
+        if(trajectory != null) {
+            trajectory.free();
         }
         RobotLogger.logInfoFine("Advanced vision align interrupted");
     }
