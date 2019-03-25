@@ -61,8 +61,11 @@ public class Robot extends TimedRobot {
 
     public static boolean isInDebugMode = false;
 
-    public static final String FRONT_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/main_camera/image_raw&quality=25&width=640&height=360";
-    public static final String REAR_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/secondary_camera/image_raw&quality=20";
+    public static final String REG_FRONT_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/main_camera/image_raw&quality=25&width=640&height=360";
+    public static final String REG_REAR_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/secondary_camera/image_raw&quality=20";
+    public static final String LOW_FRONT_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/main_camera/image_raw&quality=10&width=320&height=180";
+    public static final String LOW_REAR_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/secondary_camera/image_raw&quality=10&width=320&height=240";
+    public static boolean useLowQualityStream = false;
     public static final NetworkTableEntry mainCameraUrl = NetworkTableInstance.getDefault().getTable("SmartDashboard")
             .getEntry("main-stream-url");
     public static final NetworkTableEntry secondaryCameraUrl = NetworkTableInstance.getDefault()
@@ -133,8 +136,8 @@ public class Robot extends TimedRobot {
         SmartDashboard.putString("Last Error", "");
         SmartDashboard.putString("Last Warning", "");
 
-        mainCameraUrl.setString(FRONT_CAMERA_URL);
-        secondaryCameraUrl.setString(REAR_CAMERA_URL);
+        mainCameraUrl.setString(useLowQualityStream ? LOW_FRONT_CAMERA_URL : REG_FRONT_CAMERA_URL);
+        secondaryCameraUrl.setString(useLowQualityStream ? LOW_REAR_CAMERA_URL : REG_FRONT_CAMERA_URL);
 
         SmartDashboard.putData("Shutdown Jetson", new ShutdownJetson());
 
@@ -142,6 +145,9 @@ public class Robot extends TimedRobot {
         modeChooser.setDefaultOption("None", AutoDispatcher.Mode.NONE);
         modeChooser.addOption("Cargo Ship Front", AutoDispatcher.Mode.FRONT);
         modeChooser.addOption("Cargo Ship Side", AutoDispatcher.Mode.SIDE);
+        modeChooser.addOption("Vision", AutoDispatcher.Mode.VISION);
+        modeChooser.addOption("Side Vision", AutoDispatcher.Mode.SIDE_VISION);
+        modeChooser.addOption("Debug", AutoDispatcher.Mode.DEBUG);
         SmartDashboard.putData("Auto Mode", modeChooser);
         habLevelChooser.setDefaultOption("Level 1", AutoDispatcher.HabLevel.ONE);
         habLevelChooser.addOption("Level 2", AutoDispatcher.HabLevel.TWO);

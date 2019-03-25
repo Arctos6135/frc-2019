@@ -118,8 +118,8 @@ public class RobotMap {
         public static final double CARGOSHIP_FRONT_OFFSET = 10.875;
         public static final double CARGOSHIP_FRONT_OFFSET_SIDE = 12.875;
     }
-    public static final RobotSpecs specsHigh = new RobotSpecs(42.5, 53, RobotDimensions.BASEPLATE_WIDTH);
-    public static final RobotSpecs specsLow = new RobotSpecs(150, 50, RobotDimensions.BASEPLATE_WIDTH);
+    public static final RobotSpecs specsLow = new RobotSpecs(42.5, 53, RobotDimensions.BASEPLATE_WIDTH);
+    public static final RobotSpecs specsHigh = new RobotSpecs(150, 50, RobotDimensions.BASEPLATE_WIDTH);
 
     public static final int SHIFT_LOW_TO_HIGH_MAX = Integer.MAX_VALUE;
     public static final int SHIFT_HIGH_TO_LOW_MAX = 48;
