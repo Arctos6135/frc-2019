@@ -8,17 +8,12 @@
 package frc.robot.commands.sandstorm;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.robot.commands.AdvancedVisionAlign;
 import frc.robot.commands.FollowTrajectory;
 import frc.robot.misc.AutoPaths;
-import robot.pathfinder.core.trajectory.TankDriveTrajectory;
 
-public class ApproachCargoShipSideVisionLevelOne extends CommandGroup {
-    public ApproachCargoShipSideVisionLevelOne(AutoDispatcher.Side side) {
-        TankDriveTrajectory t = side == AutoDispatcher.Side.LEFT
-                ? AutoPaths.approachCargoShipSideForVisionLevelOneL
-                : AutoPaths.approachCargoShipSideForVisionLevelOneR;
-        addSequential(new FollowTrajectory(t));
-        addSequential(new AdvancedVisionAlign());
+public class ApproachCargoShipSideVisionLevelTwo extends CommandGroup {
+    public ApproachCargoShipSideVisionLevelTwo(AutoDispatcher.Side side) {
+        addSequential(new FollowTrajectory(AutoPaths.driveOffHabLevelTwo));
+        addSequential(new ApproachCargoShipSideVisionLevelOne(side));
     }
 }
