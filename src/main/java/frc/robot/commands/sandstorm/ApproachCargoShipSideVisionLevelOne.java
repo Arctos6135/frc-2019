@@ -7,11 +7,12 @@
 
 package frc.robot.commands.sandstorm;
 
+import com.arctos6135.robotpathfinder.core.trajectory.TankDriveTrajectory;
+
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.commands.AdvancedVisionAlign;
 import frc.robot.commands.FollowTrajectory;
 import frc.robot.misc.AutoPaths;
-import robot.pathfinder.core.trajectory.TankDriveTrajectory;
 
 public class ApproachCargoShipSideVisionLevelOne extends CommandGroup {
     public ApproachCargoShipSideVisionLevelOne(AutoDispatcher.Side side) {

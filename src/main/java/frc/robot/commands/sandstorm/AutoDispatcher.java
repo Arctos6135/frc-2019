@@ -40,7 +40,12 @@ public final class AutoDispatcher {
     }
 
     public static final boolean isValidAuto(Mode mode, HabLevel level, Side side, RobotSide robotSide) {
-        // Currently all autos are valid
+        if(mode == Mode.VISION && robotSide == RobotSide.ESSIE) {
+            return false;
+        }
+        else if(mode == Mode.SIDE_VISION && robotSide == RobotSide.ESSIE) {
+            return false;
+        }
         return true;
     }
     public static final Command getAuto(Mode mode, HabLevel level, Side side, RobotSide robotSide) {
