@@ -145,6 +145,9 @@ public class Robot extends TimedRobot {
         modeChooser.setDefaultOption("None", AutoDispatcher.Mode.NONE);
         modeChooser.addOption("Cargo Ship Front", AutoDispatcher.Mode.FRONT);
         modeChooser.addOption("Cargo Ship Side", AutoDispatcher.Mode.SIDE);
+        modeChooser.addOption("Vision", AutoDispatcher.Mode.VISION);
+        modeChooser.addOption("Side Vision", AutoDispatcher.Mode.SIDE_VISION);
+        modeChooser.addOption("Debug", AutoDispatcher.Mode.DEBUG);
         SmartDashboard.putData("Auto Mode", modeChooser);
         habLevelChooser.setDefaultOption("Level 1", AutoDispatcher.HabLevel.ONE);
         habLevelChooser.addOption("Level 2", AutoDispatcher.HabLevel.TWO);

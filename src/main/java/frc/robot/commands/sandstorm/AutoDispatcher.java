@@ -20,7 +20,7 @@ public final class AutoDispatcher {
      * Auto mode.
      */
     public enum Mode {
-        NONE, FRONT, SIDE, VISION, DEBUG;
+        NONE, FRONT, SIDE, VISION, SIDE_VISION, DEBUG;
     }
 
     /**
@@ -61,11 +61,24 @@ public final class AutoDispatcher {
                 return new ApproachCargoShipSideLevelTwo(side, robotSide != RobotSide.HANK);
             }
         case VISION:
+            if(robotSide == RobotSide.ESSIE) {
+                return null;
+            }
             if(level == HabLevel.ONE) {
                 return new AdvancedVisionAlign();
             }
             else {
                 return new ApproachCargoShipVisionLevelTwo();
+            }
+        case SIDE_VISION:
+            if(robotSide == RobotSide.ESSIE) {
+                return null;
+            }
+            if(level == HabLevel.ONE) {
+                return new ApproachCargoShipSideVisionLevelOne(side);
+            }
+            else {
+                return new ApproachCargoShipSideVisionLevelTwo(side);
             }
         default: return null;
         }
