@@ -101,6 +101,13 @@ public class AdvancedVisionAlign extends Command {
             error = true;
             return;
         }
+
+        if(visionYOffset <= 3) {
+            RobotLogger.logError("Not enough distance to vision target!");
+            OI.errorRumbleDriverMinor.execute();
+            error = true;
+            return;
+        }
         
         params = new TrajectoryParams();
         params.pathType = PathType.QUINTIC_HERMITE;
