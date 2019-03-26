@@ -71,5 +71,12 @@ public final class AutoPaths {
         approachCargoShipSideForVisionLevelOneR = approachCargoShipSideForVisionLevelOneL.mirrorLeftRight();
 
         driveOffHabLevelTwo = TrajectoryGenerator.generateStraightTank(specs, RobotMap.FieldDimensions.HAB_LVL2_LENGTH);
+        
+        params.waypoints = new Waypoint[] {
+            new Waypoint(0, 0, Math.PI / 2),
+            new Waypoint(-60, 84, Math.PI / 2),
+        };
+        params.alpha = 100;
+        debug = new TankDriveTrajectory(specs, params);
     }
 }
