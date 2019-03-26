@@ -100,6 +100,13 @@ public class AdvancedVisionAlign extends Command {
             error = true;
             return;
         }
+
+        if(visionYOffset <= 3) {
+            RobotLogger.logError("Not enough distance to vision target!");
+            OI.errorRumbleDriverMinor.execute();
+            error = true;
+            return;
+        }
         
         params = new TrajectoryParams();
         params.isTank = true;
@@ -109,7 +116,7 @@ public class AdvancedVisionAlign extends Command {
         params.waypoints = new Waypoint[] {
             new Waypoint(0, 0, Math.PI / 2),
             // The second waypoint has coordinates relative to the first waypoint, which is just the robot's current position
-            new Waypoint(visionXOffset, Math.max(0, visionYOffset - 3), Math.toRadians(-visionAngleOffset) + Math.PI / 2),
+            new Waypoint(visionXOffset, visionYOffset, Math.toRadians(-visionAngleOffset) + Math.PI / 2),
         };
         // Set alpha to be 3/4 of the diagonal distance
         params.alpha = Math.sqrt(visionXOffset * visionXOffset + visionYOffset * visionYOffset) * 0.75;
