@@ -21,12 +21,12 @@ public class Climber extends Subsystem {
     public enum State {
         EXTENDED, RETRACTED;
 
-        public DoubleSolenoid.Value value() {
+        public boolean value() {
             if(this == EXTENDED) {
-                return DoubleSolenoid.Value.kForward;
+                return true;
             }
             else {
-                return DoubleSolenoid.Value.kReverse;
+                return false;
             }
         }
     }
