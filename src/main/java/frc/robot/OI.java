@@ -30,6 +30,7 @@ import frc.robot.commands.VisionAlign;
 import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.misc.RobotLogger;
 import frc.robot.misc.Rumble;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.triggers.HeldButton;
 import frc.robot.triggers.MultiButton;
@@ -323,8 +324,8 @@ public class OI {
 
         restartVisionServer.whenPressed(new RestartVisionServer());
 
-        climberPistonToggleFront.whenPressed(new OperateClimber(OperateClimber.Side.FRONT));
-        climberPistonToggleBack.whenPressed(new OperateClimber(OperateClimber.Side.BACK));
+        climberPistonToggleFront.whenPressed(new OperateClimber(Climber.Side.FRONT));
+        climberPistonToggleBack.whenPressed(new OperateClimber(Climber.Side.BACK));
 
         autoClimb.whenPressed(new AutoClimb());
         autoClimb.whenReleased(new InstantCommand(() -> {

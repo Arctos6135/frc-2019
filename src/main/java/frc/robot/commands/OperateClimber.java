@@ -8,21 +8,21 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.Robot;
 import frc.robot.misc.RobotLogger;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Climber.Side;
 
 /**
-  * Operates the climber.
-  */
+ * Operates the climber.
+ */
 public class OperateClimber extends Command {
 
     Side side;
     Climber.State state;
     boolean wait;
-    
+
     public OperateClimber(Side side, boolean wait) {
         super();
         // Use requires() here to declare subsystem dependencies
@@ -33,6 +33,7 @@ public class OperateClimber extends Command {
         this.state = null;
         this.wait = wait;
     }
+
     public OperateClimber(Side side) {
         this(side, false);
     }
@@ -45,12 +46,9 @@ public class OperateClimber extends Command {
         this.state = state;
         this.wait = wait;
     }
+
     public OperateClimber(Side side, Climber.State state) {
         this(side, state, false);
-    }
-
-    public enum Side {
-        FRONT, BACK;
     }
 
     // Called once when the command executes
@@ -59,21 +57,18 @@ public class OperateClimber extends Command {
         // When extending, go into low gear
         RobotLogger.logInfoFiner("Putting robot into low gear for climbing");
         Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
-        if(state == null) {
-            if(side == Side.FRONT) {
+        if (state == null) {
+            if (side == Side.FRONT) {
                 state = Robot.climber.getFrontState().opposite();
                 Robot.climber.toggleFront();
-            }
-            else {
+            } else {
                 state = Robot.climber.getBackState().opposite();
                 Robot.climber.toggleBack();
             }
-        }
-        else {
-            if(side == Side.FRONT) {
+        } else {
+            if (side == Side.FRONT) {
                 Robot.climber.setFrontState(state);
-            }
-            else {
+            } else {
                 Robot.climber.setBackState(state);
             }
         }
@@ -81,16 +76,14 @@ public class OperateClimber extends Command {
 
     @Override
     protected boolean isFinished() {
-        if(wait) {
-            if(state == Climber.State.RETRACTED) {
+        if (wait) {
+            if (state == Climber.State.RETRACTED) {
                 return timeSinceInitialized() >= 0.5;
-            }
-            else {
+            } else {
                 Climber.State s = side == Side.FRONT ? Robot.climber.getFrontState() : Robot.climber.getBackState();
                 return s == state || timeSinceInitialized() >= 0.5;
             }
-        }
-        else {
+        } else {
             return true;
         }
     }
