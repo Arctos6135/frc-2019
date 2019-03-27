@@ -23,6 +23,13 @@ public class OperateClimber extends Command {
     Climber.State state;
     boolean wait;
 
+    /**
+     * Toggles one side of the climber. If wait is set to true, this command will
+     * wait for the pistons to go into position before finishing.
+     * 
+     * @param side The side to operate
+     * @param wait Whether or not to wait for the pistons
+     */
     public OperateClimber(Side side, boolean wait) {
         super();
         // Use requires() here to declare subsystem dependencies
@@ -34,10 +41,33 @@ public class OperateClimber extends Command {
         this.wait = wait;
     }
 
+    /**
+     * Toggles one side of the climber.
+     * 
+     * @param side The side to operate
+     */
     public OperateClimber(Side side) {
         this(side, false);
     }
 
+    /**
+     * Sets the state of one side of the climber.
+     * 
+     * @param side  The side to operate
+     * @param state The state to set it to
+     */
+    public OperateClimber(Side side, Climber.State state) {
+        this(side, state, false);
+    }
+
+    /**
+     * Sets the state of one side of the climber. If wait is set to true, this
+     * command will wait for the pistons to go into position before exiting.
+     * 
+     * @param side  The side to operate
+     * @param state The state to set it to
+     * @param wait  Whether or not to wait for the pistons
+     */
     public OperateClimber(Side side, Climber.State state, boolean wait) {
         super();
         requires(Robot.climber);
@@ -47,42 +77,30 @@ public class OperateClimber extends Command {
         this.wait = wait;
     }
 
-    public OperateClimber(Side side, Climber.State state) {
-        this(side, state, false);
-    }
-
     // Called once when the command executes
     @Override
     protected void initialize() {
-        // When extending, go into low gear
+        // Go into low gear
         RobotLogger.logInfoFiner("Putting robot into low gear for climbing");
         Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
         if (state == null) {
-            if (side == Side.FRONT) {
-                state = Robot.climber.getState(Climber.Side.FRONT).opposite();
-                Robot.climber.toggle(Climber.Side.FRONT);
-            } else {
-                state = Robot.climber.getState(Climber.Side.BACK).opposite();
-                Robot.climber.toggle(Climber.Side.BACK);
-            }
-        } else {
-            if (side == Side.FRONT) {
-                Robot.climber.setState(Climber.Side.FRONT, state);
-            } else {
-                Robot.climber.setState(Climber.Side.BACK, state);
-            }
+            state = Robot.climber.getState(side).opposite();
         }
+        Robot.climber.setState(side, state);
     }
 
     @Override
     protected boolean isFinished() {
         if (wait) {
+            // If retracting simply wait for half a second
             if (state == Climber.State.RETRACTED) {
                 return timeSinceInitialized() >= 0.5;
             } else {
-                Climber.State s = side == Side.FRONT ? Robot.climber.getState(Climber.Side.FRONT) 
-                    : Robot.climber.getState(Climber.Side.BACK);
-                return s == state || timeSinceInitialized() >= 0.5;
+                if (timeSinceInitialized() >= 2.0) {
+                    RobotLogger.logError("Wait for climber pistons to go into position timed out");
+                    return true;
+                }
+                return Robot.climber.getState(side) == state;
             }
         } else {
             return true;
