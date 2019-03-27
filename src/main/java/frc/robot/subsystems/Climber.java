@@ -7,7 +7,6 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
 
@@ -21,12 +20,12 @@ public class Climber extends Subsystem {
     public enum State {
         EXTENDED, RETRACTED;
 
-        public DoubleSolenoid.Value value() {
+        public boolean value() {
             if(this == EXTENDED) {
-                return DoubleSolenoid.Value.kForward;
+                return true;
             }
             else {
-                return DoubleSolenoid.Value.kReverse;
+                return false;
             }
         }
     }
