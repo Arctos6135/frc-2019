@@ -48,9 +48,10 @@ public class RobotMap {
 
     // Encoder constants
 	public static final int WHEEL_DIAMETER = 6; //INCHES
-	public static final double WHEEL_CIRCUMFRENCE = WHEEL_DIAMETER*Math.PI;
-	public static final double DRIVE_ENCODER_PPR = 256;
-    public static final double DISTANCE_PER_PULSE = WHEEL_CIRCUMFRENCE/DRIVE_ENCODER_PPR*5/48;
+	public static final double WHEEL_CIRCUMFRENCE = WHEEL_DIAMETER * Math.PI;
+    public static final double DRIVE_ENCODER_PPR = 256;
+    // 5 / 48 is the gear ratio
+    public static final double DISTANCE_PER_PULSE = WHEEL_CIRCUMFRENCE / DRIVE_ENCODER_PPR * 5 / 48;
 
     public static final DoubleSolenoid hankSolenoid = new DoubleSolenoid(2, 3);
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
@@ -86,9 +87,6 @@ public class RobotMap {
         RobotLogger.logError("Critical error: Essie high motor protection tripped");
     });
     public static final DigitalInput essiePhotoElectric = new DigitalInput(4);
-
-    // Climber motor
-    public static final VictorSP climberMotor = new VictorSP(2);
 
     // navX
     public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
