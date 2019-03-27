@@ -15,12 +15,15 @@ import frc.robot.RobotMap;
 import frc.robot.misc.RobotLogger;
 
 /**
-  * Add your docs here.
-  */
+ * Controls Hab 2 climber pistons.
+ */
 public class Climber extends Subsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
 
+    /**
+     * Enum for the two states of a climber piston, extended or retracted.
+     */
     public enum State {
         EXTENDED, RETRACTED;
 
@@ -42,8 +45,59 @@ public class Climber extends Subsystem {
         }
     }
 
+    public static void sleep(long ms) {
+        try {
+            Thread.sleep(ms);
+        }
+        catch(InterruptedException e) {
+            // Ignore
+        }
+    }
+
+    /**
+     * Enum for the two piston sides. 
+     * <em>Note: The FRONT side is the ESSIE side instead of the HANK side!</em>
+     */
     public enum Side {
         FRONT, BACK;
+    }
+
+    public State getState(Side side) {
+        return !(side == Side.FRONT ? RobotMap.frontMRS : RobotMap.backMRS).get() ? State.EXTENDED : State.RETRACTED;
+    }
+
+    public void setState(Side side, State state) {
+        setState(side, state, false);
+    }
+    public void setState(Side side, State state, boolean wait) {
+        RobotLogger.logInfoFine("Setting " + side.toString() + " climbers to " + state.toString() + " wait=" + wait);
+        DoubleSolenoid climber = side == Side.FRONT ? RobotMap.frontClimber : RobotMap.backClimber;
+
+        climber.set(state.value());
+
+        if(wait) {
+            if(state == State.RETRACTED) {
+                sleep(500);
+            }
+            else {
+                double start = Timer.getFPGATimestamp();
+                while(getState(side) != State.EXTENDED) {
+                    if(Timer.getFPGATimestamp() - start >= 2.0) {
+                        RobotLogger.logError("Waiting for front pistons to extend timed out (2 seconds)");
+                        OI.errorRumbleDriverMajor.execute();
+                        OI.errorRumbleOperatorMajor.execute();
+                        return;
+                    }
+                    sleep(50);
+                }
+            }
+        }
+    }
+    public void toggle(Side side) {
+        toggle(side, false);
+    }
+    public void toggle(Side side, boolean wait) {
+        setState(side, getState(side).opposite(), wait);
     }
 
     public void setFrontState(State state) {
