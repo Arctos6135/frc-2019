@@ -71,6 +71,7 @@ public class Climber extends Subsystem {
     }
     public void setState(Side side, State state, boolean wait) {
         RobotLogger.logInfoFine("Setting " + side.toString() + " climbers to " + state.toString() + " wait=" + wait);
+        @SuppressWarnings("resource")
         DoubleSolenoid climber = side == Side.FRONT ? RobotMap.frontClimber : RobotMap.backClimber;
 
         climber.set(state.value());
@@ -100,112 +101,15 @@ public class Climber extends Subsystem {
         setState(side, getState(side).opposite(), wait);
     }
 
-    public void setFrontState(State state) {
-        setFrontState(state, false);
-    }
-    public void setFrontState(State state, boolean wait) {
-        RobotLogger.logInfoFine("Setting front climber pistons to state " + state.toString());
-        RobotMap.frontClimber.set(state.value());
-
-        if(wait) {
-            if(state == State.RETRACTED) {
-                try {
-                    Thread.sleep(500);
-                }
-                catch(InterruptedException e) {
-                    RobotLogger.logError("Unexpected InterruptedException in Thread.sleep() in Climber.setFrontState()");
-                    return;
-                }
-            }
-            else {
-                double start = Timer.getFPGATimestamp();
-                while(getFrontState() != State.EXTENDED) {
-                    try {
-                        Thread.sleep(50);
-                    }
-                    catch(InterruptedException e) {
-                        RobotLogger.logError("Unexpected InterruptedException in Thread.sleep() in Climber.setFrontState()");
-                        return;
-                    }
-                    
-                    if(Timer.getFPGATimestamp() - start >= 2.0) {
-                        RobotLogger.logError("Waiting for front pistons to extend timed out (2 seconds)");
-                        OI.errorRumbleDriverMajor.execute();
-                        OI.errorRumbleOperatorMajor.execute();
-                        return;
-                    }
-                }
-            }
-        }
-    }
-    public State getFrontState() {
-        // If get() returns false it means that the piston is extended
-        return !RobotMap.frontMRS.get() ? State.EXTENDED : State.RETRACTED;
-    }
-    public void toggleFront() {
-        toggleFront(false);
-    }
-    public void toggleFront(boolean wait) {
-        setFrontState(getFrontState().opposite(), wait);
-    }
-
-    public void setBackState(State state) {
-        setBackState(state, false);
-    }
-    public void setBackState(State state, boolean wait) {
-        RobotLogger.logInfoFine("Setting back climber pistons to state " + state.toString());
-        RobotMap.backClimber.set(state.value());
-
-        if(wait) {
-            if(state == State.RETRACTED) {
-                try {
-                    Thread.sleep(500);
-                }
-                catch(InterruptedException e) {
-                    RobotLogger.logError("Unexpected InterruptedException in Thread.sleep() in Climber.setBackState()");
-                    return;
-                }
-            }
-            else {
-                double start = Timer.getFPGATimestamp();
-                while(getBackState() != State.EXTENDED) {
-                    try {
-                        Thread.sleep(50);
-                    }
-                    catch(InterruptedException e) {
-                        RobotLogger.logError("Unexpected InterruptedException in Thread.sleep() in Climber.setBackState()");
-                        return;
-                    }
-                    
-                    if(Timer.getFPGATimestamp() - start >= 2.0) {
-                        RobotLogger.logError("Waiting for back pistons to extend timed out (2 seconds)");
-                        OI.errorRumbleDriverMajor.execute();
-                        OI.errorRumbleOperatorMajor.execute();
-                        return;
-                    }
-                }
-            }
-        }
-    }
-    public State getBackState() {
-        return !RobotMap.backMRS.get() ? State.EXTENDED : State.RETRACTED;
-    }
-    public void toggleBack() {
-        toggleBack(false);
-    }
-    public void toggleBack(boolean wait) {
-        setBackState(getBackState().opposite(), wait);
-    }
-
     public Climber() {
         super();
-        setFrontState(State.RETRACTED);
-        setBackState(State.RETRACTED);
+        setState(Side.FRONT, State.RETRACTED);
+        setState(Side.BACK, State.RETRACTED);
     }
     public Climber(String name) {
         super(name);
-        setFrontState(State.RETRACTED);
-        setBackState(State.RETRACTED);
+        setState(Side.FRONT, State.RETRACTED);
+        setState(Side.BACK, State.RETRACTED);
     }
 
     @Override

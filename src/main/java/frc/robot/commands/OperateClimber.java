@@ -59,17 +59,17 @@ public class OperateClimber extends Command {
         Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
         if (state == null) {
             if (side == Side.FRONT) {
-                state = Robot.climber.getFrontState().opposite();
-                Robot.climber.toggleFront();
+                state = Robot.climber.getState(Climber.Side.FRONT).opposite();
+                Robot.climber.toggle(Climber.Side.FRONT);
             } else {
-                state = Robot.climber.getBackState().opposite();
-                Robot.climber.toggleBack();
+                state = Robot.climber.getState(Climber.Side.BACK).opposite();
+                Robot.climber.toggle(Climber.Side.BACK);
             }
         } else {
             if (side == Side.FRONT) {
-                Robot.climber.setFrontState(state);
+                Robot.climber.setState(Climber.Side.FRONT, state);
             } else {
-                Robot.climber.setBackState(state);
+                Robot.climber.setState(Climber.Side.BACK, state);
             }
         }
     }
@@ -80,7 +80,8 @@ public class OperateClimber extends Command {
             if (state == Climber.State.RETRACTED) {
                 return timeSinceInitialized() >= 0.5;
             } else {
-                Climber.State s = side == Side.FRONT ? Robot.climber.getFrontState() : Robot.climber.getBackState();
+                Climber.State s = side == Side.FRONT ? Robot.climber.getState(Climber.Side.FRONT) 
+                    : Robot.climber.getState(Climber.Side.BACK);
                 return s == state || timeSinceInitialized() >= 0.5;
             }
         } else {
