@@ -56,8 +56,8 @@ public class RobotMap {
 
     public static final DoubleSolenoid hankSolenoid = new DoubleSolenoid(2, 3);
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
-    public static final Solenoid frontClimber = new Solenoid(4);
-    public static final Solenoid backClimber = new Solenoid(5);
+    public static final DoubleSolenoid frontClimber = new DoubleSolenoid(4, 5);
+    public static final DoubleSolenoid backClimber = new DoubleSolenoid(6, 7);
 
     // Drive motors
     public static final WPI_VictorSPX rVictor = new WPI_VictorSPX(0);
