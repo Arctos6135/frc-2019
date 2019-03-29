@@ -33,7 +33,6 @@ import frc.robot.misc.Rumble;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.triggers.HeldButton;
-import frc.robot.triggers.MultiButton;
 import frc.robot.triggers.TriggerButton;
 
 /**
@@ -186,8 +185,7 @@ public class OI {
         Button gearShiftHigh = new JoystickButton(driverController, Controls.GEARSHIFT_HIGH);
         Button gearShiftLow = new JoystickButton(driverController, Controls.GEARSHIFT_LOW);
         Button restartVisionServer = new JoystickButton(operatorController, Controls.RESTART_VISION_SERVER);
-        Button autoClimb = new HeldButton(new MultiButton(new POVButton(driverController, Controls.POV_AUTO_CLIMB),
-                new POVButton(operatorController, Controls.POV_AUTO_CLIMB)), 0.5);
+        Button autoClimb = new HeldButton(new POVButton(driverController, Controls.POV_AUTO_CLIMB), 0.5);
         Button lowQualityStreamButton = new TriggerButton(driverController, Controls.LOW_QUALITY_STREAM, 0.75);
         Button regQualityStreamButton = new TriggerButton(driverController, Controls.REG_QUALITY_STREAM, 0.75);
 
