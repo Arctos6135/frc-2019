@@ -266,8 +266,6 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotPeriodic() {
-        SmartDashboard.putBoolean("Front", climber.getState(Climber.Side.FRONT) == Climber.State.EXTENDED);
-        SmartDashboard.putBoolean("Back", climber.getState(Climber.Side.BACK) == Climber.State.EXTENDED);
         // Vision status is outputted regardless of current state
         SmartDashboard.putBoolean("Vision Status", vision.ready());
         SmartDashboard.putBoolean("Drive Reversed", TeleopDrive.isReversed());

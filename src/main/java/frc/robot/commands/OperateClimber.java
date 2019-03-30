@@ -82,17 +82,14 @@ public class OperateClimber extends Command {
     // Called once when the command executes
     @Override
     protected void initialize() {
-        System.out.println("OperateClimber initialize");
         // Go into low gear
         RobotLogger.logInfoFiner("Putting robot into low gear for climbing");
         Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
         if (state == null || toggle) {
-            System.out.println("Current state is " + Robot.climber.getState(side).toString());
-            System.out.println("Side is " + side.toString());
             state = Robot.climber.getState(side).opposite();
         }
-        System.out.println("State is " + state.toString());
         Robot.climber.setState(side, state);
+        RobotLogger.logInfoFiner("Setting climber: " + side.toString() + " to " + state.toString());
     }
 
     @Override
