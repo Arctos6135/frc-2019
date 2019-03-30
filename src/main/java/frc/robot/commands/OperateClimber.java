@@ -21,6 +21,7 @@ public class OperateClimber extends Command {
 
     Side side;
     Climber.State state;
+    boolean toggle = false;
     boolean wait;
 
     /**
@@ -38,6 +39,7 @@ public class OperateClimber extends Command {
         requires(Robot.drivetrain);
         this.side = side;
         this.state = null;
+        this.toggle = true;
         this.wait = wait;
     }
 
@@ -80,12 +82,16 @@ public class OperateClimber extends Command {
     // Called once when the command executes
     @Override
     protected void initialize() {
+        System.out.println("OperateClimber initialize");
         // Go into low gear
         RobotLogger.logInfoFiner("Putting robot into low gear for climbing");
         Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
-        if (state == null) {
+        if (state == null || toggle) {
+            System.out.println("Current state is " + Robot.climber.getState(side).toString());
+            System.out.println("Side is " + side.toString());
             state = Robot.climber.getState(side).opposite();
         }
+        System.out.println("State is " + state.toString());
         Robot.climber.setState(side, state);
     }
 
@@ -94,7 +100,7 @@ public class OperateClimber extends Command {
         if (wait) {
             // If retracting simply wait for half a second
             if (state == Climber.State.RETRACTED) {
-                return timeSinceInitialized() >= 0.5;
+                return timeSinceInitialized() >= 0.8;
             } else {
                 if (timeSinceInitialized() >= 2.0) {
                     RobotLogger.logError("Wait for climber pistons to go into position timed out");

@@ -19,22 +19,22 @@ public class AutoClimb extends CommandGroup {
      */
     public AutoClimb() {
         // Push front side out
-        addParallel(new OperateClimber(Climber.Side.FRONT, Climber.State.EXTENDED, true));
+        addSequential(new OperateClimber(Climber.Side.FRONT, Climber.State.EXTENDED, true));
 
         // Drive so that the front wheels are on the platform
         // Drive a negative distance since the front climber side is actually the back robot side
         addSequential(new DriveDistance(-20));
 
         // Retract front pistons
-        addParallel(new OperateClimber(Climber.Side.FRONT, Climber.State.RETRACTED, true));
+        addSequential(new OperateClimber(Climber.Side.FRONT, Climber.State.RETRACTED, false));
         // Push back side up
-        addParallel(new OperateClimber(Climber.Side.BACK, Climber.State.EXTENDED, true));
+        addSequential(new OperateClimber(Climber.Side.BACK, Climber.State.EXTENDED, true));
 
         // Drive the back wheels onto the platform
         addSequential(new DriveDistance(-40));
 
         // Retract back pistons
-        addParallel(new OperateClimber(Climber.Side.BACK, Climber.State.RETRACTED, true));
+        addSequential(new OperateClimber(Climber.Side.BACK, Climber.State.RETRACTED, true));
 
         // Drive so that the entire robot is on the platform
         addSequential(new DriveDistance(-20));
