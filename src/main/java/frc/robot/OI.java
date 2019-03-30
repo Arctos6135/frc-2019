@@ -33,7 +33,6 @@ import frc.robot.misc.Rumble;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.triggers.HeldButton;
-import frc.robot.triggers.TriggerButton;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -145,9 +144,6 @@ public class OI {
         public static final int TURN_180 = ControllerMap.BUTTON_A;
 
         public static final int POV_AUTO_CLIMB = ControllerMap.POV_LEFT;
-
-        public static final int LOW_QUALITY_STREAM = ControllerMap.LTRIGGER;
-        public static final int REG_QUALITY_STREAM = ControllerMap.RTRIGGER;
     }
 
     public static final XboxController driverController = new XboxController(0);
@@ -186,8 +182,6 @@ public class OI {
         Button gearShiftLow = new JoystickButton(driverController, Controls.GEARSHIFT_LOW);
         Button restartVisionServer = new JoystickButton(operatorController, Controls.RESTART_VISION_SERVER);
         Button autoClimb = new HeldButton(new POVButton(driverController, Controls.POV_AUTO_CLIMB), 0.5);
-        Button lowQualityStreamButton = new TriggerButton(driverController, Controls.LOW_QUALITY_STREAM, 0.75);
-        Button regQualityStreamButton = new TriggerButton(driverController, Controls.REG_QUALITY_STREAM, 0.75);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
             RobotMap.essieMotorHigh.overrideBlacklist();
@@ -332,13 +326,6 @@ public class OI {
                 c.cancel();
                 RobotLogger.logInfoFine("Auto climb was cancelled because the buttons were released");
             }
-        }));
-
-        lowQualityStreamButton.whenPressed(new InstantCommand(() -> {
-            Robot.useLowQualityStream = true;
-        }));
-        regQualityStreamButton.whenPressed(new InstantCommand(() -> {
-            Robot.useLowQualityStream = false;
         }));
     }
 }
