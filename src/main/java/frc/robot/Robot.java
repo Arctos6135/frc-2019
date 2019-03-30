@@ -10,6 +10,10 @@ package frc.robot;
 import java.io.IOException;
 import java.util.TimerTask;
 
+import edu.wpi.cscore.MjpegServer;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoSink;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -59,6 +63,11 @@ public class Robot extends TimedRobot {
     static SendableChooser<Drivetrain.Gear> followerGearChooser = new SendableChooser<>();
     static SendableChooser<Drivetrain.Gear> matchStartGearChooser = new SendableChooser<>();
 
+    public static UsbCamera frontCam;
+    public static UsbCamera backCam;
+    public static VideoSink frontCamServer;
+    public static VideoSink backCamServer;
+
     public static boolean isInDebugMode = false;
 
     public static final String FRONT_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/main_camera/image_raw&quality=20&width=320&height=180";
@@ -82,6 +91,19 @@ public class Robot extends TimedRobot {
         climber = new Climber();
         beautifulRobot = new BeautifulRobot();
         oi = new OI();
+
+        // Stream the cameras from the roborio because apparently the jetson takes too much bw
+        frontCam = CameraServer.getInstance().startAutomaticCapture("Main Camera", 0);
+        backCam = CameraServer.getInstance().startAutomaticCapture("Secondary Camera", 1);
+        // Set everything to shitty resolution
+        frontCam.setResolution(320, 180);
+        backCam.setResolution(320, 240);
+        frontCamServer = CameraServer.getInstance().getServer("Main Camera");
+        backCamServer = CameraServer.getInstance().getServer("Secondary Camera");
+        // Set everything to shitty quality
+        frontCamServer.getProperty("compression").set(20);
+        backCamServer.getProperty("compression").set(20);
+
 
         // Warm up RobotPathfinder and generate auto paths
         long finalGenerationTime = FollowTrajectory.warmupRobotPathfinder(10);
