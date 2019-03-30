@@ -3,8 +3,11 @@ package frc.robot.misc;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
@@ -113,5 +116,23 @@ public class RobotLogger {
 
     public static void flush() {
         fileHandler.flush();
+    }
+
+    public static void cleanLogs(File logDir, DateFormat logDateFormat, long maxAgeHours) {
+        Date now = new Date();
+        for(File f : logDir.listFiles()) {
+            if(f.isFile()) {
+                try {
+                    Date d = logDateFormat.parse(f.getName());
+                    long diffHours = TimeUnit.HOURS.convert(now.getTime() - d.getTime(), TimeUnit.MILLISECONDS);
+                    if(diffHours > maxAgeHours) {
+                        f.delete();
+                    }
+                }
+                catch(ParseException e) {
+                    continue;
+                }
+            }
+        }
     }
 }
