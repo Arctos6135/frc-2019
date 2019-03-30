@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SerialPort.Port;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
 import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.misc.RobotLogger;
@@ -58,6 +57,9 @@ public class RobotMap {
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
     public static final DoubleSolenoid frontClimber = new DoubleSolenoid(4, 5);
     public static final DoubleSolenoid backClimber = new DoubleSolenoid(6, 7);
+
+    public static final DigitalInput frontMRS = new DigitalInput(6);
+    public static final DigitalInput backMRS = new DigitalInput(5);
 
     // Drive motors
     public static final WPI_VictorSPX rVictor = new WPI_VictorSPX(0);

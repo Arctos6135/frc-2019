@@ -8,16 +8,22 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.robot.OI;
 import frc.robot.RobotMap;
+import frc.robot.misc.RobotLogger;
 
 /**
-  * Add your docs here.
-  */
+ * Controls Hab 2 climber pistons.
+ */
 public class Climber extends Subsystem {
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
 
+    /**
+     * Enum for the two states of a climber piston, extended or retracted.
+     */
     public enum State {
         EXTENDED, RETRACTED;
 
@@ -29,52 +35,81 @@ public class Climber extends Subsystem {
                 return DoubleSolenoid.Value.kReverse;
             }
         }
-    }
-
-    State frontState;
-    State backState;
-
-    public void setFrontState(State state) {
-        this.frontState = state;
-        RobotMap.frontClimber.set(state.value());
-    }
-    public State getFrontState() {
-        return frontState;
-    }
-    public void toggleFront() {
-        if(frontState == State.EXTENDED) {
-            setFrontState(State.RETRACTED);
-        }
-        else {
-            setFrontState(State.EXTENDED);
+        public State opposite() {
+            if(this == EXTENDED) {
+                return RETRACTED;
+            }
+            else {
+                return EXTENDED;
+            }
         }
     }
 
-    public void setBackState(State state) {
-        this.backState = state;
-        RobotMap.backClimber.set(state.value());
-    }
-    public State getBackState() {
-        return backState;
-    }
-    public void toggleBack() {
-        if(backState == State.EXTENDED) {
-            setBackState(State.RETRACTED);
+    public static void sleep(long ms) {
+        try {
+            Thread.sleep(ms);
         }
-        else {
-            setBackState(State.EXTENDED);
+        catch(InterruptedException e) {
+            // Ignore
         }
+    }
+
+    /**
+     * Enum for the two piston sides. 
+     * <em>Note: The FRONT side is the ESSIE side instead of the HANK side!</em>
+     */
+    public enum Side {
+        FRONT, BACK;
+    }
+
+    public State getState(Side side) {
+        return !(side == Side.FRONT ? RobotMap.frontMRS : RobotMap.backMRS).get() ? State.EXTENDED : State.RETRACTED;
+    }
+
+    public void setState(Side side, State state) {
+        setState(side, state, false);
+    }
+    public void setState(Side side, State state, boolean wait) {
+        RobotLogger.logInfoFine("Setting " + side.toString() + " climbers to " + state.toString() + " wait=" + wait);
+        @SuppressWarnings("resource")
+        DoubleSolenoid climber = side == Side.FRONT ? RobotMap.frontClimber : RobotMap.backClimber;
+
+        climber.set(state.value());
+
+        if(wait) {
+            if(state == State.RETRACTED) {
+                sleep(500);
+            }
+            else {
+                double start = Timer.getFPGATimestamp();
+                while(getState(side) != State.EXTENDED) {
+                    if(Timer.getFPGATimestamp() - start >= 2.0) {
+                        RobotLogger.logError("Waiting for front pistons to extend timed out (2 seconds)");
+                        OI.errorRumbleDriverMajor.execute();
+                        OI.errorRumbleOperatorMajor.execute();
+                        return;
+                    }
+                    sleep(50);
+                }
+            }
+        }
+    }
+    public void toggle(Side side) {
+        toggle(side, false);
+    }
+    public void toggle(Side side, boolean wait) {
+        setState(side, getState(side).opposite(), wait);
     }
 
     public Climber() {
         super();
-        setFrontState(State.RETRACTED);
-        setBackState(State.RETRACTED);
+        setState(Side.FRONT, State.RETRACTED);
+        setState(Side.BACK, State.RETRACTED);
     }
     public Climber(String name) {
         super(name);
-        setFrontState(State.RETRACTED);
-        setBackState(State.RETRACTED);
+        setState(Side.FRONT, State.RETRACTED);
+        setState(Side.BACK, State.RETRACTED);
     }
 
     @Override
