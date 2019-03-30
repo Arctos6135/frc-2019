@@ -99,7 +99,7 @@ public class OperateClimber extends Command {
             if (state == Climber.State.RETRACTED) {
                 return timeSinceInitialized() >= 0.8;
             } else {
-                if (timeSinceInitialized() >= 2.0) {
+                if (timeSinceInitialized() >= 5.0) {
                     RobotLogger.logError("Wait for climber pistons to go into position timed out");
                     return true;
                 }
