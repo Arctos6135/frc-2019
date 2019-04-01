@@ -3,8 +3,10 @@ package frc.robot.misc;
 import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
@@ -57,6 +59,10 @@ public class RobotLogger {
         // Create the log directory if it does not exist
         File logDir = new File("/home/lvuser/frc2019-logs");
         logDir.mkdirs();
+
+        // Delete every log file that's more than 72 hours old
+        cleanLogs(logDir, format, 72);
+
         // Create handler and formatter
         fileHandler = new FileHandler("/home/lvuser/frc2019-logs/" + format.format(date) + ".log");
         formatter = new RobotLoggerFormatter();
@@ -113,5 +119,34 @@ public class RobotLogger {
 
     public static void flush() {
         fileHandler.flush();
+    }
+
+    public static void cleanLogs(File logDir, DateFormat logDateFormat, long maxAgeHours) {
+        if(!logDir.isDirectory()) {
+            throw new IllegalArgumentException("logDir must be a directory");
+        }
+        // Cache the current date and time
+        Date now = new Date();
+        // Go through all files in the dir
+        for(File f : logDir.listFiles()) {
+            // Check only files
+            if(f.isFile()) {
+                try {
+                    // Try to parse the date
+                    // Parse it from the filename instead of getting the last modified time
+                    // This way we don't delete anything that's not a log file
+                    Date d = logDateFormat.parse(f.getName());
+                    // Convert the difference between the two times into hours and delete the file if needed
+                    long diffHours = TimeUnit.HOURS.convert(now.getTime() - d.getTime(), TimeUnit.MILLISECONDS);
+                    if(diffHours > maxAgeHours) {
+                        f.delete();
+                    }
+                }
+                // If the name cannot be parsed skip it
+                catch(ParseException e) {
+                    continue;
+                }
+            }
+        }
     }
 }
