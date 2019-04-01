@@ -7,9 +7,9 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.buttons.POVButton;
 import edu.wpi.first.wpilibj.buttons.Trigger;
@@ -17,19 +17,22 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.AdvancedVisionAlign;
 import frc.robot.commands.AutoCargoIntake;
+import frc.robot.commands.AutoClimb;
 import frc.robot.commands.FlashBeautifulRobot;
+import frc.robot.commands.OperateClimber;
 import frc.robot.commands.OperateEssie;
 import frc.robot.commands.OperateHank;
 import frc.robot.commands.RestartVisionServer;
 import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
-import frc.robot.commands.ToggleClimber;
 import frc.robot.commands.VisionAlign;
 import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.misc.RobotLogger;
 import frc.robot.misc.Rumble;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.triggers.HeldButton;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -125,7 +128,6 @@ public class OI {
         
         public static final int VISION_ALIGN_ADVANCED = ControllerMap.BUTTON_Y;
         public static final int VISION_ALIGN_BASIC = ControllerMap.BUTTON_RSTICK;
-        public static final int CANCEL_ALIGN = ControllerMap.BUTTON_B;
 
         public static final int POV_LED_FLASH_GREEN = ControllerMap.POV_UP;
         public static final int POV_LED_FLASH_YELLOW = ControllerMap.POV_DOWN;
@@ -140,6 +142,8 @@ public class OI {
         public static final int POV_CLIMBER_TOGGLE_BACK = ControllerMap.POV_UP;
 
         public static final int TURN_180 = ControllerMap.BUTTON_A;
+
+        public static final int POV_AUTO_CLIMB = ControllerMap.POV_LEFT;
     }
 
     public static final XboxController driverController = new XboxController(0);
@@ -155,29 +159,29 @@ public class OI {
     
     @SuppressWarnings("resource")
     public OI() {
-        JoystickButton overrideMotorBlacklist1 = new JoystickButton(driverController, Controls.OVERRIDE_MOTOR_BLACKLIST);
-        JoystickButton overrideMotorBlacklist2 = new JoystickButton(operatorController, Controls.OVERRIDE_MOTOR_BLACKLIST);
-        JoystickButton essieAutoIntake = new JoystickButton(operatorController, Controls.ESSIE_AUTOPICKUP);
-        JoystickButton cancelEssie = new JoystickButton(operatorController, Controls.CANCEL_ESSIE);
-        JoystickButton essieHigh = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH);
-        JoystickButton essieLow = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_LOW);
-        JoystickButton essieReverse = new JoystickButton(operatorController, Controls.ESSIE_REVERSE_INTAKE);
-        JoystickButton operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
-        POVButton ledFlashGreen = new POVButton(operatorController, Controls.POV_LED_FLASH_GREEN);
-        POVButton ledFlashYellow = new POVButton(operatorController, Controls.POV_LED_FLASH_YELLOW);
-        POVButton climberPistonToggleFront = new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_FRONT);
-        POVButton climberPistonToggleBack = new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_BACK);
-        JoystickButton precisionDrive = new JoystickButton(driverController, Controls.PRECISION_DRIVE);
-        JoystickButton debug = new JoystickButton(driverController, Controls.DEBUG);
-        JoystickButton visionAlignAdvanced = new JoystickButton(driverController, Controls.VISION_ALIGN_ADVANCED);
-        JoystickButton visionAlignBasic = new JoystickButton(driverController, Controls.VISION_ALIGN_BASIC);
-        JoystickButton cancelAlign = new JoystickButton(driverController, Controls.CANCEL_ALIGN);
-        JoystickButton reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
-        JoystickButton stopAuto = new JoystickButton(driverController, Controls.STOP_AUTO);
-        JoystickButton turn180 = new JoystickButton(driverController, Controls.TURN_180);
-        JoystickButton gearShiftHigh = new JoystickButton(driverController, Controls.GEARSHIFT_HIGH);
-        JoystickButton gearShiftLow = new JoystickButton(driverController, Controls.GEARSHIFT_LOW);
-        JoystickButton restartVisionServer = new JoystickButton(operatorController, Controls.RESTART_VISION_SERVER);
+        Button overrideMotorBlacklist1 = new JoystickButton(driverController, Controls.OVERRIDE_MOTOR_BLACKLIST);
+        Button overrideMotorBlacklist2 = new JoystickButton(operatorController, Controls.OVERRIDE_MOTOR_BLACKLIST);
+        Button essieAutoIntake = new JoystickButton(operatorController, Controls.ESSIE_AUTOPICKUP);
+        Button cancelEssie = new JoystickButton(operatorController, Controls.CANCEL_ESSIE);
+        Button essieHigh = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH);
+        Button essieLow = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_LOW);
+        Button essieReverse = new JoystickButton(operatorController, Controls.ESSIE_REVERSE_INTAKE);
+        Button operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
+        Button ledFlashGreen = new POVButton(operatorController, Controls.POV_LED_FLASH_GREEN);
+        Button ledFlashYellow = new POVButton(operatorController, Controls.POV_LED_FLASH_YELLOW);
+        Button climberPistonToggleFront = new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_FRONT);
+        Button climberPistonToggleBack = new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_BACK);
+        Button precisionDrive = new JoystickButton(driverController, Controls.PRECISION_DRIVE);
+        Button debug = new JoystickButton(driverController, Controls.DEBUG);
+        Button visionAlignAdvanced = new JoystickButton(driverController, Controls.VISION_ALIGN_ADVANCED);
+        Button visionAlignBasic = new JoystickButton(driverController, Controls.VISION_ALIGN_BASIC);
+        Button reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
+        Button stopAuto = new JoystickButton(driverController, Controls.STOP_AUTO);
+        Button turn180 = new JoystickButton(driverController, Controls.TURN_180);
+        Button gearShiftHigh = new JoystickButton(driverController, Controls.GEARSHIFT_HIGH);
+        Button gearShiftLow = new JoystickButton(driverController, Controls.GEARSHIFT_LOW);
+        Button restartVisionServer = new JoystickButton(operatorController, Controls.RESTART_VISION_SERVER);
+        Button autoClimb = new HeldButton(new POVButton(driverController, Controls.POV_AUTO_CLIMB), 0.5);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
             RobotMap.essieMotorHigh.overrideBlacklist();
@@ -216,13 +220,6 @@ public class OI {
 
         visionAlignAdvanced.whenPressed(new AdvancedVisionAlign());
         visionAlignBasic.whenPressed(new VisionAlign());
-        cancelAlign.whenPressed(new InstantCommand(() -> {
-            // Since all vision align commands must require the vision subsystem, this will cancel any vision align command.
-            if(Robot.vision.getCurrentCommand() != null) {
-                Robot.vision.getCurrentCommand().cancel();
-                RobotLogger.logInfoFine("Current vision command cancelled");
-            }
-        }));
         precisionDrive.whenPressed(new InstantCommand(() -> {
             // Precision drive is disabled when the robot is in low gear,
             // as the robot already goes very slowly anyways.
@@ -246,9 +243,10 @@ public class OI {
         ledFlashYellow.whenPressed(new FlashBeautifulRobot(BeautifulRobotDriver.Color.CUSTOM, 150, 5));
 
         stopAuto.whenPressed(new InstantCommand(() -> {
-            if(DriverStation.getInstance().isAutonomous() && Robot.autoCommand != null) {
-                Robot.autoCommand.cancel();
-                RobotLogger.logInfoFine("Current auto stopped");
+            Command c = Robot.drivetrain.getCurrentCommand();
+            if(c != null && !(c instanceof TeleopDrive)) {
+                c.cancel();
+                RobotLogger.logInfoFine("Cancelled a command of type " + c.getClass().getName());
             }
         }));
         reverse.whenPressed(new InstantCommand(() -> {
@@ -257,7 +255,7 @@ public class OI {
         }));
 
         // This trigger is activated when the drive controls are active
-        Trigger interruptAdvancedVisionAlign = new Trigger() {
+        Trigger driveInput = new Trigger() {
             @Override
             public boolean get() {
                 return Math.abs(OI.driverController.getRawAxis(Controls.DRIVE_FWD_REV)) > TeleopDrive.DEADZONE
@@ -265,11 +263,11 @@ public class OI {
             }
         };
         // When activated, it will cancel the currently running command on the drivetrain
-        interruptAdvancedVisionAlign.whenActive(new InstantCommand(() -> {
-            Command cmd = Robot.drivetrain.getCurrentCommand();
-            if(cmd != null && !(cmd instanceof TeleopDrive)) {
-                Robot.drivetrain.getCurrentCommand().cancel();
-                RobotLogger.logInfoFine("Current auto stopped (joystick input)");
+        driveInput.whenActive(new InstantCommand(() -> {
+            Command c = Robot.drivetrain.getCurrentCommand();
+            if(c != null && !(c instanceof TeleopDrive)) {
+                c.cancel();
+                RobotLogger.logInfoFine("Cancelled a command of type " + c.getClass().getName());
             }
         }));
 
@@ -318,7 +316,16 @@ public class OI {
 
         restartVisionServer.whenPressed(new RestartVisionServer());
 
-        climberPistonToggleFront.whenPressed(new ToggleClimber(ToggleClimber.Side.FRONT));
-        climberPistonToggleBack.whenPressed(new ToggleClimber(ToggleClimber.Side.BACK));
+        climberPistonToggleFront.whenPressed(new OperateClimber(Climber.Side.FRONT));
+        climberPistonToggleBack.whenPressed(new OperateClimber(Climber.Side.BACK));
+
+        autoClimb.whenPressed(new AutoClimb());
+        autoClimb.whenReleased(new InstantCommand(() -> {
+            Command c = Robot.climber.getCurrentCommand();
+            if(c != null && c instanceof AutoClimb) {
+                c.cancel();
+                RobotLogger.logInfoFine("Auto climb was cancelled because the buttons were released");
+            }
+        }));
     }
 }

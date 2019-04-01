@@ -48,14 +48,18 @@ public class RobotMap {
 
     // Encoder constants
 	public static final int WHEEL_DIAMETER = 6; //INCHES
-	public static final double WHEEL_CIRCUMFRENCE = WHEEL_DIAMETER*Math.PI;
-	public static final double DRIVE_ENCODER_PPR = 256;
-    public static final double DISTANCE_PER_PULSE = WHEEL_CIRCUMFRENCE/DRIVE_ENCODER_PPR*5/48;
+	public static final double WHEEL_CIRCUMFRENCE = WHEEL_DIAMETER * Math.PI;
+    public static final double DRIVE_ENCODER_PPR = 256;
+    // 5 / 48 is the gear ratio
+    public static final double DISTANCE_PER_PULSE = WHEEL_CIRCUMFRENCE / DRIVE_ENCODER_PPR * 5 / 48;
 
     public static final DoubleSolenoid hankSolenoid = new DoubleSolenoid(2, 3);
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
     public static final DoubleSolenoid frontClimber = new DoubleSolenoid(4, 5);
     public static final DoubleSolenoid backClimber = new DoubleSolenoid(6, 7);
+
+    public static final DigitalInput frontMRS = new DigitalInput(6);
+    public static final DigitalInput backMRS = new DigitalInput(5);
 
     // Drive motors
     public static final WPI_VictorSPX rVictor = new WPI_VictorSPX(0);
@@ -80,9 +84,6 @@ public class RobotMap {
         RobotLogger.logError("Critical error: Essie high motor protection tripped");
     });
     public static final DigitalInput essiePhotoElectric = new DigitalInput(4);
-
-    // Climber motor
-    public static final VictorSP climberMotor = new VictorSP(2);
 
     // navX
     public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
@@ -109,9 +110,11 @@ public class RobotMap {
         public static final double HAB_LVL1_TO_CARGO_SHIP_SIDE = 213.2200787;
         public static final double HAB_LVL1_EDGE_TO_CARGO_SHIP_SIDE = 42.96;
         public static final double HAB_LVL2_LENGTH = 48;
+        public static final double CARGOSHIP_FRONT_OFFSET = 10.875;
+        public static final double CARGOSHIP_FRONT_OFFSET_SIDE = 12.875;
     }
-    public static final RobotSpecs specsHigh = new RobotSpecs(42.5, 53, RobotDimensions.BASEPLATE_WIDTH);
-    public static final RobotSpecs specsLow = new RobotSpecs(150, 50, RobotDimensions.BASEPLATE_WIDTH);
+    public static final RobotSpecs specsLow = new RobotSpecs(42.5, 53, RobotDimensions.BASEPLATE_WIDTH);
+    public static final RobotSpecs specsHigh = new RobotSpecs(150, 50, RobotDimensions.BASEPLATE_WIDTH);
 
     public static final int SHIFT_LOW_TO_HIGH_MAX = Integer.MAX_VALUE;
     public static final int SHIFT_HIGH_TO_LOW_MAX = 48;

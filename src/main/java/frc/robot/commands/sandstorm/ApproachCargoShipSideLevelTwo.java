@@ -9,18 +9,13 @@ package frc.robot.commands.sandstorm;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.commands.FollowTrajectory;
-import frc.robot.commands.OperateHank;
-import frc.robot.commands.sandstorm.AutoDispatcher.Mode;
 import frc.robot.misc.AutoPaths;
 
-/**
- * Hatch auto that starts from hab level 1 and places a hatch on the side of the cargo ship.
- */
-public class HatchAutoHabLevelOneSide extends CommandGroup {
+public class ApproachCargoShipSideLevelTwo extends CommandGroup {
 
-    public HatchAutoHabLevelOneSide(Mode side) {
-        addSequential(new FollowTrajectory(side == Mode.LEFT ? AutoPaths.hatchAutoHabLevel1SideLeft : AutoPaths.hatchAutoHabLevel1SideRight));
-        addSequential(new OperateHank());
-        addSequential(new FollowTrajectory(AutoPaths.driveBack));
+    public ApproachCargoShipSideLevelTwo(AutoDispatcher.Side side, boolean reverse) {
+        addSequential(new FollowTrajectory(reverse ? AutoPaths.driveOffHabLevelTwo.mirrorFrontBack() 
+                : AutoPaths.driveOffHabLevelTwo));
+        addSequential(new ApproachCargoShipSideLevelOne(side, reverse));
     }
 }

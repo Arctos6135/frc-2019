@@ -54,13 +54,15 @@ public class Robot extends TimedRobot {
 
     static SendableChooser<AutoDispatcher.Mode> modeChooser = new SendableChooser<>();
     static SendableChooser<AutoDispatcher.HabLevel> habLevelChooser = new SendableChooser<>();
+    static SendableChooser<AutoDispatcher.Side> sideChooser = new SendableChooser<>();
+    static SendableChooser<AutoDispatcher.RobotSide> robotSideChooser = new SendableChooser<>();
     static SendableChooser<Drivetrain.Gear> followerGearChooser = new SendableChooser<>();
     static SendableChooser<Drivetrain.Gear> matchStartGearChooser = new SendableChooser<>();
 
     public static boolean isInDebugMode = false;
 
-    public static final String FRONT_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/main_camera/image_raw&quality=25&width=640&height=360";
-    public static final String REAR_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/secondary_camera/image_raw&quality=20";
+    public static final String FRONT_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/main_camera/image_raw&quality=20&width=320&height=180";
+    public static final String REAR_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/secondary_camera/image_raw&quality=20&width=320&height=240";
     public static final NetworkTableEntry mainCameraUrl = NetworkTableInstance.getDefault().getTable("SmartDashboard")
             .getEntry("main-stream-url");
     public static final NetworkTableEntry secondaryCameraUrl = NetworkTableInstance.getDefault()
@@ -138,24 +140,31 @@ public class Robot extends TimedRobot {
 
         // Create auto chooser
         modeChooser.setDefaultOption("None", AutoDispatcher.Mode.NONE);
-        modeChooser.addOption("Left Side", AutoDispatcher.Mode.LEFT);
-        modeChooser.addOption("Right Side", AutoDispatcher.Mode.RIGHT);
-        modeChooser.addOption("Aligned", AutoDispatcher.Mode.ALIGNED);
+        modeChooser.addOption("Cargo Ship Front", AutoDispatcher.Mode.FRONT);
+        modeChooser.addOption("Cargo Ship Side", AutoDispatcher.Mode.SIDE);
         modeChooser.addOption("Vision", AutoDispatcher.Mode.VISION);
+        modeChooser.addOption("Side Vision", AutoDispatcher.Mode.SIDE_VISION);
         modeChooser.addOption("Debug", AutoDispatcher.Mode.DEBUG);
+        SmartDashboard.putData("Auto Mode", modeChooser);
         habLevelChooser.setDefaultOption("Level 1", AutoDispatcher.HabLevel.ONE);
         habLevelChooser.addOption("Level 2", AutoDispatcher.HabLevel.TWO);
+        SmartDashboard.putData("Auto Start Hab Level", habLevelChooser);
+        sideChooser.setDefaultOption("Left", AutoDispatcher.Side.LEFT);
+        sideChooser.addOption("Right", AutoDispatcher.Side.RIGHT);
+        SmartDashboard.putData("Auto Side", sideChooser);
+        robotSideChooser.setDefaultOption("Hank Side", AutoDispatcher.RobotSide.HANK);
+        robotSideChooser.addOption("Essie Side", AutoDispatcher.RobotSide.ESSIE);
+        SmartDashboard.putData("Auto Robot Side", robotSideChooser);
         
+        // Create follower gear chooser and match start gear chooser
         followerGearChooser.setDefaultOption("Low Gear", Drivetrain.Gear.LOW);
         followerGearChooser.addOption("High Gear", Drivetrain.Gear.HIGH);
         followerGearChooser.addOption("All Gears", null);
+        SmartDashboard.putData("Trajectory Follower Gear", followerGearChooser);
 
         matchStartGearChooser.setDefaultOption("Low Gear", Drivetrain.Gear.LOW);
         matchStartGearChooser.addOption("High Gear", Drivetrain.Gear.HIGH);
         matchStartGearChooser.addOption("Current Gear", null);
-
-        SmartDashboard.putData("Auto Mode", modeChooser);
-        SmartDashboard.putData("Starting Hab Level", habLevelChooser);
         SmartDashboard.putData("Match Start Gear", matchStartGearChooser);
         
         // 
@@ -318,19 +327,17 @@ public class Robot extends TimedRobot {
         TeleopDrive.setReversed(false);
 
         beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.PULSATING);
-        AutoDispatcher.Mode mode = modeChooser.getSelected();
-        AutoDispatcher.HabLevel level = habLevelChooser.getSelected();
 
-        try {
-            autoCommand = AutoDispatcher.getAuto(level, mode);
+        autoCommand = AutoDispatcher.getAuto(modeChooser.getSelected(), habLevelChooser.getSelected(),
+                sideChooser.getSelected(), robotSideChooser.getSelected());
+        if(autoCommand != null) {
             autoCommand.start();
             RobotLogger.logInfo("Autonomous command started: " + autoCommand.getClass().getName());
         }
-        catch(AutoDispatcher.AutoNotFoundException e) {
+        else {
             RobotLogger.logWarning("No auto exists for the specified configuration");
             OI.errorRumbleDriverMinor.execute();
-            OI.errorRumbleDriverMajor.execute();
-            autoCommand = null;
+            OI.errorRumbleOperatorMinor.execute();
         }
     }
 
@@ -391,13 +398,8 @@ public class Robot extends TimedRobot {
         Scheduler.getInstance().run();
 
         // Check if the auto configuration is valid
-        try {
-            AutoDispatcher.getAuto(habLevelChooser.getSelected(), modeChooser.getSelected());
-            SmartDashboard.putBoolean("Valid Auto Configuration", true);
-        }
-        catch(AutoDispatcher.AutoNotFoundException e) {
-            SmartDashboard.putBoolean("Valid Auto Configuration", false);
-        }
+        SmartDashboard.putBoolean("Valid Auto Configuration", AutoDispatcher.getAuto(modeChooser.getSelected(), 
+                habLevelChooser.getSelected(), sideChooser.getSelected(), robotSideChooser.getSelected()) != null);
         if(isInDebugMode) {
             getTuningEntries();
         }

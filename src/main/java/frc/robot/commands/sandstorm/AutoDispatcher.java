@@ -2,6 +2,7 @@ package frc.robot.commands.sandstorm;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.robot.commands.AdvancedVisionAlign;
 import frc.robot.commands.FollowTrajectory;
 import frc.robot.misc.AutoPaths;
 
@@ -11,74 +12,77 @@ import frc.robot.misc.AutoPaths;
 public final class AutoDispatcher {
 
     /**
-     * Levels of the hab.
+     * Levels of the hab to start on.
      */
     public enum HabLevel {
-        ONE, TWO, THREE;
+        ONE, TWO;
     }
 
     /**
-     * For auto choosing.
-     * Left, right aligned/middle or vision, plus other special options.
+     * Auto mode.
      */
     public enum Mode {
-        NONE, LEFT, RIGHT, ALIGNED, VISION, DEBUG;
+        NONE, FRONT, SIDE, VISION, SIDE_VISION, DEBUG;
     }
 
     /**
-     * This checked exception is thrown by {@link AutoDispatcher#getAuto(HabLevel, Mode) } if no auto matches the options.
+     * Left or right side.
      */
-    public static final class AutoNotFoundException extends Exception {
-        private static final long serialVersionUID = -4080978647629416633L;
-
-        public AutoNotFoundException() {
-            super();
-        }
-        public AutoNotFoundException(String msg) {
-            super(msg);
-        }
+    public enum Side {
+        LEFT, RIGHT;
     }
 
     /**
-     * Gets the corresponding auto command based on parameters.
-     * @param level The hab level to start on
-     * @param mode The side of the auto, or aligned, or vision
-     * @return The corresponding auto
-     * @throws AutoNotFoundException If no matching auto command is found
+     * Hank side or Essie side of the robot.
      */
-    public static final Command getAuto(HabLevel level, Mode mode) throws AutoNotFoundException {
-        if(mode == Mode.NONE) {
-            // Return an empty InstantCommand for no auto.
+    public enum RobotSide {
+        HANK, ESSIE;
+    }
+
+    
+    public static final Command getAuto(Mode mode, HabLevel level, Side side, RobotSide robotSide) {
+        switch(mode) {
+        case NONE:
             return new InstantCommand();
-        }
-        // Debug auto
-        else if(mode == Mode.DEBUG) {
+        case DEBUG:
             return new FollowTrajectory(AutoPaths.debug);
-        }
-        switch(level) {
-        case ONE:
-            switch(mode) {
-            case ALIGNED:
-                return new HatchAutoHabLevelOneFrontAligned();
-            case LEFT:
-                return new HatchAutoHabLevelOneSide(mode);
-            case RIGHT:
-                return new HatchAutoHabLevelOneSide(mode);
-            case VISION:
-                return new HatchAutoHabLevelOneFrontVision();
-            default:
-                throw new AutoNotFoundException("No auto found");
+        case FRONT:
+            if(level == HabLevel.ONE) {
+                // The auto is reversed if the robot side is not hank
+                return new ApproachCargoShipFrontLevelOne(side, robotSide != RobotSide.HANK);
             }
-        case TWO:
-            switch(mode) {
-            case VISION: 
-                return new HatchAutoHabLevelTwoFrontVision();
-            default: throw new AutoNotFoundException("No auto found");
+            else {
+                return new ApproachCargoShipFrontLevelTwo(side, robotSide != RobotSide.HANK);
             }
-        case THREE:
-            throw new AutoNotFoundException("No autos for hab level 3");
-        default:
-            throw new AutoNotFoundException("No auto found");
+        case SIDE:
+            if(level == HabLevel.ONE) {
+                // The auto is reversed if the robot side is not hank
+                return new ApproachCargoShipSideLevelOne(side, robotSide != RobotSide.HANK);
+            }
+            else {
+                return new ApproachCargoShipSideLevelTwo(side, robotSide != RobotSide.HANK);
+            }
+        case VISION:
+            if(robotSide == RobotSide.ESSIE) {
+                return null;
+            }
+            if(level == HabLevel.ONE) {
+                return new AdvancedVisionAlign();
+            }
+            else {
+                return new ApproachCargoShipVisionLevelTwo();
+            }
+        case SIDE_VISION:
+            if(robotSide == RobotSide.ESSIE) {
+                return null;
+            }
+            if(level == HabLevel.ONE) {
+                return new ApproachCargoShipSideVisionLevelOne(side);
+            }
+            else {
+                return new ApproachCargoShipSideVisionLevelTwo(side);
+            }
+        default: return null;
         }
     }
 }

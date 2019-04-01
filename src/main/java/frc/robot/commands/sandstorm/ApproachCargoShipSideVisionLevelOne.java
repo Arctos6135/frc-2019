@@ -8,20 +8,17 @@
 package frc.robot.commands.sandstorm;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.robot.commands.AdvancedVisionAlign;
 import frc.robot.commands.FollowTrajectory;
-import frc.robot.commands.OperateHank;
 import frc.robot.misc.AutoPaths;
+import robot.pathfinder.core.trajectory.TankDriveTrajectory;
 
-/**
- * Hatch auto that starts from hab level 1 aligned with the cargo ship.
- */
-public class HatchAutoHabLevelOneFrontAligned extends CommandGroup {
-    /**
-     * Add your docs here.
-     */
-    public HatchAutoHabLevelOneFrontAligned() {
-        addSequential(new FollowTrajectory(AutoPaths.hatchAutoHabLevel1AlignedFront));
-        addSequential(new OperateHank());
-        addSequential(new FollowTrajectory(AutoPaths.driveBack));
+public class ApproachCargoShipSideVisionLevelOne extends CommandGroup {
+    public ApproachCargoShipSideVisionLevelOne(AutoDispatcher.Side side) {
+        TankDriveTrajectory t = side == AutoDispatcher.Side.LEFT
+                ? AutoPaths.approachCargoShipSideForVisionLevelOneL
+                : AutoPaths.approachCargoShipSideForVisionLevelOneR;
+        addSequential(new FollowTrajectory(t));
+        addSequential(new AdvancedVisionAlign());
     }
 }

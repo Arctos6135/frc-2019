@@ -135,7 +135,7 @@ public class TeleopDrive extends Command {
 
         if(Robot.drivetrain.getGear() == Drivetrain.Gear.HIGH) {
             // Half the turning rate in high gear
-            x *= 0.5;
+            x /= 3;
         }
 
         if(reverseDrive) {
