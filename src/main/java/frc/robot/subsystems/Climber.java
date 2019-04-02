@@ -56,14 +56,13 @@ public class Climber extends Subsystem {
 
     /**
      * Enum for the two piston sides. 
-     * <em>Note: The FRONT side is the ESSIE side instead of the HANK side!</em>
      */
     public enum Side {
-        FRONT, BACK;
+        ESSIE, HANK;
     }
 
     public State getState(Side side) {
-        return !(side == Side.FRONT ? RobotMap.frontDownMRS : RobotMap.backDownMRS).get() ? State.EXTENDED : State.RETRACTED;
+        return !(side == Side.ESSIE ? RobotMap.essieMRS : RobotMap.hankMRS).get() ? State.EXTENDED : State.RETRACTED;
     }
 
     public void setState(Side side, State state) {
@@ -72,7 +71,7 @@ public class Climber extends Subsystem {
     public void setState(Side side, State state, boolean wait) {
         RobotLogger.logInfoFine("Setting " + side.toString() + " climbers to " + state.toString() + " wait=" + wait);
         @SuppressWarnings("resource")
-        DoubleSolenoid climber = side == Side.FRONT ? RobotMap.frontClimber : RobotMap.backClimber;
+        DoubleSolenoid climber = side == Side.ESSIE ? RobotMap.frontClimber : RobotMap.backClimber;
 
         climber.set(state.value());
 
@@ -103,13 +102,13 @@ public class Climber extends Subsystem {
 
     public Climber() {
         super();
-        setState(Side.FRONT, State.RETRACTED);
-        setState(Side.BACK, State.RETRACTED);
+        setState(Side.ESSIE, State.RETRACTED);
+        setState(Side.HANK, State.RETRACTED);
     }
     public Climber(String name) {
         super(name);
-        setState(Side.FRONT, State.RETRACTED);
-        setState(Side.BACK, State.RETRACTED);
+        setState(Side.ESSIE, State.RETRACTED);
+        setState(Side.HANK, State.RETRACTED);
     }
 
     @Override

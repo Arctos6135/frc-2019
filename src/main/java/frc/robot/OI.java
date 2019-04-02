@@ -138,8 +138,8 @@ public class OI {
 
         public static final int STOP_AUTO = ControllerMap.BUTTON_B;
 
-        public static final int POV_CLIMBER_TOGGLE_FRONT = ControllerMap.POV_DOWN;
-        public static final int POV_CLIMBER_TOGGLE_BACK = ControllerMap.POV_UP;
+        public static final int POV_CLIMBER_TOGGLE_HANK = ControllerMap.POV_UP;
+        public static final int POV_CLIMBER_TOGGLE_ESSIE = ControllerMap.POV_DOWN;
 
         public static final int TURN_180 = ControllerMap.BUTTON_A;
 
@@ -169,8 +169,8 @@ public class OI {
         Button operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
         Button ledFlashGreen = new POVButton(operatorController, Controls.POV_LED_FLASH_GREEN);
         Button ledFlashYellow = new POVButton(operatorController, Controls.POV_LED_FLASH_YELLOW);
-        Button climberPistonToggleFront = new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_FRONT);
-        Button climberPistonToggleBack = new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_BACK);
+        Button climberPistonToggleEssie = new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_ESSIE);
+        Button climberPistonToggleHank = new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_HANK);
         Button precisionDrive = new JoystickButton(driverController, Controls.PRECISION_DRIVE);
         Button debug = new JoystickButton(driverController, Controls.DEBUG);
         Button visionAlignAdvanced = new JoystickButton(driverController, Controls.VISION_ALIGN_ADVANCED);
@@ -316,8 +316,8 @@ public class OI {
 
         restartVisionServer.whenPressed(new RestartVisionServer());
 
-        climberPistonToggleFront.whenPressed(new OperateClimber(Climber.Side.FRONT));
-        climberPistonToggleBack.whenPressed(new OperateClimber(Climber.Side.BACK));
+        climberPistonToggleEssie.whenPressed(new OperateClimber(Climber.Side.ESSIE));
+        climberPistonToggleHank.whenPressed(new OperateClimber(Climber.Side.HANK));
 
         autoClimb.whenPressed(new AutoClimb());
         autoClimb.whenReleased(new InstantCommand(() -> {
