@@ -62,7 +62,7 @@ public class Climber extends Subsystem {
     }
 
     public State getState(Side side) {
-        return !(side == Side.ESSIE ? RobotMap.essieMRS : RobotMap.hankMRS).get() ? State.EXTENDED : State.RETRACTED;
+        return !(side == Side.ESSIE ? RobotMap.essieDownMRS : RobotMap.hankDownMRS).get() ? State.EXTENDED : State.RETRACTED;
     }
 
     public void setState(Side side, State state) {

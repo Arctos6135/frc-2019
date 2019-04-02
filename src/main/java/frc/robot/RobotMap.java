@@ -58,8 +58,10 @@ public class RobotMap {
     public static final DoubleSolenoid frontClimber = new DoubleSolenoid(4, 5);
     public static final DoubleSolenoid backClimber = new DoubleSolenoid(6, 7);
 
-    public static final DigitalInput essieMRS = new DigitalInput(6);
-    public static final DigitalInput hankMRS = new DigitalInput(5);
+    public static final DigitalInput essieDownMRS = new DigitalInput(6);
+    public static final DigitalInput hankDownMRS = new DigitalInput(5);
+    public static final DigitalInput essieUpMRS = new DigitalInput(8);
+    public static final DigitalInput hankUpMRS = new DigitalInput(7);
 
     // Drive motors
     public static final WPI_VictorSPX rVictor = new WPI_VictorSPX(0);
