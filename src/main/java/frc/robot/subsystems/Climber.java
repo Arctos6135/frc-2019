@@ -27,6 +27,9 @@ public class Climber extends Subsystem {
     public enum State {
         EXTENDED, RETRACTED, UNKNOWN;
 
+        /**
+         * @throws IllegalArgumentException If the value is UNKNOWN
+         */
         public DoubleSolenoid.Value value() {
             if (this == EXTENDED) {
                 return DoubleSolenoid.Value.kForward;
@@ -36,7 +39,9 @@ public class Climber extends Subsystem {
                 throw new IllegalArgumentException("State is unknown");
             }
         }
-
+        /**
+         * @throws IllegalArgumentException If the value is UNKNOWN
+         */
         public State opposite() {
             if (this == EXTENDED) {
                 return RETRACTED;
@@ -72,11 +77,19 @@ public class Climber extends Subsystem {
         }
     }
 
+    /**
+     * @throws IllegalArgumentException If state is UNKNOWN
+     */
     public void setState(Side side, State state) {
         setState(side, state, false);
     }
-
+    /**
+     * @throws IllegalArgumentException If state is UNKNOWN
+     */
     public void setState(Side side, State state, boolean wait) {
+        if(state == State.UNKNOWN) {
+            throw new IllegalArgumentException("State cannot be UNKNOWN");
+        }
         RobotLogger.logInfoFine("Setting " + side.toString() + " climbers to " + state.toString() + " wait=" + wait);
         @SuppressWarnings("resource")
         DoubleSolenoid climber = side == Side.ESSIE ? RobotMap.frontClimber : RobotMap.backClimber;
@@ -84,19 +97,15 @@ public class Climber extends Subsystem {
         climber.set(state.value());
 
         if (wait) {
-            if (state == State.RETRACTED) {
-                sleep(500);
-            } else {
-                double start = Timer.getFPGATimestamp();
-                while (getState(side) != State.EXTENDED) {
-                    if (Timer.getFPGATimestamp() - start >= 2.0) {
-                        RobotLogger.logError("Waiting for front pistons to extend timed out (2 seconds)");
-                        OI.errorRumbleDriverMajor.execute();
-                        OI.errorRumbleOperatorMajor.execute();
-                        return;
-                    }
-                    sleep(50);
+            double start = Timer.getFPGATimestamp();
+            while (getState(side) != state) {
+                if (Timer.getFPGATimestamp() - start >= 2.0) {
+                    RobotLogger.logError("Waiting for front pistons to extend timed out (2 seconds)");
+                    OI.errorRumbleDriverMajor.execute();
+                    OI.errorRumbleOperatorMajor.execute();
+                    return;
                 }
+                sleep(50);
             }
         }
     }
@@ -106,7 +115,9 @@ public class Climber extends Subsystem {
     }
 
     public void toggle(Side side, boolean wait) {
-        setState(side, getState(side).opposite(), wait);
+        if(getState(side) != State.UNKNOWN) {
+            setState(side, getState(side).opposite(), wait);
+        }
     }
 
     public Climber() {
