@@ -7,8 +7,8 @@
 
 package frc.robot.commands;
 
-import com.arctos6135.robotpathfinder.core.trajectory.TankDriveTrajectory;
-import com.arctos6135.robotpathfinder.core.trajectory.TrajectoryGenerator;
+import com.arctos6135.robotpathfinder.follower.TankDriveFollowable;
+import com.arctos6135.robotpathfinder.motionprofile.followable.TrapezoidalRotationTankDriveProfile;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
@@ -28,7 +28,7 @@ public class RotateToAngle extends Command {
         LEFT, RIGHT;
     }
 
-    TankDriveTrajectory trajectory;
+    TankDriveFollowable profile;
     FollowTrajectory followerCommand;
 
     double angle;
@@ -52,9 +52,9 @@ public class RotateToAngle extends Command {
     protected void initialize() {
         RobotLogger.logInfoFiner("Generating trajectory to rotate to angle...");
         // Use a RobotPathfinder trajectory here to save time and improve accuracy with the already tuned PIDs
-        trajectory = TrajectoryGenerator.generateRotationTank(FollowTrajectory.getSpecs(), 
+        profile = new TrapezoidalRotationTankDriveProfile(FollowTrajectory.getSpecs(), 
                 direction == Direction.LEFT ? Math.toRadians(angle) : Math.toRadians(-angle));
-        followerCommand = new FollowTrajectory(trajectory);
+        followerCommand = new FollowTrajectory(profile);
         RobotLogger.logInfoFiner("Rotating to angle " + angle + " to " + direction.toString());
         // We cannot actually start the FollowTrajectory command, as it also requires drivetrain and will interrupt this command.
         // Therefore we must call its methods manually without handing control to WPILib.
@@ -77,7 +77,6 @@ public class RotateToAngle extends Command {
     @Override
     protected void end() {
         followerCommand.end();
-        trajectory.free();
     }
 
     // Called when another command which requires one or more of the same
@@ -85,6 +84,5 @@ public class RotateToAngle extends Command {
     @Override
     protected void interrupted() {
         followerCommand.interrupted();
-        trajectory.free();
     }
 }
