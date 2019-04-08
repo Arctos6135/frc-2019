@@ -14,13 +14,15 @@ import frc.robot.commands.FollowTrajectory;
 import frc.robot.misc.AutoPaths;
 
 public class ApproachCargoShipFrontLevelTwo extends CommandGroup {
-    
+
     public ApproachCargoShipFrontLevelTwo(AutoDispatcher.Side side, boolean reverse) {
-        addSequential(new FollowTrajectory(reverse ? AutoPaths.driveOffHabLevelTwo.mirrorFrontBack() 
-                : AutoPaths.driveOffHabLevelTwo));
+        addSequential(
+                new FollowTrajectory(reverse ? AutoPaths.driveOffHabLevelTwoReversed : AutoPaths.driveOffHabLevelTwo));
         TankDriveTrajectory t = side == AutoDispatcher.Side.LEFT
-        ? reverse ? AutoPaths.approachCargoShipFrontLevelOneSideL.mirrorFrontBack() : AutoPaths.approachCargoShipFrontLevelOneSideL
-        : reverse ? AutoPaths.approachCargoShipFrontLevelOneSideR.mirrorFrontBack() : AutoPaths.approachCargoShipFrontLevelOneSideR;
+                ? reverse ? AutoPaths.approachCargoShipFrontLevelOneSideL.mirrorFrontBack()
+                        : AutoPaths.approachCargoShipFrontLevelOneSideL
+                : reverse ? AutoPaths.approachCargoShipFrontLevelOneSideR.mirrorFrontBack()
+                        : AutoPaths.approachCargoShipFrontLevelOneSideR;
         addSequential(new FollowTrajectory(t));
     }
 }
