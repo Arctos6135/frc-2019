@@ -30,12 +30,7 @@ public class DriveDistance extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        if(distance >= 0) {
-            trajectory = TrajectoryGenerator.generateStraightTank(FollowTrajectory.getSpecs(), distance);
-        }
-        else {
-            trajectory = TrajectoryGenerator.generateStraightTank(FollowTrajectory.getSpecs(), -distance).retrace();
-        }
+        trajectory = TrajectoryGenerator.generateStraightTank(FollowTrajectory.getSpecs(), distance);
         // Wrap around a FollowTrajectory
         followerCommand = new FollowTrajectory(trajectory);
         followerCommand.initialize();
