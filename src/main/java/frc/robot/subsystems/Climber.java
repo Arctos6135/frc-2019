@@ -71,7 +71,7 @@ public class Climber extends Subsystem {
     public void setState(Side side, State state, boolean wait) {
         RobotLogger.logInfoFine("Setting " + side.toString() + " climbers to " + state.toString() + " wait=" + wait);
         @SuppressWarnings("resource")
-        Solenoid climber = side == Side.ESSIE ? RobotMap.frontClimber : RobotMap.backClimber;
+        Solenoid climber = side == Side.ESSIE ? RobotMap.essieClimber : RobotMap.hankClimber;
 
         climber.set(state.value());
 
