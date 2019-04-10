@@ -7,7 +7,7 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.OI;
@@ -27,12 +27,12 @@ public class Climber extends Subsystem {
     public enum State {
         EXTENDED, RETRACTED;
 
-        public DoubleSolenoid.Value value() {
+        public boolean value() {
             if(this == EXTENDED) {
-                return DoubleSolenoid.Value.kForward;
+                return true;
             }
             else {
-                return DoubleSolenoid.Value.kReverse;
+                return false;
             }
         }
         public State opposite() {
@@ -71,7 +71,7 @@ public class Climber extends Subsystem {
     public void setState(Side side, State state, boolean wait) {
         RobotLogger.logInfoFine("Setting " + side.toString() + " climbers to " + state.toString() + " wait=" + wait);
         @SuppressWarnings("resource")
-        DoubleSolenoid climber = side == Side.ESSIE ? RobotMap.frontClimber : RobotMap.backClimber;
+        Solenoid climber = side == Side.ESSIE ? RobotMap.frontClimber : RobotMap.backClimber;
 
         climber.set(state.value());
 
