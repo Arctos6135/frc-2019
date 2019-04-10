@@ -91,6 +91,8 @@ public class Robot extends TimedRobot {
         beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.RAINBOW_DASH);
         beautifulRobot.turnOn();
 
+        AutoPaths.generateAll();
+
         // Wait for the DS to connect before starting the logger
         // This is important as the roboRIO's system time is only updated when the DS is
         // connected

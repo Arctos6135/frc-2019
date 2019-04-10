@@ -5,7 +5,8 @@ import com.arctos6135.robotpathfinder.core.TrajectoryParams;
 import com.arctos6135.robotpathfinder.core.Waypoint;
 import com.arctos6135.robotpathfinder.core.path.PathType;
 import com.arctos6135.robotpathfinder.core.trajectory.TankDriveTrajectory;
-import com.arctos6135.robotpathfinder.core.trajectory.TrajectoryGenerator;
+import com.arctos6135.robotpathfinder.follower.TankDriveFollowable;
+import com.arctos6135.robotpathfinder.motionprofile.followable.TrapezoidalTankDriveProfile;
 
 import frc.robot.RobotMap;
 import frc.robot.commands.FollowTrajectory;
@@ -27,7 +28,8 @@ public final class AutoPaths {
     public static TankDriveTrajectory approachCargoShipSideLevelOneR;
     public static TankDriveTrajectory approachCargoShipSideForVisionLevelOneL;
     public static TankDriveTrajectory approachCargoShipSideForVisionLevelOneR;
-    public static TankDriveTrajectory driveOffHabLevelTwo;
+    public static TankDriveFollowable driveOffHabLevelTwo;
+    public static TankDriveFollowable driveOffHabLevelTwoReversed;
     
     public static void generateAll() {
         RobotSpecs specs = FollowTrajectory.getSpecs();
@@ -70,8 +72,9 @@ public final class AutoPaths {
         approachCargoShipSideForVisionLevelOneL = new TankDriveTrajectory(specs, params);
         approachCargoShipSideForVisionLevelOneR = approachCargoShipSideForVisionLevelOneL.mirrorLeftRight();
 
-        driveOffHabLevelTwo = TrajectoryGenerator.generateStraightTank(specs, RobotMap.FieldDimensions.HAB_LVL2_LENGTH);
-        
+        driveOffHabLevelTwo = new TrapezoidalTankDriveProfile(specs, RobotMap.FieldDimensions.HAB_LVL2_LENGTH);
+        driveOffHabLevelTwoReversed = new TrapezoidalTankDriveProfile(specs, -RobotMap.FieldDimensions.HAB_LVL2_LENGTH);
+
         params.waypoints = new Waypoint[] {
             new Waypoint(0, 0, Math.PI / 2),
             new Waypoint(-60, 84, Math.PI / 2),

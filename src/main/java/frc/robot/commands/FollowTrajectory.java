@@ -8,11 +8,11 @@
 package frc.robot.commands;
 
 import com.arctos6135.robotpathfinder.core.RobotSpecs;
-import com.arctos6135.robotpathfinder.core.trajectory.TankDriveTrajectory;
 import com.arctos6135.robotpathfinder.follower.Follower.DirectionSource;
 import com.arctos6135.robotpathfinder.follower.Follower.DistanceSource;
 import com.arctos6135.robotpathfinder.follower.Follower.Motor;
 import com.arctos6135.robotpathfinder.follower.Follower.TimestampSource;
+import com.arctos6135.robotpathfinder.follower.TankDriveFollowable;
 import com.arctos6135.robotpathfinder.follower.TankDriveFollower;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
@@ -42,14 +42,14 @@ public class FollowTrajectory extends Command {
     // If set to null, the robot will accept both
     public static Drivetrain.Gear gearToUse = null;
 
-    public final TankDriveTrajectory trajectory;
+    public final TankDriveFollowable profile;
     public TankDriveFollower follower;
 
-    public FollowTrajectory(TankDriveTrajectory trajectory) {
+    public FollowTrajectory(TankDriveFollowable trajectory) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
         requires(Robot.drivetrain);
-        this.trajectory = trajectory;
+        this.profile = trajectory;
     }
 
     private Drivetrain.Gear startingGear;
@@ -67,11 +67,11 @@ public class FollowTrajectory extends Command {
         }
 
         if(Robot.drivetrain.getGear() == Drivetrain.Gear.HIGH) {
-            follower = new TankDriveFollower(trajectory, L_MOTOR, R_MOTOR, L_DISTANCE_SOURCE, R_DISTANCE_SOURCE, TIMESTAMP_SOURCE, 
+            follower = new TankDriveFollower(profile, L_MOTOR, R_MOTOR, L_DISTANCE_SOURCE, R_DISTANCE_SOURCE, TIMESTAMP_SOURCE, 
                     GYRO, kV_h, kA_h, kP_h, kD_h, kDP_h);
         }
         else {
-            follower = new TankDriveFollower(trajectory, L_MOTOR, R_MOTOR, L_DISTANCE_SOURCE, R_DISTANCE_SOURCE, TIMESTAMP_SOURCE, 
+            follower = new TankDriveFollower(profile, L_MOTOR, R_MOTOR, L_DISTANCE_SOURCE, R_DISTANCE_SOURCE, TIMESTAMP_SOURCE, 
                     GYRO, kV_l, kA_l, kP_l, kD_l, kDP_l);
         }
 

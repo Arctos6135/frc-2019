@@ -48,7 +48,7 @@ dependencies {
     compile wpi.deps.wpilib()
     compile wpi.deps.vendor.java()
 
-    compile files("lib/RobotPathfinder-3.0.0-alpha.0.jar")
+    compile files("lib/RobotPathfinder-3.0.0-alpha.0.1.1.jar")
     nativeLib files("lib/libRobotPathfinder.so")
     
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
