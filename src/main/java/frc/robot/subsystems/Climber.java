@@ -92,7 +92,7 @@ public class Climber extends Subsystem {
         }
         RobotLogger.logInfoFine("Setting " + side.toString() + " climbers to " + state.toString() + " wait=" + wait);
         @SuppressWarnings("resource")
-        Solenoid climber = side == Side.ESSIE ? RobotMap.frontClimber : RobotMap.backClimber;
+        Solenoid climber = side == Side.ESSIE ? RobotMap.essieClimber : RobotMap.hankClimber;
 
         climber.set(state.value());
 

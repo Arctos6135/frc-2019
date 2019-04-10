@@ -56,8 +56,8 @@ public class RobotMap {
 
     public static final DoubleSolenoid hankSolenoid = new DoubleSolenoid(2, 3);
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
-    public static final Solenoid frontClimber = new Solenoid(4);
-    public static final Solenoid backClimber = new Solenoid(5);
+    public static final Solenoid essieClimber = new Solenoid(4);
+    public static final Solenoid hankClimber = new Solenoid(5);
 
     public static final DigitalInput essieDownMRS = new DigitalInput(6);
     public static final DigitalInput hankDownMRS = new DigitalInput(5);
