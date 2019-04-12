@@ -132,6 +132,7 @@ public class Robot extends TimedRobot {
         // Clear the last error and warning
         SmartDashboard.putString("Last Error", "");
         SmartDashboard.putString("Last Warning", "");
+        SmartDashboard.putBoolean("Climbing", false);
 
         mainCameraUrl.setString(FRONT_CAMERA_URL);
         secondaryCameraUrl.setString(REAR_CAMERA_URL);
