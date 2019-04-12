@@ -72,6 +72,11 @@ public class OperateClimber extends Command {
      */
     public OperateClimber(Side side, Climber.State state, boolean wait) {
         super();
+
+        if(state == Climber.State.UNKNOWN) {
+            throw new IllegalArgumentException("State cannot be UNKNOWN");
+        }
+
         requires(Robot.climber);
         requires(Robot.drivetrain);
         this.side = side;
@@ -86,7 +91,13 @@ public class OperateClimber extends Command {
         RobotLogger.logInfoFiner("Putting robot into low gear for climbing");
         Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
         if (state == null || toggle) {
-            state = Robot.climber.getState(side).opposite();
+            Climber.State climberState = Robot.climber.getState(side);
+            if(climberState == Climber.State.UNKNOWN) {
+                wait = false;
+                RobotLogger.logInfoFiner("Attempting to toggle climber, but state is UNKNOWN");
+                return;
+            }
+            state = climberState.opposite();
         }
         Robot.climber.setState(side, state);
         RobotLogger.logInfoFiner("Setting climber: " + side.toString() + " to " + state.toString());
@@ -95,16 +106,11 @@ public class OperateClimber extends Command {
     @Override
     protected boolean isFinished() {
         if (wait) {
-            // If retracting simply wait for half a second
-            if (state == Climber.State.RETRACTED) {
-                return timeSinceInitialized() >= 0.8;
-            } else {
-                if (timeSinceInitialized() >= 2.0) {
-                    RobotLogger.logError("Wait for climber pistons to go into position timed out");
-                    return true;
-                }
-                return Robot.climber.getState(side) == state;
+            if (timeSinceInitialized() >= 2.0) {
+                RobotLogger.logError("Wait for climber pistons to go into position timed out");
+                return true;
             }
+            return Robot.climber.getState(side) == state;
         } else {
             return true;
         }

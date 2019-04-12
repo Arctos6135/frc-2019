@@ -7,7 +7,7 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.OI;
@@ -25,22 +25,30 @@ public class Climber extends Subsystem {
      * Enum for the two states of a climber piston, extended or retracted.
      */
     public enum State {
-        EXTENDED, RETRACTED;
+        EXTENDED, RETRACTED, UNKNOWN;
 
-        public DoubleSolenoid.Value value() {
-            if(this == EXTENDED) {
-                return DoubleSolenoid.Value.kForward;
-            }
-            else {
-                return DoubleSolenoid.Value.kReverse;
+        /**
+         * @throws IllegalArgumentException If the value is UNKNOWN
+         */
+        public boolean value() {
+            if (this == EXTENDED) {
+                return true;
+            } else if (this == RETRACTED) {
+                return false;
+            } else {
+                throw new IllegalArgumentException("State is unknown");
             }
         }
+        /**
+         * @throws IllegalArgumentException If the value is UNKNOWN
+         */
         public State opposite() {
-            if(this == EXTENDED) {
+            if (this == EXTENDED) {
                 return RETRACTED;
-            }
-            else {
+            } else if (this == RETRACTED) {
                 return EXTENDED;
+            } else {
+                throw new IllegalArgumentException("State is unknown");
             }
         }
     }
@@ -48,68 +56,80 @@ public class Climber extends Subsystem {
     public static void sleep(long ms) {
         try {
             Thread.sleep(ms);
-        }
-        catch(InterruptedException e) {
+        } catch (InterruptedException e) {
             // Ignore
         }
     }
 
     /**
-     * Enum for the two piston sides. 
-     * <em>Note: The FRONT side is the ESSIE side instead of the HANK side!</em>
+     * Enum for the two piston sides.
      */
     public enum Side {
-        FRONT, BACK;
+        ESSIE, HANK;
     }
 
     public State getState(Side side) {
-        return !(side == Side.FRONT ? RobotMap.frontMRS : RobotMap.backMRS).get() ? State.EXTENDED : State.RETRACTED;
+        if(side == Side.ESSIE) {
+            return !RobotMap.essieDownMRS.get() ? State.EXTENDED : (!RobotMap.essieUpMRS.get() ? State.RETRACTED : State.UNKNOWN);
+        }
+        else {
+            return !RobotMap.hankDownMRS.get() ? State.EXTENDED : (!RobotMap.hankUpMRS.get() ? State.RETRACTED : State.UNKNOWN);
+        }
     }
 
+    /**
+     * @throws IllegalArgumentException If state is UNKNOWN
+     */
     public void setState(Side side, State state) {
         setState(side, state, false);
     }
+    /**
+     * @throws IllegalArgumentException If state is UNKNOWN
+     */
     public void setState(Side side, State state, boolean wait) {
+        if(state == State.UNKNOWN) {
+            throw new IllegalArgumentException("State cannot be UNKNOWN");
+        }
         RobotLogger.logInfoFine("Setting " + side.toString() + " climbers to " + state.toString() + " wait=" + wait);
         @SuppressWarnings("resource")
-        DoubleSolenoid climber = side == Side.FRONT ? RobotMap.frontClimber : RobotMap.backClimber;
+        Solenoid climber = side == Side.ESSIE ? RobotMap.essieClimber : RobotMap.hankClimber;
 
         climber.set(state.value());
 
-        if(wait) {
-            if(state == State.RETRACTED) {
-                sleep(500);
-            }
-            else {
-                double start = Timer.getFPGATimestamp();
-                while(getState(side) != State.EXTENDED) {
-                    if(Timer.getFPGATimestamp() - start >= 2.0) {
-                        RobotLogger.logError("Waiting for front pistons to extend timed out (2 seconds)");
-                        OI.errorRumbleDriverMajor.execute();
-                        OI.errorRumbleOperatorMajor.execute();
-                        return;
-                    }
-                    sleep(50);
+        if (wait) {
+            double start = Timer.getFPGATimestamp();
+            while (getState(side) != state) {
+                if (Timer.getFPGATimestamp() - start >= 2.0) {
+                    RobotLogger.logError("Waiting for front pistons to extend timed out (2 seconds)");
+                    OI.errorRumbleDriverMajor.execute();
+                    OI.errorRumbleOperatorMajor.execute();
+                    return;
                 }
+                sleep(50);
             }
         }
     }
+
     public void toggle(Side side) {
         toggle(side, false);
     }
+
     public void toggle(Side side, boolean wait) {
-        setState(side, getState(side).opposite(), wait);
+        if(getState(side) != State.UNKNOWN) {
+            setState(side, getState(side).opposite(), wait);
+        }
     }
 
     public Climber() {
         super();
-        setState(Side.FRONT, State.RETRACTED);
-        setState(Side.BACK, State.RETRACTED);
+        setState(Side.ESSIE, State.RETRACTED);
+        setState(Side.HANK, State.RETRACTED);
     }
+
     public Climber(String name) {
         super(name);
-        setState(Side.FRONT, State.RETRACTED);
-        setState(Side.BACK, State.RETRACTED);
+        setState(Side.ESSIE, State.RETRACTED);
+        setState(Side.HANK, State.RETRACTED);
     }
 
     @Override
