@@ -13,60 +13,56 @@ import frc.robot.Robot;
 
 public class EssieDefault extends Command {
 
-    private static final double THRESHOLD = 0.6;
+	private static final double THRESHOLD = 0.6;
 
-    public EssieDefault() {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-        requires(Robot.essie);
-    }
+	public EssieDefault() {
+		// Use requires() here to declare subsystem dependencies
+		// eg. requires(chassis);
+		requires(Robot.essie);
+	}
 
-    // Called just before this Command runs the first time
-    @Override
-    protected void initialize() {
-    }
+	// Called just before this Command runs the first time
+	@Override
+	protected void initialize() {
+	}
 
-    // Called repeatedly when this Command is scheduled to run
-    @Override
-    protected void execute() {
-        double val = OI.operatorController.getRawAxis(OI.Controls.ESSIE_OUTTAKE);
-        
-        if(val >= THRESHOLD) {
-            Robot.essie.startOuttakeLow();
-        }
-        else if(val <= -THRESHOLD) {
-            Robot.essie.startOuttakeHigh();
-        }
-        else {
-            val = OI.operatorController.getRawAxis(OI.Controls.ESSIE_INTAKE);
-            if(val >= THRESHOLD) {
-                Robot.essie.startIntakeFromMiddle();
-            }
-            else if(val <= -THRESHOLD) {
-                Robot.essie.reverseIntake();
-            }
-            else {
-                Robot.essie.stop();
-            }
-        }
-    }
+	// Called repeatedly when this Command is scheduled to run
+	@Override
+	protected void execute() {
+		double val = OI.operatorController.getRawAxis(OI.Controls.ESSIE_OUTTAKE_uwu);
 
-    // Make this return true when this Command no longer needs to run execute()
-    @Override
-    protected boolean isFinished() {
-        return false;
-    }
+		if (val >= THRESHOLD) {
+			Robot.essie.startOuttakeLow();
+		} else if (val <= -THRESHOLD) {
+			Robot.essie.startOuttakeHigh();
+		} else {
+			val = OI.operatorController.getRawAxis(OI.Controls.ESSIE_INTAKE_uwu);
+			if (val >= THRESHOLD) {
+				Robot.essie.startIntakeFromMiddle();
+			} else if (val <= -THRESHOLD) {
+				Robot.essie.reverseIntake();
+			} else {
+				Robot.essie.stop();
+			}
+		}
+	}
 
-    // Called once after isFinished returns true
-    @Override
-    protected void end() {
-        Robot.essie.stop();
-    }
+	// Make this return true when this Command no longer needs to run execute()
+	@Override
+	protected boolean isFinished() {
+		return false;
+	}
 
-    // Called when another command which requires one or more of the same
-    // subsystems is scheduled to run
-    @Override
-    protected void interrupted() {
-        Robot.essie.stop();
-    }
+	// Called once after isFinished returns true
+	@Override
+	protected void end() {
+		Robot.essie.stop();
+	}
+
+	// Called when another command which requires one or more of the same
+	// subsystems is scheduled to run
+	@Override
+	protected void interrupted() {
+		Robot.essie.stop();
+	}
 }

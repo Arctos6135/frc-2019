@@ -14,50 +14,50 @@ import robot.pathfinder.core.trajectory.TrajectoryGenerator;
 
 public class DriveDistance extends Command {
 
-    final double distance;
+	final double distance;
 
-    TankDriveTrajectory trajectory;
-    FollowTrajectory followerCommand;
+	TankDriveTrajectory trajectory;
+	FollowTrajectory followerCommand;
 
-    public DriveDistance(double distance) {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-        requires(Robot.drivetrain);
+	public DriveDistance(double distance) {
+		// Use requires() here to declare subsystem dependencies
+		// eg. requires(chassis);
+		requires(Robot.drivetrain_uwu);
 
-        this.distance = distance;
-    }
+		this.distance = distance;
+	}
 
-    // Called just before this Command runs the first time
-    @Override
-    protected void initialize() {
-        trajectory = TrajectoryGenerator.generateStraightTank(FollowTrajectory.getSpecs(), distance);
-        // Wrap around a FollowTrajectory
-        followerCommand = new FollowTrajectory(trajectory);
-        followerCommand.initialize();
-    }
+	// Called just before this Command runs the first time
+	@Override
+	protected void initialize() {
+		trajectory = TrajectoryGenerator.generateStraightTank(FollowTrajectory.getSpecs(), distance);
+		// Wrap around a FollowTrajectory
+		followerCommand = new FollowTrajectory(trajectory);
+		followerCommand.initialize();
+	}
 
-    // Called repeatedly when this Command is scheduled to run
-    @Override
-    protected void execute() {
-        followerCommand.execute();
-    }
+	// Called repeatedly when this Command is scheduled to run
+	@Override
+	protected void execute() {
+		followerCommand.execute();
+	}
 
-    // Make this return true when this Command no longer needs to run execute()
-    @Override
-    protected boolean isFinished() {
-        return followerCommand.isFinished();
-    }
+	// Make this return true when this Command no longer needs to run execute()
+	@Override
+	protected boolean isFinished() {
+		return followerCommand.isFinished();
+	}
 
-    // Called once after isFinished returns true
-    @Override
-    protected void end() {
-        followerCommand.end();
-    }
+	// Called once after isFinished returns true
+	@Override
+	protected void end() {
+		followerCommand.end();
+	}
 
-    // Called when another command which requires one or more of the same
-    // subsystems is scheduled to run
-    @Override
-    protected void interrupted() {
-        followerCommand.interrupted();
-    }
+	// Called when another command which requires one or more of the same
+	// subsystems is scheduled to run
+	@Override
+	protected void interrupted() {
+		followerCommand.interrupted();
+	}
 }
