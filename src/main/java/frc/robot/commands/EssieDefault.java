@@ -29,14 +29,14 @@ public class EssieDefault extends Command {
 	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
-		double val = OI.operatorController.getRawAxis(OI.Controls.ESSIE_OUTTAKE_uwu);
+		double val = OI.operatorController_uwu.getRawAxis(OI.Controls.ESSIE_OUTTAKE_uwu);
 
 		if (val >= THRESHOLD) {
 			Robot.essie.startOuttakeLow();
 		} else if (val <= -THRESHOLD) {
 			Robot.essie.startOuttakeHigh();
 		} else {
-			val = OI.operatorController.getRawAxis(OI.Controls.ESSIE_INTAKE_uwu);
+			val = OI.operatorController_uwu.getRawAxis(OI.Controls.ESSIE_INTAKE_uwu);
 			if (val >= THRESHOLD) {
 				Robot.essie.startIntakeFromMiddle();
 			} else if (val <= -THRESHOLD) {

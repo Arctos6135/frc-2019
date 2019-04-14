@@ -18,123 +18,126 @@ import frc.robot.misc.RobotLogger;
  * Controls Hab 2 climber pistons.
  */
 public class Climber extends Subsystem {
-    // Put methods for controlling this subsystem
-    // here. Call these from Commands.
+	// Put methods for controlling this subsystem
+	// here. Call these from Commands.
 
-    /**
-     * Enum for the two states of a climber piston, extended or retracted.
-     */
-    public enum State {
-        EXTENDED, RETRACTED, UNKNOWN;
+	/**
+	 * Enum for the two states of a climber piston, extended or retracted.
+	 */
+	public enum State {
+		EXTENDED, RETRACTED, UNKNOWN;
 
-        /**
-         * @throws IllegalArgumentException If the value is UNKNOWN
-         */
-        public boolean value() {
-            if (this == EXTENDED) {
-                return true;
-            } else if (this == RETRACTED) {
-                return false;
-            } else {
-                throw new IllegalArgumentException("State is unknown");
-            }
-        }
-        /**
-         * @throws IllegalArgumentException If the value is UNKNOWN
-         */
-        public State opposite() {
-            if (this == EXTENDED) {
-                return RETRACTED;
-            } else if (this == RETRACTED) {
-                return EXTENDED;
-            } else {
-                throw new IllegalArgumentException("State is unknown");
-            }
-        }
-    }
+		/**
+		 * @throws IllegalArgumentException If the value is UNKNOWN
+		 */
+		public boolean value() {
+			if (this == EXTENDED) {
+				return true;
+			} else if (this == RETRACTED) {
+				return false;
+			} else {
+				throw new IllegalArgumentException("State is unknown");
+			}
+		}
 
-    public static void sleep(long ms) {
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            // Ignore
-        }
-    }
+		/**
+		 * @throws IllegalArgumentException If the value is UNKNOWN
+		 */
+		public State opposite() {
+			if (this == EXTENDED) {
+				return RETRACTED;
+			} else if (this == RETRACTED) {
+				return EXTENDED;
+			} else {
+				throw new IllegalArgumentException("State is unknown");
+			}
+		}
+	}
 
-    /**
-     * Enum for the two piston sides.
-     */
-    public enum Side {
-        ESSIE, HANK;
-    }
+	public static void sleep(long ms) {
+		try {
+			Thread.sleep(ms);
+		} catch (InterruptedException e) {
+			// Ignore
+		}
+	}
 
-    public State getState(Side side) {
-        if(side == Side.ESSIE) {
-            return !RobotMap.essieDownMRS.get() ? State.EXTENDED : (!RobotMap.essieUpMRS.get() ? State.RETRACTED : State.UNKNOWN);
-        }
-        else {
-            return !RobotMap.hankDownMRS.get() ? State.EXTENDED : (!RobotMap.hankUpMRS.get() ? State.RETRACTED : State.UNKNOWN);
-        }
-    }
+	/**
+	 * Enum for the two piston sides.
+	 */
+	public enum Side {
+		ESSIE, HANK;
+	}
 
-    /**
-     * @throws IllegalArgumentException If state is UNKNOWN
-     */
-    public void setState(Side side, State state) {
-        setState(side, state, false);
-    }
-    /**
-     * @throws IllegalArgumentException If state is UNKNOWN
-     */
-    public void setState(Side side, State state, boolean wait) {
-        if(state == State.UNKNOWN) {
-            throw new IllegalArgumentException("State cannot be UNKNOWN");
-        }
-        RobotLogger.logInfoFine("Setting " + side.toString() + " climbers to " + state.toString() + " wait=" + wait);
-        @SuppressWarnings("resource")
-        Solenoid climber = side == Side.ESSIE ? RobotMap.essieClimber : RobotMap.hankClimber;
+	public State getState(Side side) {
+		if (side == Side.ESSIE) {
+			return !RobotMap.essieDownMRS.get() ? State.EXTENDED
+					: (!RobotMap.essieUpMRS.get() ? State.RETRACTED : State.UNKNOWN);
+		} else {
+			return !RobotMap.hankDownMRS.get() ? State.EXTENDED
+					: (!RobotMap.hankUpMRS.get() ? State.RETRACTED : State.UNKNOWN);
+		}
+	}
 
-        climber.set(state.value());
+	/**
+	 * @throws IllegalArgumentException If state is UNKNOWN
+	 */
+	public void setState(Side side, State state) {
+		setState(side, state, false);
+	}
 
-        if (wait) {
-            double start = Timer.getFPGATimestamp();
-            while (getState(side) != state) {
-                if (Timer.getFPGATimestamp() - start >= 2.0) {
-                    RobotLogger.logError("Waiting for front pistons to extend timed out (2 seconds)");
-                    OI.errorRumbleDriverMajor.execute();
-                    OI.errorRumbleOperatorMajor.execute();
-                    return;
-                }
-                sleep(50);
-            }
-        }
-    }
+	/**
+	 * @throws IllegalArgumentException If state is UNKNOWN
+	 */
+	public void setState(Side side, State state, boolean wait) {
+		if (state == State.UNKNOWN) {
+			throw new IllegalArgumentException("State cannot be UNKNOWN");
+		}
+		RobotLogger.logInfoFine("Setting " + side.toString() + " climbers to " + state.toString() + " wait=" + wait);
+		@SuppressWarnings("resource")
+		Solenoid climber = side == Side.ESSIE ? RobotMap.essieClimber : RobotMap.hankClimber;
 
-    public void toggle(Side side) {
-        toggle(side, false);
-    }
+		climber.set(state.value());
 
-    public void toggle(Side side, boolean wait) {
-        if(getState(side) != State.UNKNOWN) {
-            setState(side, getState(side).opposite(), wait);
-        }
-    }
+		if (wait) {
+			double start = Timer.getFPGATimestamp();
+			while (getState(side) != state) {
+				if (Timer.getFPGATimestamp() - start >= 2.0) {
+					RobotLogger.logError("Waiting for front pistons to extend timed out (2 seconds)");
+					OI.errorRumbleDriverMajor_uwu.execute();
+					OI.errorRumbleOperatorMajor_uwu.execute();
+					return;
+				}
+				sleep(50);
+			}
+		}
+	}
 
-    public Climber() {
-        super();
-        setState(Side.ESSIE, State.RETRACTED);
-        setState(Side.HANK, State.RETRACTED);
-    }
+	public void toggle(Side side) {
+		toggle(side, false);
+	}
 
-    public Climber(String name) {
-        super(name);
-        setState(Side.ESSIE, State.RETRACTED);
-        setState(Side.HANK, State.RETRACTED);
-    }
+	public void toggle(Side side, boolean wait) {
+		if (getState(side) != State.UNKNOWN) {
+			setState(side, getState(side).opposite(), wait);
+		}
+	}
 
-    @Override
-    public void initDefaultCommand() {
-        // Set the default command for a subsystem here.
-        // setDefaultCommand(new MySpecialCommand());
-    }
+	public Climber() {
+		super();
+		setState(Side.ESSIE, State.RETRACTED);
+		setState(Side.HANK, State.RETRACTED);
+	}
+
+	public Climber(String name) {
+		super(name);
+		setState(Side.ESSIE, State.RETRACTED);
+		setState(Side.HANK, State.RETRACTED);
+	}
+
+	@Override
+	public void initDefaultCommand() {
+		// Set the default command for a subsystem here.
+		// setDefaultCommand(new MySpecialCommand());
+	}
 }

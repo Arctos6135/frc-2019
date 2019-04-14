@@ -29,7 +29,7 @@ public class TeleopDrive extends Command {
 	public TeleopDrive() {
 		// Use requires() here to declare subsystem dependencies
 		// eg. requires(chassis);
-		requires(Robot.drivetrain);
+		requires(Robot.drivetrain_uwu);
 	}
 
 	public static boolean isRamped() {
@@ -97,7 +97,7 @@ public class TeleopDrive extends Command {
 	// Called just before this Command runs the first time
 	@Override
 	protected void initialize() {
-		Robot.drivetrain.enableSafety();
+		Robot.drivetrain_uwu.enableSafety();
 	}
 
 	int logCounter = 0;
@@ -107,8 +107,8 @@ public class TeleopDrive extends Command {
 	protected void execute() {
 		logCounter++;
 		// Handle regular driving
-		double x = OI.driverController.getRawAxis(OI.Controls.DRIVE_LEFT_RIGHT_uwu);
-		double y = -OI.driverController.getRawAxis(OI.Controls.DRIVE_FWD_REV_uwu);
+		double x = OI.driverController_uwu.getRawAxis(OI.Controls.DRIVE_LEFT_RIGHT_uwu);
+		double y = -OI.driverController_uwu.getRawAxis(OI.Controls.DRIVE_FWD_REV_uwu);
 
 		if (logCounter >= 20) {
 			RobotLogger.logInfoFiner("Raw drive values: x=" + x + " y=" + y);
@@ -118,8 +118,8 @@ public class TeleopDrive extends Command {
 		if (Math.abs(x) > DEADZONE) {
 			// Don't do anything with the value of X if it's valid
 			// However, check and make sure the robot is in coast mode
-			if (Robot.drivetrain.getNeutralMode() != NeutralMode.Coast) {
-				Robot.drivetrain.setNeutralMode(NeutralMode.Coast);
+			if (Robot.drivetrain_uwu.getNeutralMode() != NeutralMode.Coast) {
+				Robot.drivetrain_uwu.setNeutralMode(NeutralMode.Coast);
 			}
 		}
 		// If it's not, then set it to 0 as it's probably just noise
@@ -128,8 +128,8 @@ public class TeleopDrive extends Command {
 		}
 		// Same logic as above
 		if (Math.abs(y) > DEADZONE) {
-			if (Robot.drivetrain.getNeutralMode() != NeutralMode.Coast) {
-				Robot.drivetrain.setNeutralMode(NeutralMode.Coast);
+			if (Robot.drivetrain_uwu.getNeutralMode() != NeutralMode.Coast) {
+				Robot.drivetrain_uwu.setNeutralMode(NeutralMode.Coast);
 			}
 		} else {
 			y = 0;
@@ -141,7 +141,7 @@ public class TeleopDrive extends Command {
 		x = Math.copySign(Math.pow(x, 4), x);
 		y = Math.copySign(y * y, y);
 
-		if (Robot.drivetrain.getGear() == Drivetrain.Gear.HIGH) {
+		if (Robot.drivetrain_uwu.getGear() == Drivetrain.Gear_uwu.HIGH_uwu) {
 			// Half the turning rate in high gear
 			x /= 3;
 		}
@@ -152,11 +152,12 @@ public class TeleopDrive extends Command {
 
 		double l = y + x, r = y - x;
 		if (rampingOn) {
-			double rampBand = Robot.drivetrain.getGear() == Drivetrain.Gear.HIGH ? rampBandHigh : rampBandLow;
-			l = Math.max(Robot.drivetrain.getPrevLeft() - rampBand,
-					Math.min(Robot.drivetrain.getPrevLeft() + rampBand, l));
-			r = Math.max(Robot.drivetrain.getPrevRight() - rampBand,
-					Math.min(Robot.drivetrain.getPrevRight() + rampBand, r));
+			double rampBand = Robot.drivetrain_uwu.getGear() == Drivetrain.Gear_uwu.HIGH_uwu ? rampBandHigh
+					: rampBandLow;
+			l = Math.max(Robot.drivetrain_uwu.getPrevLeft() - rampBand,
+					Math.min(Robot.drivetrain_uwu.getPrevLeft() + rampBand, l));
+			r = Math.max(Robot.drivetrain_uwu.getPrevRight() - rampBand,
+					Math.min(Robot.drivetrain_uwu.getPrevRight() + rampBand, r));
 		}
 		if (precisionDrive) {
 			l /= 2;
@@ -168,7 +169,7 @@ public class TeleopDrive extends Command {
 			logCounter = 0;
 		}
 
-		Robot.drivetrain.setMotors(l, r);
+		Robot.drivetrain_uwu.setMotors(l, r);
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
@@ -180,15 +181,15 @@ public class TeleopDrive extends Command {
 	// Called once after isFinished returns true
 	@Override
 	protected void end() {
-		Robot.drivetrain.disableSafety();
-		Robot.drivetrain.setMotors(0, 0);
+		Robot.drivetrain_uwu.disableSafety();
+		Robot.drivetrain_uwu.setMotors(0, 0);
 	}
 
 	// Called when another command which requires one or more of the same
 	// subsystems is scheduled to run
 	@Override
 	protected void interrupted() {
-		Robot.drivetrain.disableSafety();
-		Robot.drivetrain.setMotors(0, 0);
+		Robot.drivetrain_uwu.disableSafety();
+		Robot.drivetrain_uwu.setMotors(0, 0);
 	}
 }
