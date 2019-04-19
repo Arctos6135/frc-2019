@@ -8,6 +8,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.misc.RobotLogger;
 import frc.robot.subsystems.Climber;
 
 /**
@@ -38,5 +40,27 @@ public class AutoClimb extends CommandGroup {
 
         // Drive so that the entire robot is on the platform
         addSequential(new DriveDistance(-20));
+
+    }
+
+    @Override
+    protected void initialize() {
+        super.initialize();
+        SmartDashboard.putBoolean("Climbing", true);
+        RobotLogger.logInfoFine("Auto climb sequence started");
+    }
+
+    @Override
+    protected void interrupted() {
+        super.interrupted();
+        SmartDashboard.putBoolean("Climbing", false);
+        RobotLogger.logInfoFine("Auto climb sequence interrupted");
+    }
+
+    @Override
+    protected void end() {
+        super.end();
+        SmartDashboard.putBoolean("Climbing", false);
+        RobotLogger.logInfoFine("Auto climb sequence ended");
     }
 }
