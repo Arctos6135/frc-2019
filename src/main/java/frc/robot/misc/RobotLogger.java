@@ -33,7 +33,7 @@ public class RobotLogger {
 
     static class RobotLoggerFormatter extends Formatter {
 
-        static DateFormat format = new SimpleDateFormat("(yyyy/MM/dd hh:mm:ss)");
+        static DateFormat format = new SimpleDateFormat("(yyyy/MM/dd HH:mm:ss)");
 
         @Override
         public String format(LogRecord record) {
@@ -53,7 +53,7 @@ public class RobotLogger {
         // Logging level fine
         logger.setLevel(Level.FINER);
         // Get a date string (for naming the log file)
-        DateFormat format = new SimpleDateFormat("yyyy_MM_dd-hh_mm_ss");
+        DateFormat format = new SimpleDateFormat("yyyy_MM_dd-HH_mm_ss");
         Date date = new Date();
         
         // Create the log directory if it does not exist
