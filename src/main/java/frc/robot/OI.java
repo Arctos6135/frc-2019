@@ -35,6 +35,7 @@ import frc.robot.misc.Rumble;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.triggers.HeldButton;
+import frc.robot.triggers.ConditionalButton;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -202,12 +203,21 @@ public class OI {
         Button autoClimb = new HeldButton(new POVButton(driverController, Controls.POV_AUTO_CLIMB), 0.5);
 
         Button essieAutoIntake = new JoystickButton(operatorController, Controls.ESSIE_AUTOPICKUP);
+        Button cancelEssie = new JoystickButton(operatorController, Controls.CANCEL_ESSIE);
         Button operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
             RobotMap.essieMotorHigh.overrideBlacklist();
             RobotMap.essieMotorLow.overrideBlacklist();
             RobotLogger.logWarning("Motor protection manually overridden");
+        }));
+
+        cancelEssie.whenActive(new InstantCommand(() -> {
+            Command essieCommand = Robot.essie.getCurrentCommand();
+            if (essieCommand != null && essieCommand instanceof AutoCargoIntake) {
+                essieCommand.cancel();
+                RobotLogger.logInfoFine("Essie autopickup cancelled");
+            }
         }));
 
         operateHank.whileHeld(new OperateHank());
@@ -325,57 +335,43 @@ public class OI {
             }
         }));
 
-        /**
-         * Guest Mode off All buttons perform regular actions For competition use
-         */
-        if (!guestMode) {
+        Button overrideMotorBlacklist2 = new ConditionalButton(
+                new JoystickButton(operatorController, Controls.OVERRIDE_MOTOR_BLACKLIST), this.guestMode, true);
+        Button restartVisionServer = new ConditionalButton(
+                new JoystickButton(operatorController, Controls.RESTART_VISION_SERVER), this.guestMode, true);
+        Button essieHigh = new ConditionalButton(new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH),
+                this.guestMode, true);
+        Button essieLow = new ConditionalButton(new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_LOW),
+                this.guestMode, true);
+        Button essieReverse = new ConditionalButton(
+                new JoystickButton(operatorController, Controls.ESSIE_REVERSE_INTAKE), this.guestMode, true);
+        Button ledFlashGreen = new ConditionalButton(new POVButton(operatorController, Controls.POV_LED_FLASH_GREEN),
+                this.guestMode, true);
+        Button ledFlashYellow = new ConditionalButton(new POVButton(operatorController, Controls.POV_LED_FLASH_YELLOW),
+                this.guestMode, true);
 
-            Button overrideMotorBlacklist2 = new JoystickButton(operatorController, Controls.OVERRIDE_MOTOR_BLACKLIST);
-            Button restartVisionServer = new JoystickButton(operatorController, Controls.RESTART_VISION_SERVER);
-            Button ledFlashYellow = new POVButton(operatorController, Controls.POV_LED_FLASH_YELLOW);
-            Button cancelEssie = new JoystickButton(operatorController, Controls.CANCEL_ESSIE);
-            Button essieHigh = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH);
-            Button essieLow = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_LOW);
-            Button essieReverse = new JoystickButton(operatorController, Controls.ESSIE_REVERSE_INTAKE);
-            Button ledFlashGreen = new POVButton(operatorController, Controls.POV_LED_FLASH_GREEN);
+        overrideMotorBlacklist2.whenActive(new InstantCommand(() -> {
+            RobotMap.essieMotorHigh.overrideBlacklist();
+            RobotMap.essieMotorLow.overrideBlacklist();
+            RobotLogger.logWarning("Motor protection manually overridden");
+        }));
 
-            overrideMotorBlacklist2.whenActive(new InstantCommand(() -> {
-                RobotMap.essieMotorHigh.overrideBlacklist();
-                RobotMap.essieMotorLow.overrideBlacklist();
-                RobotLogger.logWarning("Motor protection manually overridden");
-            }));
+        essieAutoIntake.whenPressed(new AutoCargoIntake());
+        essieHigh.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_HIGH));
+        essieLow.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_LOW));
+        essieReverse.whileHeld(new OperateEssie(OperateEssie.Mode.REVERSE));
 
-            essieAutoIntake.whenPressed(new AutoCargoIntake());
-            essieHigh.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_HIGH));
-            essieLow.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_LOW));
-            essieReverse.whileHeld(new OperateEssie(OperateEssie.Mode.REVERSE));
+        ledFlashGreen.whenPressed(new FlashBeautifulRobot(BeautifulRobotDriver.Color.GREEN, 150, 5));
+        ledFlashYellow.whenPressed(new FlashBeautifulRobot(BeautifulRobotDriver.Color.CUSTOM, 150, 5));
 
-            cancelEssie.whenActive(new InstantCommand(() -> {
-                Command essieCommand = Robot.essie.getCurrentCommand();
-                if (essieCommand != null && essieCommand instanceof AutoCargoIntake) {
-                    essieCommand.cancel();
-                    RobotLogger.logInfoFine("Essie autopickup cancelled");
-                }
-            }));
+        restartVisionServer.whenPressed(new RestartVisionServer());
+        
+        Button essieReverseGuest = new ConditionalButton(
+                new POVButton(operatorController, Controls.ESSIE_REVERSE_INTAKE_GUEST), this.guestMode);
+        Button essieHighGuest = new ConditionalButton(
+                new POVButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH_GUEST), this.guestMode);
 
-            ledFlashGreen.whenPressed(new FlashBeautifulRobot(BeautifulRobotDriver.Color.GREEN, 150, 5));
-            ledFlashYellow.whenPressed(new FlashBeautifulRobot(BeautifulRobotDriver.Color.CUSTOM, 150, 5));
-
-            restartVisionServer.whenPressed(new RestartVisionServer());
-
-            /**
-             * Guest Mode on Essie reverse and high are mapped to D-pad buttons All other
-             * buttons disabled For presentations/demoes/etc.
-             */
-        } else {
-
-            Button essieReverse = new POVButton(operatorController, Controls.ESSIE_REVERSE_INTAKE_GUEST);
-            Button essieHigh = new POVButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH_GUEST);
-
-            essieAutoIntake.whenPressed(new AutoCargoIntake());
-            essieHigh.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_HIGH));
-            essieReverse.whileHeld(new OperateEssie(OperateEssie.Mode.REVERSE));
-
-        }
+        essieHighGuest.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_HIGH));
+        essieReverseGuest.whileHeld(new OperateEssie(OperateEssie.Mode.REVERSE));
     }
 }

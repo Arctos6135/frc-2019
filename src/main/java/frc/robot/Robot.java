@@ -317,10 +317,10 @@ public class Robot extends TimedRobot {
 		 */
 		if (guestModeChooser.getSelected() != prevGuestMode) {
 			if (guestModeChooser.getSelected() == GuestMode.OFF) {
-				oi = new OI(false);
+                oi.setGuestMode(false);
 				drivetrain.setSpeedMultiplier(1);
 			} else {
-				oi = new OI(true);
+                oi.setGuestMode(true);
 				drivetrain.setSpeedMultiplier(GUEST_MODE_SPEED_MULTIPLIER);
 			}
 
