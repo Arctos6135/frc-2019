@@ -53,7 +53,7 @@ public class Drivetrain extends Subsystem {
     }
 
     // Having a speed multiplier allows for easy adjustment of top speeds
-    private double speedMultiplier = 1;
+    private double speedMultiplier = 1.0;
 
     public void setSpeedMultiplier(double multiplier) {
         speedMultiplier = multiplier;

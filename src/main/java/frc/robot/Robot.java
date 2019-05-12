@@ -62,7 +62,6 @@ public class Robot extends TimedRobot {
 	static SendableChooser<Drivetrain.Gear> matchStartGearChooser = new SendableChooser<>();
 	
 	static GuestMode prevGuestMode = GuestMode.OFF;
-	public static final double GUEST_MODE_SPEED_MULTIPLIER = 0.7;
 
     public static boolean isInDebugMode = false;
 
@@ -317,11 +316,11 @@ public class Robot extends TimedRobot {
 		 */
 		if (guestModeChooser.getSelected() != prevGuestMode) {
 			if (guestModeChooser.getSelected() == GuestMode.OFF) {
-				oi = new OI(false);
+                oi.setGuestMode(false);
 				drivetrain.setSpeedMultiplier(1);
 			} else {
-				oi = new OI(true);
-				drivetrain.setSpeedMultiplier(GUEST_MODE_SPEED_MULTIPLIER);
+                oi.setGuestMode(true);
+				drivetrain.setSpeedMultiplier(RobotMap.GUEST_MODE_SPEED_MULTIPLIER);
 			}
 
 			prevGuestMode = guestModeChooser.getSelected();
