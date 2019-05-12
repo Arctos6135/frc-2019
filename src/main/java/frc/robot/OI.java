@@ -153,8 +153,8 @@ public class OI {
         /**
          * Button variables for guest mode
          */
-        public static final int ESSIE_REVERSE_INTAKE_GUEST = ControllerMap.POV_DOWN;
         public static final int ESSIE_OUTTAKE_HIGH_GUEST = ControllerMap.POV_UP;
+        public static final int ESSIE_OUTTAKE_LOW_GUEST = ControllerMap.POV_DOWN;
 
     }
 
@@ -343,12 +343,11 @@ public class OI {
                 this.guestMode, true);
         Button essieLow = new ConditionalButton(new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_LOW),
                 this.guestMode, true);
-        Button essieReverse = new ConditionalButton(
-                new JoystickButton(operatorController, Controls.ESSIE_REVERSE_INTAKE), this.guestMode, true);
         Button ledFlashGreen = new ConditionalButton(new POVButton(operatorController, Controls.POV_LED_FLASH_GREEN),
                 this.guestMode, true);
         Button ledFlashYellow = new ConditionalButton(new POVButton(operatorController, Controls.POV_LED_FLASH_YELLOW),
                 this.guestMode, true);
+        Button essieReverse = new JoystickButton(operatorController, Controls.ESSIE_REVERSE_INTAKE);
 
         overrideMotorBlacklist2.whenActive(new InstantCommand(() -> {
             RobotMap.essieMotorHigh.overrideBlacklist();
@@ -365,13 +364,13 @@ public class OI {
         ledFlashYellow.whenPressed(new FlashBeautifulRobot(BeautifulRobotDriver.Color.CUSTOM, 150, 5));
 
         restartVisionServer.whenPressed(new RestartVisionServer());
-        
-        Button essieReverseGuest = new ConditionalButton(
-                new POVButton(operatorController, Controls.ESSIE_REVERSE_INTAKE_GUEST), this.guestMode);
+
         Button essieHighGuest = new ConditionalButton(
                 new POVButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH_GUEST), this.guestMode);
+        Button essieLowGuest = new ConditionalButton(
+                new POVButton(operatorController, Controls.ESSIE_OUTTAKE_LOW_GUEST), this.guestMode);
 
         essieHighGuest.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_HIGH));
-        essieReverseGuest.whileHeld(new OperateEssie(OperateEssie.Mode.REVERSE));
+        essieLowGuest.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_LOW));
     }
 }
