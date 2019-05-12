@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.Button;
@@ -164,12 +166,21 @@ public class OI {
     public static final Rumble pickupRumbleOperator = new Rumble(operatorController, Rumble.SIDE_BOTH, 1, 200);
 	public static final Rumble noGearShiftRumble = new Rumble(driverController, Rumble.SIDE_BOTH, 0.75, 300);
 	
-	public boolean guestMode;
-    
+	private AtomicBoolean guestMode = new AtomicBoolean();
+	public boolean isGuestMode() {
+		return guestMode.get();
+	}
+	public void setGuestMode(boolean g) {
+		guestMode.set(g);
+	}
+	
+	public OI() {
+		this(false);
+	}
     @SuppressWarnings("resource")
     public OI(boolean guestMode) {
 
-		this.guestMode = guestMode;
+		this.guestMode.set(guestMode);
 
         Button overrideMotorBlacklist1 = new JoystickButton(driverController, Controls.OVERRIDE_MOTOR_BLACKLIST);
         Button climberPistonToggleEssie = new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_ESSIE);
@@ -188,12 +199,134 @@ public class OI {
 		Button essieAutoIntake = new JoystickButton(operatorController, Controls.ESSIE_AUTOPICKUP);
 		Button operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
 
+		overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
+			RobotMap.essieMotorHigh.overrideBlacklist();
+			RobotMap.essieMotorLow.overrideBlacklist();
+			RobotLogger.logWarning("Motor protection manually overridden");
+		}));
+
+		operateHank.whileHeld(new OperateHank());
+
+		// User button on the rio shuts down the Jetson
+		Trigger shutdownJetson = new Trigger() {
+			@Override
+			public boolean get() {
+				return RobotController.getUserButton();
+			}
+		};
+		shutdownJetson.whileActive(new ShutdownJetson());
+
+		visionAlignAdvanced.whenPressed(new AdvancedVisionAlign());
+		visionAlignBasic.whenPressed(new VisionAlign());
+		precisionDrive.whenPressed(new InstantCommand(() -> {
+			// Precision drive is disabled when the robot is in low gear,
+			// as the robot already goes very slowly anyways.
+			if(Robot.drivetrain.getGear() != Drivetrain.Gear.LOW) {
+				TeleopDrive.togglePrecisionDrive();
+				RobotLogger.logInfoFine("Precision drive changed to " + TeleopDrive.isPrecisionDrive());
+			}
+		}));
+
+		Command debugCmd = new InstantCommand(() -> {
+			Robot.isInDebugMode = !Robot.isInDebugMode;
+			if(Robot.isInDebugMode) {
+				Robot.putTuningEntries();
+				RobotLogger.logInfo("Debug mode activated");
+			}
+		});
+		debugCmd.setRunWhenDisabled(true);
+		debug.whenPressed(debugCmd);
+
+		stopAuto.whenPressed(new InstantCommand(() -> {
+			Command c = Robot.drivetrain.getCurrentCommand();
+			if(c != null && !(c instanceof TeleopDrive)) {
+				c.cancel();
+				RobotLogger.logInfoFine("Cancelled a command of type " + c.getClass().getName());
+			}
+		}));
+		reverse.whenPressed(new InstantCommand(() -> {
+			TeleopDrive.reverse();
+			RobotLogger.logInfoFine("Driving reversed");
+		}));
+
+		// This trigger is activated when the drive controls are active
+		Trigger driveInput = new Trigger() {
+			@Override
+			public boolean get() {
+				return Math.abs(OI.driverController.getRawAxis(Controls.DRIVE_FWD_REV)) > TeleopDrive.DEADZONE
+						|| Math.abs(OI.driverController.getRawAxis(Controls.DRIVE_LEFT_RIGHT)) > TeleopDrive.DEADZONE;
+			}
+		};
+		// When activated, it will cancel the currently running command on the drivetrain
+		driveInput.whenActive(new InstantCommand(() -> {
+			Command c = Robot.drivetrain.getCurrentCommand();
+			if(c != null && !(c instanceof TeleopDrive)) {
+				c.cancel();
+				RobotLogger.logInfoFine("Cancelled a command of type " + c.getClass().getName());
+			}
+		}));
+
+		// Turns 180 degrees in place
+		turn180.whenPressed(new RotateToAngle(187, RotateToAngle.Direction.LEFT));
+
+		gearShiftHigh.whenPressed(new InstantCommand(() -> {
+			// Do nothing if the current gear is already high
+			if(Robot.drivetrain.getGear() != Drivetrain.Gear.HIGH) {
+				// Disable shifting when the robot is going too fast to reduce stress on the gearbox
+				if(Math.abs(Robot.drivetrain.getLeftSpeed()) <= RobotMap.SHIFT_LOW_TO_HIGH_MAX
+						&& Math.abs(Robot.drivetrain.getRightSpeed()) <= RobotMap.SHIFT_LOW_TO_HIGH_MAX) {
+					Robot.drivetrain.setGear(Drivetrain.Gear.HIGH);
+					RobotLogger.logInfoFine("Shifted to high gear");
+				}
+				else {
+					noGearShiftRumble.execute();
+					RobotLogger.logWarning("Attempt to shift to high gear when speed is too high");
+				}
+			}
+			else {
+				RobotLogger.logInfoFine("High gear button pressed; robot is already in high gear");
+			}
+		}));
+		gearShiftLow.whenPressed(new InstantCommand(() -> {
+			if(Robot.drivetrain.getGear() != Drivetrain.Gear.LOW) {
+				if(Math.abs(Robot.drivetrain.getLeftSpeed()) <= RobotMap.SHIFT_HIGH_TO_LOW_MAX
+						&& Math.abs(Robot.drivetrain.getRightSpeed()) <= RobotMap.SHIFT_HIGH_TO_LOW_MAX) {
+					Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
+					RobotLogger.logInfoFine("Shifted to low gear");
+					// When setting gear from high to low, check if precision mode is enabled
+					// Disable precision mode as it is useless in low gear and there is no way to disable it
+					if(TeleopDrive.isPrecisionDrive()) {
+						TeleopDrive.setPrecisionDrive(false);
+					}
+				}
+				else {
+					noGearShiftRumble.execute();
+					RobotLogger.logWarning("Attempt to shift to low gear when speed is too high");
+				}
+			}
+			else {
+				RobotLogger.logInfoFine("Low gear button pressed; robot is already in low gear");
+			}
+		}));
+
+		climberPistonToggleEssie.whenPressed(new OperateClimber(Climber.Side.ESSIE));
+		climberPistonToggleHank.whenPressed(new OperateClimber(Climber.Side.HANK));
+
+		autoClimb.whenPressed(new AutoClimb());
+		autoClimb.whenReleased(new InstantCommand(() -> {
+			Command c = Robot.climber.getCurrentCommand();
+			if(c != null && c instanceof AutoClimb) {
+				c.cancel();
+				RobotLogger.logInfoFine("Auto climb was cancelled because the buttons were released");
+			}
+		}));
+
 		/**
 		 * Guest Mode off
 		 * All buttons perform regular actions
 		 * For competition use
 		 */
-		if (!this.guestMode) {
+		if (!guestMode) {
 		
 			Button overrideMotorBlacklist2 = new JoystickButton(operatorController, Controls.OVERRIDE_MOTOR_BLACKLIST);
 			Button restartVisionServer = new JoystickButton(operatorController, Controls.RESTART_VISION_SERVER);
@@ -204,11 +337,6 @@ public class OI {
 			Button essieReverse = new JoystickButton(operatorController, Controls.ESSIE_REVERSE_INTAKE);
 			Button ledFlashGreen = new POVButton(operatorController, Controls.POV_LED_FLASH_GREEN);
 
-			overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
-				RobotMap.essieMotorHigh.overrideBlacklist();
-				RobotMap.essieMotorLow.overrideBlacklist();
-				RobotLogger.logWarning("Motor protection manually overridden");
-			}));
 			overrideMotorBlacklist2.whenActive(new InstantCommand(() -> {
 				RobotMap.essieMotorHigh.overrideBlacklist();
 				RobotMap.essieMotorLow.overrideBlacklist();
@@ -227,127 +355,11 @@ public class OI {
 					RobotLogger.logInfoFine("Essie autopickup cancelled");
 				}
 			}));
-
-			operateHank.whileHeld(new OperateHank());
-
-			// User button on the rio shuts down the Jetson
-			Trigger shutdownJetson = new Trigger() {
-				@Override
-				public boolean get() {
-					return RobotController.getUserButton();
-				}
-			};
-			shutdownJetson.whileActive(new ShutdownJetson());
-
-			visionAlignAdvanced.whenPressed(new AdvancedVisionAlign());
-			visionAlignBasic.whenPressed(new VisionAlign());
-			precisionDrive.whenPressed(new InstantCommand(() -> {
-				// Precision drive is disabled when the robot is in low gear,
-				// as the robot already goes very slowly anyways.
-				if(Robot.drivetrain.getGear() != Drivetrain.Gear.LOW) {
-					TeleopDrive.togglePrecisionDrive();
-					RobotLogger.logInfoFine("Precision drive changed to " + TeleopDrive.isPrecisionDrive());
-				}
-			}));
-
-			Command debugCmd = new InstantCommand(() -> {
-				Robot.isInDebugMode = !Robot.isInDebugMode;
-				if(Robot.isInDebugMode) {
-					Robot.putTuningEntries();
-					RobotLogger.logInfo("Debug mode activated");
-				}
-			});
-			debugCmd.setRunWhenDisabled(true);
-			debug.whenPressed(debugCmd);
 			
 			ledFlashGreen.whenPressed(new FlashBeautifulRobot(BeautifulRobotDriver.Color.GREEN, 150, 5));
 			ledFlashYellow.whenPressed(new FlashBeautifulRobot(BeautifulRobotDriver.Color.CUSTOM, 150, 5));
 
-			stopAuto.whenPressed(new InstantCommand(() -> {
-				Command c = Robot.drivetrain.getCurrentCommand();
-				if(c != null && !(c instanceof TeleopDrive)) {
-					c.cancel();
-					RobotLogger.logInfoFine("Cancelled a command of type " + c.getClass().getName());
-				}
-			}));
-			reverse.whenPressed(new InstantCommand(() -> {
-				TeleopDrive.reverse();
-				RobotLogger.logInfoFine("Driving reversed");
-			}));
-
-			// This trigger is activated when the drive controls are active
-			Trigger driveInput = new Trigger() {
-				@Override
-				public boolean get() {
-					return Math.abs(OI.driverController.getRawAxis(Controls.DRIVE_FWD_REV)) > TeleopDrive.DEADZONE
-							|| Math.abs(OI.driverController.getRawAxis(Controls.DRIVE_LEFT_RIGHT)) > TeleopDrive.DEADZONE;
-				}
-			};
-			// When activated, it will cancel the currently running command on the drivetrain
-			driveInput.whenActive(new InstantCommand(() -> {
-				Command c = Robot.drivetrain.getCurrentCommand();
-				if(c != null && !(c instanceof TeleopDrive)) {
-					c.cancel();
-					RobotLogger.logInfoFine("Cancelled a command of type " + c.getClass().getName());
-				}
-			}));
-
-			// Turns 180 degrees in place
-			turn180.whenPressed(new RotateToAngle(187, RotateToAngle.Direction.LEFT));
-
-			gearShiftHigh.whenPressed(new InstantCommand(() -> {
-				// Do nothing if the current gear is already high
-				if(Robot.drivetrain.getGear() != Drivetrain.Gear.HIGH) {
-					// Disable shifting when the robot is going too fast to reduce stress on the gearbox
-					if(Math.abs(Robot.drivetrain.getLeftSpeed()) <= RobotMap.SHIFT_LOW_TO_HIGH_MAX
-							&& Math.abs(Robot.drivetrain.getRightSpeed()) <= RobotMap.SHIFT_LOW_TO_HIGH_MAX) {
-						Robot.drivetrain.setGear(Drivetrain.Gear.HIGH);
-						RobotLogger.logInfoFine("Shifted to high gear");
-					}
-					else {
-						noGearShiftRumble.execute();
-						RobotLogger.logWarning("Attempt to shift to high gear when speed is too high");
-					}
-				}
-				else {
-					RobotLogger.logInfoFine("High gear button pressed; robot is already in high gear");
-				}
-			}));
-			gearShiftLow.whenPressed(new InstantCommand(() -> {
-				if(Robot.drivetrain.getGear() != Drivetrain.Gear.LOW) {
-					if(Math.abs(Robot.drivetrain.getLeftSpeed()) <= RobotMap.SHIFT_HIGH_TO_LOW_MAX
-							&& Math.abs(Robot.drivetrain.getRightSpeed()) <= RobotMap.SHIFT_HIGH_TO_LOW_MAX) {
-						Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
-						RobotLogger.logInfoFine("Shifted to low gear");
-						// When setting gear from high to low, check if precision mode is enabled
-						// Disable precision mode as it is useless in low gear and there is no way to disable it
-						if(TeleopDrive.isPrecisionDrive()) {
-							TeleopDrive.setPrecisionDrive(false);
-						}
-					}
-					else {
-						noGearShiftRumble.execute();
-						RobotLogger.logWarning("Attempt to shift to low gear when speed is too high");
-					}
-				}
-				else {
-					RobotLogger.logInfoFine("Low gear button pressed; robot is already in low gear");
-				}
-			}));
-
 			restartVisionServer.whenPressed(new RestartVisionServer());
-
-			climberPistonToggleEssie.whenPressed(new OperateClimber(Climber.Side.ESSIE));
-			climberPistonToggleHank.whenPressed(new OperateClimber(Climber.Side.HANK));
-
-			autoClimb.whenPressed(new AutoClimb());
-			autoClimb.whenReleased(new InstantCommand(() -> {
-				Command c = Robot.climber.getCurrentCommand();
-				if(c != null && c instanceof AutoClimb) {
-					c.cancel();
-					RobotLogger.logInfoFine("Auto climb was cancelled because the buttons were released");
-				}
-			}));
 		
 		/**
 		 * Guest Mode on
@@ -360,132 +372,13 @@ public class OI {
 			Button essieReverse = new POVButton(operatorController, Controls.ESSIE_REVERSE_INTAKE_GUEST);
 			Button essieHigh = new POVButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH_GUEST);
 
-			overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
-				RobotMap.essieMotorHigh.overrideBlacklist();
-				RobotMap.essieMotorLow.overrideBlacklist();
-				RobotLogger.logWarning("Motor protection manually overridden");
-			}));
-
+			
 			essieAutoIntake.whenPressed(new AutoCargoIntake());
 			essieHigh.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_HIGH));
 			essieReverse.whileHeld(new OperateEssie(OperateEssie.Mode.REVERSE));
 
-			operateHank.whileHeld(new OperateHank());
 
-			// User button on the rio shuts down the Jetson
-			Trigger shutdownJetson = new Trigger() {
-				@Override
-				public boolean get() {
-					return RobotController.getUserButton();
-				}
-			};
-			shutdownJetson.whileActive(new ShutdownJetson());
-
-			visionAlignAdvanced.whenPressed(new AdvancedVisionAlign());
-			visionAlignBasic.whenPressed(new VisionAlign());
-			precisionDrive.whenPressed(new InstantCommand(() -> {
-				// Precision drive is disabled when the robot is in low gear,
-				// as the robot already goes very slowly anyways.
-				if(Robot.drivetrain.getGear() != Drivetrain.Gear.LOW) {
-					TeleopDrive.togglePrecisionDrive();
-					RobotLogger.logInfoFine("Precision drive changed to " + TeleopDrive.isPrecisionDrive());
-				}
-			}));
-
-			Command debugCmd = new InstantCommand(() -> {
-				Robot.isInDebugMode = !Robot.isInDebugMode;
-				if(Robot.isInDebugMode) {
-					Robot.putTuningEntries();
-					RobotLogger.logInfo("Debug mode activated");
-				}
-			});
-			debugCmd.setRunWhenDisabled(true);
-			debug.whenPressed(debugCmd);
-
-			stopAuto.whenPressed(new InstantCommand(() -> {
-				Command c = Robot.drivetrain.getCurrentCommand();
-				if(c != null && !(c instanceof TeleopDrive)) {
-					c.cancel();
-					RobotLogger.logInfoFine("Cancelled a command of type " + c.getClass().getName());
-				}
-			}));
-			reverse.whenPressed(new InstantCommand(() -> {
-				TeleopDrive.reverse();
-				RobotLogger.logInfoFine("Driving reversed");
-			}));
-
-			// This trigger is activated when the drive controls are active
-			Trigger driveInput = new Trigger() {
-				@Override
-				public boolean get() {
-					return Math.abs(OI.driverController.getRawAxis(Controls.DRIVE_FWD_REV)) > TeleopDrive.DEADZONE
-							|| Math.abs(OI.driverController.getRawAxis(Controls.DRIVE_LEFT_RIGHT)) > TeleopDrive.DEADZONE;
-				}
-			};
-			// When activated, it will cancel the currently running command on the drivetrain
-			driveInput.whenActive(new InstantCommand(() -> {
-				Command c = Robot.drivetrain.getCurrentCommand();
-				if(c != null && !(c instanceof TeleopDrive)) {
-					c.cancel();
-					RobotLogger.logInfoFine("Cancelled a command of type " + c.getClass().getName());
-				}
-			}));
-
-			// Turns 180 degrees in place
-			turn180.whenPressed(new RotateToAngle(187, RotateToAngle.Direction.LEFT));
-
-			gearShiftHigh.whenPressed(new InstantCommand(() -> {
-				// Do nothing if the current gear is already high
-				if(Robot.drivetrain.getGear() != Drivetrain.Gear.HIGH) {
-					// Disable shifting when the robot is going too fast to reduce stress on the gearbox
-					if(Math.abs(Robot.drivetrain.getLeftSpeed()) <= RobotMap.SHIFT_LOW_TO_HIGH_MAX
-							&& Math.abs(Robot.drivetrain.getRightSpeed()) <= RobotMap.SHIFT_LOW_TO_HIGH_MAX) {
-						Robot.drivetrain.setGear(Drivetrain.Gear.HIGH);
-						RobotLogger.logInfoFine("Shifted to high gear");
-					}
-					else {
-						noGearShiftRumble.execute();
-						RobotLogger.logWarning("Attempt to shift to high gear when speed is too high");
-					}
-				}
-				else {
-					RobotLogger.logInfoFine("High gear button pressed; robot is already in high gear");
-				}
-			}));
-			gearShiftLow.whenPressed(new InstantCommand(() -> {
-				if(Robot.drivetrain.getGear() != Drivetrain.Gear.LOW) {
-					if(Math.abs(Robot.drivetrain.getLeftSpeed()) <= RobotMap.SHIFT_HIGH_TO_LOW_MAX
-							&& Math.abs(Robot.drivetrain.getRightSpeed()) <= RobotMap.SHIFT_HIGH_TO_LOW_MAX) {
-						Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
-						RobotLogger.logInfoFine("Shifted to low gear");
-						// When setting gear from high to low, check if precision mode is enabled
-						// Disable precision mode as it is useless in low gear and there is no way to disable it
-						if(TeleopDrive.isPrecisionDrive()) {
-							TeleopDrive.setPrecisionDrive(false);
-						}
-					}
-					else {
-						noGearShiftRumble.execute();
-						RobotLogger.logWarning("Attempt to shift to low gear when speed is too high");
-					}
-				}
-				else {
-					RobotLogger.logInfoFine("Low gear button pressed; robot is already in low gear");
-				}
-			}));
-
-			climberPistonToggleEssie.whenPressed(new OperateClimber(Climber.Side.ESSIE));
-			climberPistonToggleHank.whenPressed(new OperateClimber(Climber.Side.HANK));
-
-			autoClimb.whenPressed(new AutoClimb());
-			autoClimb.whenReleased(new InstantCommand(() -> {
-				Command c = Robot.climber.getCurrentCommand();
-				if(c != null && c instanceof AutoClimb) {
-					c.cancel();
-					RobotLogger.logInfoFine("Auto climb was cancelled because the buttons were released");
-				}
-			}));
-
+			
 		}
 	}
 }
