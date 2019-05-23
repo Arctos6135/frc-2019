@@ -34,8 +34,8 @@ import frc.robot.misc.RobotLogger;
 import frc.robot.misc.Rumble;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.triggers.HeldButton;
 import frc.robot.triggers.ConditionalButton;
+import frc.robot.triggers.HeldButton;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -153,8 +153,12 @@ public class OI {
         /**
          * Button variables for guest mode
          */
-        public static final int ESSIE_OUTTAKE_HIGH_GUEST = ControllerMap.POV_UP;
-        public static final int ESSIE_OUTTAKE_LOW_GUEST = ControllerMap.POV_DOWN;
+        public static final int ESSIE_OUTTAKE_HIGH_GUEST_0 = ControllerMap.POV_UP;
+        public static final int ESSIE_OUTTAKE_LOW_GUEST_0 = ControllerMap.POV_DOWN;
+        public static final int ESSIE_OUTTAKE_HIGH_GUEST_1 = ControllerMap.POV_UPPER_LEFT;
+        public static final int ESSIE_OUTTAKE_LOW_GUEST_1 = ControllerMap.POV_LOWER_LEFT;
+        public static final int ESSIE_OUTTAKE_HIGH_GUEST_2 = ControllerMap.POV_UPPER_RIGHT;
+        public static final int ESSIE_OUTTAKE_LOW_GUEST_2 = ControllerMap.POV_LOWER_RIGHT;
 
     }
 
@@ -189,18 +193,25 @@ public class OI {
         this.guestMode.set(guestMode);
 
         Button overrideMotorBlacklist1 = new JoystickButton(driverController, Controls.OVERRIDE_MOTOR_BLACKLIST);
-        Button climberPistonToggleEssie = new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_ESSIE);
-        Button climberPistonToggleHank = new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_HANK);
-        Button precisionDrive = new JoystickButton(driverController, Controls.PRECISION_DRIVE);
+        Button climberPistonToggleEssie = new ConditionalButton(
+                new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_ESSIE), this.guestMode, true);
+        Button climberPistonToggleHank = new ConditionalButton(
+                new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_HANK), this.guestMode, true);
+        Button precisionDrive = new ConditionalButton(new JoystickButton(driverController, Controls.PRECISION_DRIVE),
+                this.guestMode, true);
         Button debug = new JoystickButton(driverController, Controls.DEBUG);
-        Button visionAlignAdvanced = new JoystickButton(driverController, Controls.VISION_ALIGN_ADVANCED);
-        Button visionAlignBasic = new JoystickButton(driverController, Controls.VISION_ALIGN_BASIC);
+        Button visionAlignAdvanced = new ConditionalButton(
+                new JoystickButton(driverController, Controls.VISION_ALIGN_ADVANCED), this.guestMode, true);
+        Button visionAlignBasic = new ConditionalButton(
+                new JoystickButton(driverController, Controls.VISION_ALIGN_BASIC), this.guestMode, true);
         Button reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
         Button stopAuto = new JoystickButton(driverController, Controls.STOP_AUTO);
-        Button turn180 = new JoystickButton(driverController, Controls.TURN_180);
+        Button turn180 = new ConditionalButton(new JoystickButton(driverController, Controls.TURN_180), this.guestMode,
+                true);
         Button gearShiftHigh = new JoystickButton(driverController, Controls.GEARSHIFT_HIGH);
         Button gearShiftLow = new JoystickButton(driverController, Controls.GEARSHIFT_LOW);
-        Button autoClimb = new HeldButton(new POVButton(driverController, Controls.POV_AUTO_CLIMB), 0.5);
+        Button autoClimb = new ConditionalButton(
+                new HeldButton(new POVButton(driverController, Controls.POV_AUTO_CLIMB), 0.5), this.guestMode, true);
 
         Button essieAutoIntake = new JoystickButton(operatorController, Controls.ESSIE_AUTOPICKUP);
         Button cancelEssie = new JoystickButton(operatorController, Controls.CANCEL_ESSIE);
@@ -365,12 +376,24 @@ public class OI {
 
         restartVisionServer.whenPressed(new RestartVisionServer());
 
-        Button essieHighGuest = new ConditionalButton(
-                new POVButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH_GUEST), this.guestMode);
-        Button essieLowGuest = new ConditionalButton(
-                new POVButton(operatorController, Controls.ESSIE_OUTTAKE_LOW_GUEST), this.guestMode);
+        Button essieHighGuest0 = new ConditionalButton(
+                new POVButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH_GUEST_0), this.guestMode);
+        Button essieLowGuest0 = new ConditionalButton(
+                new POVButton(operatorController, Controls.ESSIE_OUTTAKE_LOW_GUEST_0), this.guestMode);
+        Button essieHighGuest1 = new ConditionalButton(
+                new POVButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH_GUEST_1), this.guestMode);
+        Button essieLowGuest1 = new ConditionalButton(
+                new POVButton(operatorController, Controls.ESSIE_OUTTAKE_LOW_GUEST_1), this.guestMode);
+        Button essieHighGuest2 = new ConditionalButton(
+                new POVButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH_GUEST_2), this.guestMode);
+        Button essieLowGuest2 = new ConditionalButton(
+                new POVButton(operatorController, Controls.ESSIE_OUTTAKE_LOW_GUEST_2), this.guestMode);
 
-        essieHighGuest.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_HIGH));
-        essieLowGuest.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_LOW));
+        essieHighGuest0.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_HIGH));
+        essieLowGuest0.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_LOW));
+        essieHighGuest1.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_HIGH));
+        essieLowGuest1.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_LOW));
+        essieHighGuest2.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_HIGH));
+        essieLowGuest2.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_LOW));
     }
 }

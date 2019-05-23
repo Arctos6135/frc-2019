@@ -29,6 +29,9 @@ public class EssieDefault extends Command {
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
+        if(Robot.oi.isGuestMode()) {
+            return;
+        }
         double val = OI.operatorController.getRawAxis(OI.Controls.ESSIE_OUTTAKE);
         
         if(val >= THRESHOLD) {

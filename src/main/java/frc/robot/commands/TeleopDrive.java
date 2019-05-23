@@ -134,8 +134,8 @@ public class TeleopDrive extends Command {
         y = Math.copySign(y * y, y);
 
         if(Robot.drivetrain.getGear() == Drivetrain.Gear.HIGH) {
-            // Half the turning rate in high gear
-            x /= 3;
+            // Reduce the turning rate in high gear
+            x *= 0.7;
         }
 
         if(reverseDrive) {
