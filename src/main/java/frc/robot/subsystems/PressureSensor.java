@@ -30,7 +30,7 @@ public class PressureSensor extends Subsystem {
         // 250 (voltageOut/supplyVoltage) - 25
         pressure = 250 * (RobotMap.pressureSensor.getAverageValue() / supplyVoltage) - 25;
     }
-    public float getPressure() {
+    public double getPressure() {
         findPressure();
         return pressure;
     }
