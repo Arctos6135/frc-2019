@@ -22,10 +22,12 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
+import edu.wpi.first.wpilibj.AnalogInput;
 import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.misc.RobotLogger;
 import frc.robot.misc.protectedmotor.ProtectedMotor;
 import robot.pathfinder.core.RobotSpecs;
+
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
@@ -58,6 +60,8 @@ public class RobotMap {
     public static final DoubleSolenoid gearShifter = new DoubleSolenoid(0, 1);
     public static final Solenoid essieClimber = new Solenoid(4);
     public static final Solenoid hankClimber = new Solenoid(5);
+
+    public static final AnalogInput pressureSensor = new AnalogInput(0);
 
     public static final DigitalInput essieDownMRS = new DigitalInput(6);
     public static final DigitalInput hankDownMRS = new DigitalInput(5);

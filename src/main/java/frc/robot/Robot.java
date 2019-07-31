@@ -34,6 +34,7 @@ import frc.robot.subsystems.Essie;
 import frc.robot.subsystems.Hank;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Vision.VisionException;
+import frc.robot.subsystems.PressureSensor;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -50,6 +51,7 @@ public class Robot extends TimedRobot {
     public static BeautifulRobot beautifulRobot;
     public static Climber climber;
     public static OI oi;
+    public static PressureSensor pressureSensor;
 
     public static Command autoCommand;
 
@@ -86,6 +88,7 @@ public class Robot extends TimedRobot {
         climber = new Climber();
         beautifulRobot = new BeautifulRobot();
         oi = new OI(false);
+        pressureSensor = new PressureSensor();
 
         // Warm up RobotPathfinder and generate auto paths
         long finalGenerationTime = FollowTrajectory.warmupRobotPathfinder(10);
@@ -284,6 +287,8 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Debug", isInDebugMode);
         
         SmartDashboard.putBoolean("Essie Cargo", essie.hasCargo());
+        SmartDashboard.putNumber("Pressure Level", pressureSensor.getPressure());
+        SmartDashboard.putBoolean("Can Climb", pressureSensor.canClimb());
 
         if(isInDebugMode) {     
             SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
