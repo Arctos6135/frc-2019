@@ -194,24 +194,24 @@ public class OI {
 
         Button overrideMotorBlacklist1 = new JoystickButton(driverController, Controls.OVERRIDE_MOTOR_BLACKLIST);
         Button climberPistonToggleEssie = new ConditionalButton(
-                new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_ESSIE), this.guestMode, true);
+                new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_ESSIE), this.guestMode, false);
         Button climberPistonToggleHank = new ConditionalButton(
-                new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_HANK), this.guestMode, true);
+                new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_HANK), this.guestMode, false);
         Button precisionDrive = new ConditionalButton(new JoystickButton(driverController, Controls.PRECISION_DRIVE),
-                this.guestMode, true);
+                this.guestMode, false);
         Button debug = new JoystickButton(driverController, Controls.DEBUG);
         Button visionAlignAdvanced = new ConditionalButton(
-                new JoystickButton(driverController, Controls.VISION_ALIGN_ADVANCED), this.guestMode, true);
+                new JoystickButton(driverController, Controls.VISION_ALIGN_ADVANCED), this.guestMode, false);
         Button visionAlignBasic = new ConditionalButton(
-                new JoystickButton(driverController, Controls.VISION_ALIGN_BASIC), this.guestMode, true);
+                new JoystickButton(driverController, Controls.VISION_ALIGN_BASIC), this.guestMode, false);
         Button reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
         Button stopAuto = new JoystickButton(driverController, Controls.STOP_AUTO);
         Button turn180 = new ConditionalButton(new JoystickButton(driverController, Controls.TURN_180), this.guestMode,
-                true);
+                false);
         Button gearShiftHigh = new JoystickButton(driverController, Controls.GEARSHIFT_HIGH);
         Button gearShiftLow = new JoystickButton(driverController, Controls.GEARSHIFT_LOW);
         Button autoClimb = new ConditionalButton(
-                new HeldButton(new POVButton(driverController, Controls.POV_AUTO_CLIMB), 0.5), this.guestMode, true);
+                new HeldButton(new POVButton(driverController, Controls.POV_AUTO_CLIMB), 0.5), this.guestMode, false);
 
         Button essieAutoIntake = new JoystickButton(operatorController, Controls.ESSIE_AUTOPICKUP);
         Button cancelEssie = new JoystickButton(operatorController, Controls.CANCEL_ESSIE);
@@ -347,17 +347,17 @@ public class OI {
         }));
 
         Button overrideMotorBlacklist2 = new ConditionalButton(
-                new JoystickButton(operatorController, Controls.OVERRIDE_MOTOR_BLACKLIST), this.guestMode, true);
+                new JoystickButton(operatorController, Controls.OVERRIDE_MOTOR_BLACKLIST), this.guestMode, false);
         Button restartVisionServer = new ConditionalButton(
-                new JoystickButton(operatorController, Controls.RESTART_VISION_SERVER), this.guestMode, true);
+                new JoystickButton(operatorController, Controls.RESTART_VISION_SERVER), this.guestMode, false);
         Button essieHigh = new ConditionalButton(new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_HIGH),
-                this.guestMode, true);
+                this.guestMode, false);
         Button essieLow = new ConditionalButton(new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_LOW),
-                this.guestMode, true);
+                this.guestMode, false);
         Button ledFlashGreen = new ConditionalButton(new POVButton(operatorController, Controls.POV_LED_FLASH_GREEN),
-                this.guestMode, true);
+                this.guestMode, false);
         Button ledFlashYellow = new ConditionalButton(new POVButton(operatorController, Controls.POV_LED_FLASH_YELLOW),
-                this.guestMode, true);
+                this.guestMode, false);
         Button essieReverse = new JoystickButton(operatorController, Controls.ESSIE_REVERSE_INTAKE);
 
         overrideMotorBlacklist2.whenActive(new InstantCommand(() -> {

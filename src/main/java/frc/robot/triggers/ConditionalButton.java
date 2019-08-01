@@ -25,7 +25,7 @@ public class ConditionalButton extends Button {
 
     protected Button button;
     protected AtomicBoolean condition;
-    protected boolean invert = false;
+    protected boolean required = true;
 
     /**
      * Create a new {@code ConditionalButton}.
@@ -44,25 +44,20 @@ public class ConditionalButton extends Button {
     /**
      * Create a new {@code ConditionalButton}.
      * 
-     * If {@code invert} is {@code false}, then the button can only be activated
-     * when {@code condition.get()} is {@code true}. If {@code invert} is
-     * {@code true}, then the button can only be activated when
-     * {@code condition.get()} is {@code false}.
+     * This button can only be activated when {@code condition.get() == required}.
      * 
-     * @param button
-     * @param condition
-     * @param invert
+     * @param button    The button to wrap around
+     * @param condition The condition for this button
+     * @param required  The state the condition is required to be in for this button
+     *                  to activate
      */
-    public ConditionalButton(Button button, AtomicBoolean condition, boolean invert) {
+    public ConditionalButton(Button button, AtomicBoolean condition, boolean required) {
         this(button, condition);
-        this.invert = invert;
+        this.required = required;
     }
 
     @Override
     public boolean get() {
-        // XOR the condition with invert
-        // If invert is false, this will not have any effect
-        // If invert is true, this will basically invert the condition
-        return button.get() && (condition.get() ^ invert);
+        return button.get() && (condition.get() == required);
     }
 }
