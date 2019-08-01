@@ -87,12 +87,14 @@ public class FollowTrajectory extends Command {
         if(Robot.isInDebugMode) {
             SmartDashboard.putNumber("Follower Left Output", follower.lastLeftOutput());
             SmartDashboard.putNumber("Follower Right Output", follower.lastRightOutput());
+            
+            TankDriveMoment m = follower.lastMoment();
 
-            SmartDashboard.putNumber("Follower Left Velocity", follower.lastLeftVelocity());
-            SmartDashboard.putNumber("Follower Right Velocity", follower.lastRightVelocity());
+            SmartDashboard.putNumber("Follower Left Velocity", m.getLeftVelocity());
+            SmartDashboard.putNumber("Follower Right Velocity", m.getRightVelocity());
 
-            SmartDashboard.putNumber("Follower Left Acceleration", follower.lastLeftAcceleration());
-            SmartDashboard.putNumber("Follower Right Acceleration", follower.lastRightAcceleration());
+            SmartDashboard.putNumber("Follower Left Acceleration", m.getLeftAcceleration());
+            SmartDashboard.putNumber("Follower Right Acceleration", m.getRightAcceleration());
 
             SmartDashboard.putNumber("Follower Left Error", follower.lastLeftError());
             SmartDashboard.putNumber("Follower Right Error", follower.lastRightError());
