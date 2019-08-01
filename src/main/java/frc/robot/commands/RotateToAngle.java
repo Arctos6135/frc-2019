@@ -7,8 +7,9 @@
 
 package frc.robot.commands;
 
-import com.arctos6135.robotpathfinder.follower.TankDriveFollowable;
-import com.arctos6135.robotpathfinder.motionprofile.followable.TrapezoidalRotationTankDriveProfile;
+import com.arctos6135.robotpathfinder.core.trajectory.TankDriveMoment;
+import com.arctos6135.robotpathfinder.follower.Followable;
+import com.arctos6135.robotpathfinder.motionprofile.followable.profiles.TrapezoidalTankDriveRotationProfile;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
@@ -28,7 +29,7 @@ public class RotateToAngle extends Command {
         LEFT, RIGHT;
     }
 
-    TankDriveFollowable profile;
+    Followable<TankDriveMoment> profile;
     FollowTrajectory followerCommand;
 
     double angle;
@@ -52,7 +53,7 @@ public class RotateToAngle extends Command {
     protected void initialize() {
         RobotLogger.logInfoFiner("Generating trajectory to rotate to angle...");
         // Use a RobotPathfinder trajectory here to save time and improve accuracy with the already tuned PIDs
-        profile = new TrapezoidalRotationTankDriveProfile(FollowTrajectory.getSpecs(), 
+        profile = new TrapezoidalTankDriveRotationProfile(FollowTrajectory.getSpecs(), 
                 direction == Direction.LEFT ? Math.toRadians(angle) : Math.toRadians(-angle));
         followerCommand = new FollowTrajectory(profile);
         RobotLogger.logInfoFiner("Rotating to angle " + angle + " to " + direction.toString());

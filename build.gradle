@@ -3,6 +3,11 @@ plugins {
     id "edu.wpi.first.GradleRIO" version "2019.3.2"
 }
 
+compileJava {
+    // Show deprecation warnings
+    options.compilerArgs << '-Xlint:deprecation'
+}
+
 def ROBOT_MAIN_CLASS = "frc.robot.Main"
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
@@ -48,7 +53,7 @@ dependencies {
     compile wpi.deps.wpilib()
     compile wpi.deps.vendor.java()
 
-    compile files("lib/RobotPathfinder-3.0.0-alpha.0.1.1.jar")
+    compile files("lib/RobotPathfinder-3.0.0-alpha.1.jar")
     nativeLib files("lib/libRobotPathfinder.so")
     
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)

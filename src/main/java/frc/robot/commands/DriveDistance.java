@@ -7,8 +7,9 @@
 
 package frc.robot.commands;
 
-import com.arctos6135.robotpathfinder.follower.TankDriveFollowable;
-import com.arctos6135.robotpathfinder.motionprofile.followable.TrapezoidalTankDriveProfile;
+import com.arctos6135.robotpathfinder.core.trajectory.TankDriveMoment;
+import com.arctos6135.robotpathfinder.follower.Followable;
+import com.arctos6135.robotpathfinder.motionprofile.followable.profiles.TrapezoidalTankDriveProfile;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
@@ -18,7 +19,7 @@ public class DriveDistance extends Command {
 
     final double distance;
 
-    TankDriveFollowable profile;
+    Followable<TankDriveMoment> profile;
     FollowTrajectory followerCommand;
 
     public DriveDistance(double distance) {

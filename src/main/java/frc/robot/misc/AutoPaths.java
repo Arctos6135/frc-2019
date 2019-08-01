@@ -4,9 +4,10 @@ import com.arctos6135.robotpathfinder.core.RobotSpecs;
 import com.arctos6135.robotpathfinder.core.TrajectoryParams;
 import com.arctos6135.robotpathfinder.core.Waypoint;
 import com.arctos6135.robotpathfinder.core.path.PathType;
+import com.arctos6135.robotpathfinder.core.trajectory.TankDriveMoment;
 import com.arctos6135.robotpathfinder.core.trajectory.TankDriveTrajectory;
-import com.arctos6135.robotpathfinder.follower.TankDriveFollowable;
-import com.arctos6135.robotpathfinder.motionprofile.followable.TrapezoidalTankDriveProfile;
+import com.arctos6135.robotpathfinder.motionprofile.followable.FollowableMotionProfile;
+import com.arctos6135.robotpathfinder.motionprofile.followable.profiles.TrapezoidalTankDriveProfile;
 
 import frc.robot.RobotMap;
 import frc.robot.commands.FollowTrajectory;
@@ -28,8 +29,8 @@ public final class AutoPaths {
     public static TankDriveTrajectory approachCargoShipSideLevelOneR;
     public static TankDriveTrajectory approachCargoShipSideForVisionLevelOneL;
     public static TankDriveTrajectory approachCargoShipSideForVisionLevelOneR;
-    public static TankDriveFollowable driveOffHabLevelTwo;
-    public static TankDriveFollowable driveOffHabLevelTwoReversed;
+    public static FollowableMotionProfile<TankDriveMoment> driveOffHabLevelTwo;
+    public static FollowableMotionProfile<TankDriveMoment> driveOffHabLevelTwoReversed;
     
     public static void generateAll() {
         RobotSpecs specs = FollowTrajectory.getSpecs();

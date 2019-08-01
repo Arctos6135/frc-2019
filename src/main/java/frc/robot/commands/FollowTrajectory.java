@@ -8,11 +8,12 @@
 package frc.robot.commands;
 
 import com.arctos6135.robotpathfinder.core.RobotSpecs;
+import com.arctos6135.robotpathfinder.core.trajectory.TankDriveMoment;
+import com.arctos6135.robotpathfinder.follower.Followable;
 import com.arctos6135.robotpathfinder.follower.Follower.DirectionSource;
-import com.arctos6135.robotpathfinder.follower.Follower.DistanceSource;
 import com.arctos6135.robotpathfinder.follower.Follower.Motor;
+import com.arctos6135.robotpathfinder.follower.Follower.PositionSource;
 import com.arctos6135.robotpathfinder.follower.Follower.TimestampSource;
-import com.arctos6135.robotpathfinder.follower.TankDriveFollowable;
 import com.arctos6135.robotpathfinder.follower.TankDriveFollower;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
@@ -31,21 +32,21 @@ public class FollowTrajectory extends Command {
     public static final DirectionSource GYRO = () -> {
         return Math.toRadians(Robot.drivetrain.getHeading());
     };
-    public static final DistanceSource L_DISTANCE_SOURCE = Robot.drivetrain::getLeftDistance;
-    public static final DistanceSource R_DISTANCE_SOURCE = Robot.drivetrain::getRightDistance;
+    public static final PositionSource L_DISTANCE_SOURCE = Robot.drivetrain::getLeftDistance;
+    public static final PositionSource R_DISTANCE_SOURCE = Robot.drivetrain::getRightDistance;
     public static final TimestampSource TIMESTAMP_SOURCE = Timer::getFPGATimestamp;
 
-    public static double kP_l = 0.2, kD_l = 0.00015, kV_l = 0.025, kA_l = 0.0015, kDP_l = 0.01;
-    public static double kP_h = 0.1, kD_h = 0.00025, kV_h = 0.007, kA_h = 0.002, kDP_h = 0.01;
+    public static double kP_l = 0.2, kI_l = 0, kD_l = 0.00015, kV_l = 0.025, kA_l = 0.0015, kDP_l = 0.01;
+    public static double kP_h = 0.1, kI_h = 0, kD_h = 0.00025, kV_h = 0.007, kA_h = 0.002, kDP_h = 0.01;
 
     // This is the gear the robot must be in for trajectory following
     // If set to null, the robot will accept both
     public static Drivetrain.Gear gearToUse = null;
 
-    public final TankDriveFollowable profile;
+    public final Followable<TankDriveMoment> profile;
     public TankDriveFollower follower;
 
-    public FollowTrajectory(TankDriveFollowable trajectory) {
+    public FollowTrajectory(Followable<TankDriveMoment> trajectory) {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
         requires(Robot.drivetrain);
@@ -68,11 +69,11 @@ public class FollowTrajectory extends Command {
 
         if(Robot.drivetrain.getGear() == Drivetrain.Gear.HIGH) {
             follower = new TankDriveFollower(profile, L_MOTOR, R_MOTOR, L_DISTANCE_SOURCE, R_DISTANCE_SOURCE, TIMESTAMP_SOURCE, 
-                    GYRO, kV_h, kA_h, kP_h, kD_h, kDP_h);
+                    GYRO, kV_h, kA_h, kP_h, kI_h, kD_h, kDP_h);
         }
         else {
             follower = new TankDriveFollower(profile, L_MOTOR, R_MOTOR, L_DISTANCE_SOURCE, R_DISTANCE_SOURCE, TIMESTAMP_SOURCE, 
-                    GYRO, kV_l, kA_l, kP_l, kD_l, kDP_l);
+                    GYRO, kV_l, kA_l, kP_l, kI_l, kD_l, kDP_l);
         }
 
         follower.initialize();
