@@ -39,6 +39,13 @@ public final class AutoDispatcher {
         HANK, ESSIE;
     }
 
+    /**
+     * Whether guest mode is on or off
+     */
+    public enum GuestMode {
+        ON, OFF;
+    }
+    
     public static final boolean isValidAuto(Mode mode, HabLevel level, Side side, RobotSide robotSide) {
         if(mode == Mode.VISION && robotSide == RobotSide.ESSIE) {
             return false;
@@ -48,6 +55,7 @@ public final class AutoDispatcher {
         }
         return true;
     }
+    
     public static final Command getAuto(Mode mode, HabLevel level, Side side, RobotSide robotSide) {
         switch(mode) {
         case NONE:

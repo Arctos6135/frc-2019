@@ -23,6 +23,7 @@ import frc.robot.commands.FollowTrajectory;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.commands.sandstorm.AutoDispatcher;
+import frc.robot.commands.sandstorm.AutoDispatcher.GuestMode;
 import frc.robot.misc.AutoPaths;
 import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.misc.RobotLogger;
@@ -33,6 +34,7 @@ import frc.robot.subsystems.Essie;
 import frc.robot.subsystems.Hank;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Vision.VisionException;
+import frc.robot.subsystems.PressureSensor;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -49,15 +51,19 @@ public class Robot extends TimedRobot {
     public static BeautifulRobot beautifulRobot;
     public static Climber climber;
     public static OI oi;
+    public static PressureSensor pressureSensor;
 
     public static Command autoCommand;
 
     static SendableChooser<AutoDispatcher.Mode> modeChooser = new SendableChooser<>();
     static SendableChooser<AutoDispatcher.HabLevel> habLevelChooser = new SendableChooser<>();
     static SendableChooser<AutoDispatcher.Side> sideChooser = new SendableChooser<>();
-    static SendableChooser<AutoDispatcher.RobotSide> robotSideChooser = new SendableChooser<>();
+	static SendableChooser<AutoDispatcher.RobotSide> robotSideChooser = new SendableChooser<>();
+	static SendableChooser<AutoDispatcher.GuestMode> guestModeChooser = new SendableChooser<>();
     static SendableChooser<Drivetrain.Gear> followerGearChooser = new SendableChooser<>();
-    static SendableChooser<Drivetrain.Gear> matchStartGearChooser = new SendableChooser<>();
+	static SendableChooser<Drivetrain.Gear> matchStartGearChooser = new SendableChooser<>();
+	
+	static GuestMode prevGuestMode = GuestMode.OFF;
 
     public static boolean isInDebugMode = false;
 
@@ -81,7 +87,8 @@ public class Robot extends TimedRobot {
         essie = new Essie();
         climber = new Climber();
         beautifulRobot = new BeautifulRobot();
-        oi = new OI();
+        pressureSensor = new PressureSensor();
+        oi = new OI(false);
         
         beautifulRobot.init();
         beautifulRobot.setEnabled(true);
@@ -165,6 +172,11 @@ public class Robot extends TimedRobot {
         matchStartGearChooser.addOption("High Gear", Drivetrain.Gear.HIGH);
         matchStartGearChooser.addOption("Current Gear", null);
         SmartDashboard.putData("Match Start Gear", matchStartGearChooser);
+		
+		// Create Guest Mode chooser
+		guestModeChooser.setDefaultOption("OFF", AutoDispatcher.GuestMode.OFF);
+		guestModeChooser.addOption("ON", AutoDispatcher.GuestMode.ON);
+		SmartDashboard.putData("Guest Mode", guestModeChooser);
 
         RobotLogger.logInfo("Basic initialization complete. Waiting for vision to come online...");
         
@@ -270,6 +282,8 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Debug", isInDebugMode);
         
         SmartDashboard.putBoolean("Essie Cargo", essie.hasCargo());
+        SmartDashboard.putNumber("Pressure Level", pressureSensor.getPressure());
+        SmartDashboard.putBoolean("Can Climb", pressureSensor.canClimb());
 
         if(isInDebugMode) {     
             SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
@@ -294,7 +308,23 @@ public class Robot extends TimedRobot {
                     RobotLogger.logError("Vision went offline unexpectedly");
                 }
             }
-        }
+		}
+		
+		/**
+		 * Changes controls based on guest mode
+		 * Simplifies controls and lowers speed
+		 */
+		if (guestModeChooser.getSelected() != prevGuestMode) {
+			if (guestModeChooser.getSelected() == GuestMode.OFF) {
+                oi.setGuestMode(false);
+				drivetrain.setSpeedMultiplier(1);
+			} else {
+                oi.setGuestMode(true);
+				drivetrain.setSpeedMultiplier(RobotMap.GUEST_MODE_SPEED_MULTIPLIER);
+			}
+
+			prevGuestMode = guestModeChooser.getSelected();
+		}
     }
 
     /**
