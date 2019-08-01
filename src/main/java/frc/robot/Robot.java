@@ -237,6 +237,8 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Follower kV (Low Gear)", FollowTrajectory.kV_l);
         SmartDashboard.putNumber("Follower kA (Low Gear)", FollowTrajectory.kA_l);
         SmartDashboard.putNumber("Follower kDP (Low Gear)", FollowTrajectory.kDP_l);
+
+        SmartDashboard.putNumber("Follower Update Delay", FollowTrajectory.updateDelay);
     }
     /**
      * Updates a bunch of tunable values based on new values from SmartDashboard.
@@ -262,6 +264,8 @@ public class Robot extends TimedRobot {
         FollowTrajectory.kV_l = SmartDashboard.getNumber("Follower kV (Low Gear)", FollowTrajectory.kV_l);
         FollowTrajectory.kA_l = SmartDashboard.getNumber("Follower kA (Low Gear)", FollowTrajectory.kA_l);
         FollowTrajectory.kDP_l = SmartDashboard.getNumber("Follower kDP (Low Gear)", FollowTrajectory.kDP_l);
+
+        FollowTrajectory.updateDelay = SmartDashboard.getNumber("Follower Update Delay", FollowTrajectory.updateDelay);
     }
 
     /**
