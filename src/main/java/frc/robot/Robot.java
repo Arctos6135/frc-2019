@@ -227,12 +227,14 @@ public class Robot extends TimedRobot {
         SmartDashboard.putData("Path Follower Gear", followerGearChooser);
 
         SmartDashboard.putNumber("Follower kP (High Gear)", FollowTrajectory.kP_h);
+        SmartDashboard.putNumber("Follower kI (High Gear)", FollowTrajectory.kI_h);
         SmartDashboard.putNumber("Follower kD (High Gear)", FollowTrajectory.kD_h);
         SmartDashboard.putNumber("Follower kV (High Gear)", FollowTrajectory.kV_h);
         SmartDashboard.putNumber("Follower kA (High Gear)", FollowTrajectory.kA_h);
         SmartDashboard.putNumber("Follower kDP (High Gear)", FollowTrajectory.kDP_h);
 
         SmartDashboard.putNumber("Follower kP (Low Gear)", FollowTrajectory.kP_l);
+        SmartDashboard.putNumber("Follower kI (Low Gear)", FollowTrajectory.kI_l);
         SmartDashboard.putNumber("Follower kD (Low Gear)", FollowTrajectory.kD_l);
         SmartDashboard.putNumber("Follower kV (Low Gear)", FollowTrajectory.kV_l);
         SmartDashboard.putNumber("Follower kA (Low Gear)", FollowTrajectory.kA_l);
@@ -254,12 +256,14 @@ public class Robot extends TimedRobot {
         }
 
         FollowTrajectory.kP_h = SmartDashboard.getNumber("Follower kP (High Gear)", FollowTrajectory.kP_h);
+        FollowTrajectory.kI_h = SmartDashboard.getNumber("Follower kI (High Gear)", FollowTrajectory.kI_h);
         FollowTrajectory.kD_h = SmartDashboard.getNumber("Follower kD (High Gear)", FollowTrajectory.kD_h);
         FollowTrajectory.kV_h = SmartDashboard.getNumber("Follower kV (High Gear)", FollowTrajectory.kV_h);
         FollowTrajectory.kA_h = SmartDashboard.getNumber("Follower kA (High Gear)", FollowTrajectory.kA_h);
         FollowTrajectory.kDP_h = SmartDashboard.getNumber("Follower kDP (High Gear)", FollowTrajectory.kDP_h);
 
         FollowTrajectory.kP_l = SmartDashboard.getNumber("Follower kP (Low Gear)", FollowTrajectory.kP_l);
+        FollowTrajectory.kI_l = SmartDashboard.getNumber("Follower kI (Low Gear)", FollowTrajectory.kI_l);
         FollowTrajectory.kD_l = SmartDashboard.getNumber("Follower kD (Low Gear)", FollowTrajectory.kD_l);
         FollowTrajectory.kV_l = SmartDashboard.getNumber("Follower kV (Low Gear)", FollowTrajectory.kV_l);
         FollowTrajectory.kA_l = SmartDashboard.getNumber("Follower kA (Low Gear)", FollowTrajectory.kA_l);
