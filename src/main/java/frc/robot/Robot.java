@@ -72,10 +72,18 @@ public class Robot extends TimedRobot {
 
     public static final String FRONT_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/main_camera/image_raw&quality=20&width=320&height=180";
     public static final String REAR_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/secondary_camera/image_raw&quality=20&width=320&height=240";
-    public static final NetworkTableEntry mainCameraUrl = NetworkTableInstance.getDefault().getTable("SmartDashboard")
-            .getEntry("main-stream-url");
-    public static final NetworkTableEntry secondaryCameraUrl = NetworkTableInstance.getDefault()
-            .getTable("SmartDashboard").getEntry("secondary-stream-url");
+    private static final NetworkTableEntry cameraURLsEntry = NetworkTableInstance.getDefault()
+            .getTable("CameraPublisher").getSubTable("JetsonCameras").getEntry("streams");
+    private static String[] cameraStreamURLs = new String[] { FRONT_CAMERA_URL, REAR_CAMERA_URL };
+    
+    public static void setMainCameraURL(String url) {
+        cameraStreamURLs[0] = url;
+        cameraURLsEntry.setStringArray(cameraStreamURLs);
+    }
+    public static void setSecondaryCameraURL(String url) {
+        cameraStreamURLs[1] = url;
+        cameraURLsEntry.setStringArray(cameraStreamURLs);
+    }
 
     /**
      * This Shuffleboard tab is used for pre-match configuration, such as autos.
@@ -244,8 +252,8 @@ public class Robot extends TimedRobot {
             }
         }, 10, 2000);
 
-        mainCameraUrl.setString(FRONT_CAMERA_URL);
-        secondaryCameraUrl.setString(REAR_CAMERA_URL);
+        setMainCameraURL(FRONT_CAMERA_URL);
+        setSecondaryCameraURL(REAR_CAMERA_URL);
 
         // Add a shutdown Jetson command
         debugTab.add("Shutdown Jetson", new ShutdownJetson()).withWidget(BuiltInWidgets.kCommand);
