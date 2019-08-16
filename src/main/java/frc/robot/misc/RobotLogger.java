@@ -15,12 +15,11 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
 /**
  * This class logs messages to a log file and/or the Driver
- * Station/SmartDashboard.
+ * Station/Shuffleboard.
  */
 public class RobotLogger {
     static Handler fileHandler;
@@ -85,7 +84,7 @@ public class RobotLogger {
 
     public static void logError(String error) {
         if(isInitialized) {
-            SmartDashboard.putString("Last Error", error);
+            Robot.lastErrorEntry.setString(error);
             DriverStation.reportError(error, false);
             logger.severe(error);
         }
@@ -93,7 +92,7 @@ public class RobotLogger {
     
     public static void logWarning(String warning) {
         if(isInitialized) {
-            SmartDashboard.putString("Last Warning", warning);
+            Robot.lastWarningEntry.setString(warning);
             DriverStation.reportWarning(warning, false);
             logger.warning(warning);
         }

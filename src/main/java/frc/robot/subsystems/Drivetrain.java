@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.RobotMap;
@@ -274,5 +275,29 @@ public class Drivetrain extends Subsystem {
         setGear(Gear.LOW);
         resetHeading();
         setNeutralMode(NeutralMode.Coast);
+    }
+
+    public class Gyro extends GyroBase {
+
+        @Override
+        public void calibrate() {
+            // Not implemented
+        }
+
+        @Override
+        public void reset() {
+            resetHeading();
+        }
+
+        @Override
+        public double getAngle() {
+            return getHeading();
+        }
+
+        @Override
+        public double getRate() {
+            return RobotMap.ahrs.getRate();
+        }
+
     }
 }

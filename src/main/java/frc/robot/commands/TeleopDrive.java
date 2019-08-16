@@ -57,23 +57,23 @@ public class TeleopDrive extends Command {
     public static void setReversed(boolean reversed) {
         reverseDrive = reversed;
         if(reverseDrive) {
-            Robot.mainCameraUrl.setString(Robot.REAR_CAMERA_URL);
-            Robot.secondaryCameraUrl.setString(Robot.FRONT_CAMERA_URL);
+            Robot.setMainCameraURL(Robot.REAR_CAMERA_URL);
+            Robot.setSecondaryCameraURL(Robot.FRONT_CAMERA_URL);
         }
         else {
-            Robot.mainCameraUrl.setString(Robot.FRONT_CAMERA_URL);
-            Robot.secondaryCameraUrl.setString(Robot.REAR_CAMERA_URL);
+            Robot.setMainCameraURL(Robot.FRONT_CAMERA_URL);
+            Robot.setSecondaryCameraURL(Robot.REAR_CAMERA_URL);
         }
     }
     public static void reverse() {
         reverseDrive = !reverseDrive;
         if(reverseDrive) {
-            Robot.mainCameraUrl.setString(Robot.REAR_CAMERA_URL);
-            Robot.secondaryCameraUrl.setString(Robot.FRONT_CAMERA_URL);
+            Robot.setMainCameraURL(Robot.REAR_CAMERA_URL);
+            Robot.setSecondaryCameraURL(Robot.FRONT_CAMERA_URL);
         }
         else {
-            Robot.mainCameraUrl.setString(Robot.FRONT_CAMERA_URL);
-            Robot.secondaryCameraUrl.setString(Robot.REAR_CAMERA_URL);
+            Robot.setMainCameraURL(Robot.FRONT_CAMERA_URL);
+            Robot.setSecondaryCameraURL(Robot.REAR_CAMERA_URL);
         }
     }
 

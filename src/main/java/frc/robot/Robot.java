@@ -8,6 +8,7 @@
 package frc.robot;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.TimerTask;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -17,8 +18,10 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.FollowTrajectory;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
@@ -31,9 +34,9 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Essie;
 import frc.robot.subsystems.Hank;
+import frc.robot.subsystems.PressureSensor;
 import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Vision.VisionException;
-import frc.robot.subsystems.PressureSensor;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -65,10 +68,143 @@ public class Robot extends TimedRobot {
 
     public static final String FRONT_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/main_camera/image_raw&quality=20&width=320&height=180";
     public static final String REAR_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/secondary_camera/image_raw&quality=20&width=320&height=240";
-    public static final NetworkTableEntry mainCameraUrl = NetworkTableInstance.getDefault().getTable("SmartDashboard")
-            .getEntry("main-stream-url");
-    public static final NetworkTableEntry secondaryCameraUrl = NetworkTableInstance.getDefault()
-            .getTable("SmartDashboard").getEntry("secondary-stream-url");
+    private static final NetworkTableEntry cameraURLsEntry = NetworkTableInstance.getDefault()
+            .getTable("CameraPublisher").getSubTable("JetsonCameras").getEntry("streams");
+    private static String[] cameraStreamURLs = new String[] { FRONT_CAMERA_URL, REAR_CAMERA_URL };
+
+    public static void setMainCameraURL(String url) {
+        cameraStreamURLs[0] = url;
+        cameraURLsEntry.setStringArray(cameraStreamURLs);
+    }
+
+    public static void setSecondaryCameraURL(String url) {
+        cameraStreamURLs[1] = url;
+        cameraURLsEntry.setStringArray(cameraStreamURLs);
+    }
+
+    /**
+     * This Shuffleboard tab is used for pre-match configuration, such as autos.
+     */
+    public static final ShuffleboardTab prematchTab = Shuffleboard.getTab("Pre-match");
+    /**
+     * This Shuffleboard tab is used for normal operation during driving.
+     */
+    public static final ShuffleboardTab driveTab = Shuffleboard.getTab("Drive");
+    /**
+     * This Shuffleboard tab is used for regular debug information.
+     */
+    public static final ShuffleboardTab debugTab = Shuffleboard.getTab("Debug - General");
+    /**
+     * This shuffleboard tab is used for vision debug information.
+     */
+    public static final ShuffleboardTab debugVisionTab = Shuffleboard.getTab("Debug - Vision");
+    /**
+     * This shuffleboard tab is used for pathfinding/following debug information.
+     */
+    public static final ShuffleboardTab debugPathfindingTab = Shuffleboard.getTab("Debug - Pathfinding/following");
+    /**
+     * This Shuffleboard tab is used for miscellaneous options.
+     */
+    public static final ShuffleboardTab miscTab = Shuffleboard.getTab("Misc");
+
+    // Note: See
+    // https://first.wpi.edu/FRC/roborio/release/docs/java/edu/wpi/first/wpilibj/shuffleboard/Shuffleboard.html
+    // for Shuffleboard docs.
+
+    /*************************** Pre-match Tab Entries ***************************/
+    public static final NetworkTableEntry validAutoEntry = prematchTab.add("Valid Auto Configuration", false)
+            .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+
+    /*************************** Drive Tab Entries ***************************/
+
+    public static final NetworkTableEntry lastErrorEntry = driveTab.add("Last Error", "")
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry lastWarningEntry = driveTab.add("Last Warning", "")
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    // Note that since commands and subsystems may be uninitialized at this point,
+    // default values are used
+    public static final NetworkTableEntry visionStatusEntry = driveTab.add("Vision Status", false)
+            .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+    public static final NetworkTableEntry driveReversedEntry = driveTab.add("Drive Reversed", false)
+            .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+    public static final NetworkTableEntry precisionDriveEntry = driveTab.add("Precision Drive", false)
+            .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+    public static final NetworkTableEntry essieCargoEntry = driveTab.add("Essie Cargo", false)
+            .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+    public static final NetworkTableEntry pressureLevelEntry = driveTab.add("Pressure Level", 0.0)
+            .withWidget(BuiltInWidgets.kDial).withProperties(Map.of("min", 0, "max", 150)).getEntry();
+    public static final NetworkTableEntry canClimbEntry = driveTab.add("Can Climb", false)
+            .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+    public static final NetworkTableEntry drivetrainGearEntry = driveTab.add("Drivetrain Gear", "LOW")
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+
+    /*************************** Debug Tabs Entries ***************************/
+
+    public static final NetworkTableEntry debugModeEntry = debugTab.add("Debug Mode", isInDebugMode)
+            .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+    public static final NetworkTableEntry climbingEntry = debugTab.add("Climbing", false)
+            .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+    public static final NetworkTableEntry leftDistanceEntry = debugTab.add("Left Distance", 0.0)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry rightDistanceEntry = debugTab.add("Right Distance", 0.0)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry leftVelocityEntry = debugTab.add("Left Velocity", 0.0)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry rightVelocityEntry = debugTab.add("Right Velocity", 0.0)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry leftAccelerationEntry = debugTab.add("Left Acceleration", 0.0)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry rightAccelerationEntry = debugTab.add("Right Acceleration", 0.0)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+
+    public static final NetworkTableEntry followerPHigh = debugPathfindingTab
+            .add("Follower kP (High Gear)", FollowTrajectory.kP_h).withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerIHigh = debugPathfindingTab
+            .add("Follower kI (High Gear)", FollowTrajectory.kI_h).withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerDHigh = debugPathfindingTab
+            .add("Follower kD (High Gear)", FollowTrajectory.kD_h).withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerVHigh = debugPathfindingTab
+            .add("Follower kV (High Gear)", FollowTrajectory.kV_h).withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerAHigh = debugPathfindingTab
+            .add("Follower kA (High Gear)", FollowTrajectory.kA_h).withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerDPHigh = debugPathfindingTab
+            .add("Follower kDP (High Gear)", FollowTrajectory.kDP_h).withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerPLow = debugPathfindingTab
+            .add("Follower kP (Low Gear)", FollowTrajectory.kP_l).withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerILow = debugPathfindingTab
+            .add("Follower kI (Low Gear)", FollowTrajectory.kI_l).withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerDLow = debugPathfindingTab
+            .add("Follower kD (Low Gear)", FollowTrajectory.kD_l).withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerVLow = debugPathfindingTab
+            .add("Follower kV (Low Gear)", FollowTrajectory.kV_l).withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerALow = debugPathfindingTab
+            .add("Follower kA (Low Gear)", FollowTrajectory.kA_l).withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerDPLow = debugPathfindingTab
+            .add("Follower kDP (Low Gear)", FollowTrajectory.kDP_l).withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerUpdateDelay = debugPathfindingTab
+            .add("Follower Update Delay", FollowTrajectory.updateDelay).withWidget(BuiltInWidgets.kTextView).getEntry();
+    // No need to configure properties; the default is from -1.0 to 1.0
+    public static final NetworkTableEntry followerLeftOutputEntry = debugPathfindingTab.add("Follower Left Output", 0.0)
+            .withWidget(BuiltInWidgets.kNumberBar).getEntry();
+    public static final NetworkTableEntry followerRightOutputEntry = debugPathfindingTab
+            .add("Follower Right Output", 0.0).withWidget(BuiltInWidgets.kNumberBar).getEntry();
+    public static final NetworkTableEntry followerLeftErrorEntry = debugPathfindingTab.add("Follower Left Error", 0.0)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerRightErrorEntry = debugPathfindingTab.add("Follower Right Error", 0.0)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerDirectionalErrorEntry = debugPathfindingTab
+            .add("Follower Directional Error", 0.0).withWidget(BuiltInWidgets.kTextView).getEntry();
+
+    public static final NetworkTableEntry visionEnabledEntry = debugVisionTab.add("Vision Enabled", false)
+            .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+    public static final NetworkTableEntry visionXOffsetEntry = debugVisionTab.add("Vision X Offset", 0.0)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry visionYOffsetEntry = debugVisionTab.add("Vision Y Offset", 0.0)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry visionAngleOffsetEntry = debugVisionTab.add("Vision Angle Offset", 0.0)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+
+    /*************************** Misc Tab Entries ***************************/
 
     /**
      * This function is run when the robot is first started up and should be used
@@ -102,8 +238,7 @@ public class Robot extends TimedRobot {
         while (!DriverStation.getInstance().isDSAttached()) {
             try {
                 Thread.sleep(300);
-            }
-            catch (InterruptedException e) {
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
@@ -114,10 +249,9 @@ public class Robot extends TimedRobot {
 
         try {
             RobotLogger.init();
-        }
-        catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
-            SmartDashboard.putString("Last Error", "Failed to initialize logger!");
+            lastErrorEntry.setString("Failed to initialize logger!");
         }
         RobotLogger.logInfo("Logger initialized");
         beautifulRobot.setAlliance(DriverStation.getInstance().getAlliance());
@@ -130,15 +264,11 @@ public class Robot extends TimedRobot {
             }
         }, 10, 2000);
 
-        // Clear the last error and warning
-        SmartDashboard.putString("Last Error", "");
-        SmartDashboard.putString("Last Warning", "");
-        SmartDashboard.putBoolean("Climbing", false);
+        setMainCameraURL(FRONT_CAMERA_URL);
+        setSecondaryCameraURL(REAR_CAMERA_URL);
 
-        mainCameraUrl.setString(FRONT_CAMERA_URL);
-        secondaryCameraUrl.setString(REAR_CAMERA_URL);
-
-        SmartDashboard.putData("Shutdown Jetson", new ShutdownJetson());
+        // Add a shutdown Jetson command
+        debugTab.add("Shutdown Jetson", new ShutdownJetson()).withWidget(BuiltInWidgets.kCommand);
 
         // Create auto chooser
         modeChooser.setDefaultOption("None", AutoDispatcher.Mode.NONE);
@@ -147,163 +277,133 @@ public class Robot extends TimedRobot {
         modeChooser.addOption("Vision", AutoDispatcher.Mode.VISION);
         modeChooser.addOption("Side Vision", AutoDispatcher.Mode.SIDE_VISION);
         modeChooser.addOption("Debug", AutoDispatcher.Mode.DEBUG);
-        SmartDashboard.putData("Auto Mode", modeChooser);
+        prematchTab.add("Auto Mode", modeChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
         habLevelChooser.setDefaultOption("Level 1", AutoDispatcher.HabLevel.ONE);
         habLevelChooser.addOption("Level 2", AutoDispatcher.HabLevel.TWO);
-        SmartDashboard.putData("Auto Start Hab Level", habLevelChooser);
+        prematchTab.add("Auto Start Hab Level", habLevelChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
         sideChooser.setDefaultOption("Left", AutoDispatcher.Side.LEFT);
         sideChooser.addOption("Right", AutoDispatcher.Side.RIGHT);
-        SmartDashboard.putData("Auto Side", sideChooser);
+        prematchTab.add("Auto Side", sideChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
         robotSideChooser.setDefaultOption("Hank Side", AutoDispatcher.RobotSide.HANK);
         robotSideChooser.addOption("Essie Side", AutoDispatcher.RobotSide.ESSIE);
-        SmartDashboard.putData("Auto Robot Side", robotSideChooser);
-        
+        prematchTab.add("Auto Robot Side", robotSideChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
+
         // Create follower gear chooser and match start gear chooser
         followerGearChooser.setDefaultOption("Low Gear", Drivetrain.Gear.LOW);
         followerGearChooser.addOption("High Gear", Drivetrain.Gear.HIGH);
         followerGearChooser.addOption("All Gears", null);
-        SmartDashboard.putData("Trajectory Follower Gear", followerGearChooser);
+        debugTab.add("Trajectory Follower Gear", followerGearChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
 
         matchStartGearChooser.setDefaultOption("Low Gear", Drivetrain.Gear.LOW);
         matchStartGearChooser.addOption("High Gear", Drivetrain.Gear.HIGH);
         matchStartGearChooser.addOption("Current Gear", null);
-        SmartDashboard.putData("Match Start Gear", matchStartGearChooser);
+        prematchTab.add("Match Start Gear", matchStartGearChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
 
         RobotLogger.logInfo("Basic initialization complete. Waiting for vision to come online...");
-        
+
         // Wait for vision to be ready if it's not already
-        SmartDashboard.putBoolean("Vision Status", false);
-        if(!vision.ready()) {
+        if (!vision.ready()) {
             long start = System.currentTimeMillis();
             try {
                 // Wait for up to a minute for the vision subsystem to come online
-                while(!vision.ready() && System.currentTimeMillis() - start < 60000) {
+                while (!vision.ready() && System.currentTimeMillis() - start < 60000) {
                     Thread.sleep(300);
-                    if(OI.operatorController.getRawButton(OI.Controls.SKIP_VISION_INIT)) {
+                    if (OI.operatorController.getRawButton(OI.Controls.SKIP_VISION_INIT)) {
                         break;
                     }
                 }
-            }
-            catch(InterruptedException e) {
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        SmartDashboard.putBoolean("Vision Status", vision.ready());
+        visionStatusEntry.setBoolean(vision.ready());
 
-        if(!vision.ready()) {
+        if (!vision.ready()) {
             RobotLogger.logError("Wait for vision initialization timed out");
             OI.errorRumbleDriverMajor.execute();
             OI.errorRumbleOperatorMajor.execute();
-        }
-        else {
+        } else {
             try {
                 vision.setVisionEnabled(false);
-            }
-            catch(VisionException e) {
+            } catch (VisionException e) {
                 RobotLogger.logError("Vision went offline unexpectedly");
             }
         }
 
-        if(isInDebugMode) {
-            putTuningEntries();
-        }
+        // Put the gyro on the dashboard
+        // TODO: Change tab?
+        driveTab.add("Gyro", drivetrain.new Gyro()).withWidget(BuiltInWidgets.kGyro);
 
         RobotLogger.logInfo("Robot initialization complete");
     }
 
     /**
-     * Puts a bunch of tunable values to SmartDashboard for tuning.
-     */
-    public static void putTuningEntries() {
-        SmartDashboard.putData("Path Follower Gear", followerGearChooser);
-
-        SmartDashboard.putNumber("Follower kP (High Gear)", FollowTrajectory.kP_h);
-        SmartDashboard.putNumber("Follower kI (High Gear)", FollowTrajectory.kI_h);
-        SmartDashboard.putNumber("Follower kD (High Gear)", FollowTrajectory.kD_h);
-        SmartDashboard.putNumber("Follower kV (High Gear)", FollowTrajectory.kV_h);
-        SmartDashboard.putNumber("Follower kA (High Gear)", FollowTrajectory.kA_h);
-        SmartDashboard.putNumber("Follower kDP (High Gear)", FollowTrajectory.kDP_h);
-
-        SmartDashboard.putNumber("Follower kP (Low Gear)", FollowTrajectory.kP_l);
-        SmartDashboard.putNumber("Follower kI (Low Gear)", FollowTrajectory.kI_l);
-        SmartDashboard.putNumber("Follower kD (Low Gear)", FollowTrajectory.kD_l);
-        SmartDashboard.putNumber("Follower kV (Low Gear)", FollowTrajectory.kV_l);
-        SmartDashboard.putNumber("Follower kA (Low Gear)", FollowTrajectory.kA_l);
-        SmartDashboard.putNumber("Follower kDP (Low Gear)", FollowTrajectory.kDP_l);
-
-        SmartDashboard.putNumber("Follower Update Delay", FollowTrajectory.updateDelay);
-    }
-    /**
-     * Updates a bunch of tunable values based on new values from SmartDashboard.
+     * Updates a bunch of tunable values based on new values from Shuffleboard.
      */
     public static void getTuningEntries() {
         Drivetrain.Gear newGearToUse = followerGearChooser.getSelected();
         // Change the gear to use in autos
         // If the option was changed, the auto paths have to be regenerated
-        if(FollowTrajectory.gearToUse != newGearToUse) {
-            RobotLogger.logInfoFine("Auto gear has been changed to " + newGearToUse.toString() + ". Regenerating trajectories...");
+        if (FollowTrajectory.gearToUse != newGearToUse) {
+            RobotLogger.logInfoFine(
+                    "Auto gear has been changed to " + newGearToUse.toString() + ". Regenerating trajectories...");
             FollowTrajectory.gearToUse = newGearToUse;
             AutoPaths.generateAll();
         }
 
-        FollowTrajectory.kP_h = SmartDashboard.getNumber("Follower kP (High Gear)", FollowTrajectory.kP_h);
-        FollowTrajectory.kI_h = SmartDashboard.getNumber("Follower kI (High Gear)", FollowTrajectory.kI_h);
-        FollowTrajectory.kD_h = SmartDashboard.getNumber("Follower kD (High Gear)", FollowTrajectory.kD_h);
-        FollowTrajectory.kV_h = SmartDashboard.getNumber("Follower kV (High Gear)", FollowTrajectory.kV_h);
-        FollowTrajectory.kA_h = SmartDashboard.getNumber("Follower kA (High Gear)", FollowTrajectory.kA_h);
-        FollowTrajectory.kDP_h = SmartDashboard.getNumber("Follower kDP (High Gear)", FollowTrajectory.kDP_h);
+        FollowTrajectory.kP_h = followerPHigh.getDouble(FollowTrajectory.kP_h);
+        FollowTrajectory.kI_h = followerIHigh.getDouble(FollowTrajectory.kI_h);
+        FollowTrajectory.kD_h = followerDHigh.getDouble(FollowTrajectory.kD_h);
+        FollowTrajectory.kV_h = followerVHigh.getDouble(FollowTrajectory.kV_h);
+        FollowTrajectory.kA_h = followerAHigh.getDouble(FollowTrajectory.kA_h);
+        FollowTrajectory.kDP_h = followerDPHigh.getDouble(FollowTrajectory.kDP_h);
 
-        FollowTrajectory.kP_l = SmartDashboard.getNumber("Follower kP (Low Gear)", FollowTrajectory.kP_l);
-        FollowTrajectory.kI_l = SmartDashboard.getNumber("Follower kI (Low Gear)", FollowTrajectory.kI_l);
-        FollowTrajectory.kD_l = SmartDashboard.getNumber("Follower kD (Low Gear)", FollowTrajectory.kD_l);
-        FollowTrajectory.kV_l = SmartDashboard.getNumber("Follower kV (Low Gear)", FollowTrajectory.kV_l);
-        FollowTrajectory.kA_l = SmartDashboard.getNumber("Follower kA (Low Gear)", FollowTrajectory.kA_l);
-        FollowTrajectory.kDP_l = SmartDashboard.getNumber("Follower kDP (Low Gear)", FollowTrajectory.kDP_l);
+        FollowTrajectory.kP_l = followerPLow.getDouble(FollowTrajectory.kP_l);
+        FollowTrajectory.kI_l = followerILow.getDouble(FollowTrajectory.kI_l);
+        FollowTrajectory.kD_l = followerDLow.getDouble(FollowTrajectory.kD_l);
+        FollowTrajectory.kV_l = followerVLow.getDouble(FollowTrajectory.kV_l);
+        FollowTrajectory.kA_l = followerALow.getDouble(FollowTrajectory.kA_l);
+        FollowTrajectory.kDP_l = followerDPLow.getDouble(FollowTrajectory.kDP_l);
 
-        FollowTrajectory.updateDelay = SmartDashboard.getNumber("Follower Update Delay", FollowTrajectory.updateDelay);
+        FollowTrajectory.updateDelay = followerUpdateDelay.getDouble(FollowTrajectory.updateDelay);
     }
 
     /**
-     * This function is called every robot packet, no matter the mode. Use
-     * this for items like diagnostics that you want ran during disabled,
-     * autonomous, teleoperated and test.
+     * This function is called every robot packet, no matter the mode. Use this for
+     * items like diagnostics that you want ran during disabled, autonomous,
+     * teleoperated and test.
      *
-     * <p>This runs after the mode specific periodic functions, but before
-     * LiveWindow and SmartDashboard integrated updating.
+     * <p>
+     * This runs after the mode specific periodic functions, but before LiveWindow
+     * and SmartDashboard integrated updating.
      */
     @Override
     public void robotPeriodic() {
         // Vision status is outputted regardless of current state
-        SmartDashboard.putBoolean("Vision Status", vision.ready());
-        SmartDashboard.putBoolean("Drive Reversed", TeleopDrive.isReversed());
-        SmartDashboard.putBoolean("Essie Cargo", essie.hasCargo());
-        SmartDashboard.putBoolean("Precision Drive", TeleopDrive.isPrecisionDrive());
-        SmartDashboard.putBoolean("Debug", isInDebugMode);
-        
-        SmartDashboard.putBoolean("Essie Cargo", essie.hasCargo());
-        SmartDashboard.putNumber("Pressure Level", pressureSensor.getPressure());
-        SmartDashboard.putBoolean("Can Climb", pressureSensor.canClimb());
+        visionStatusEntry.setBoolean(vision.ready());
+        driveReversedEntry.setBoolean(TeleopDrive.isReversed());
+        precisionDriveEntry.setBoolean(TeleopDrive.isPrecisionDrive());
+        essieCargoEntry.setBoolean(essie.hasCargo());
+        pressureLevelEntry.setDouble(pressureSensor.getPressure());
+        canClimbEntry.setBoolean(pressureSensor.canClimb());
 
-        if(isInDebugMode) {     
-            SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
-
-            SmartDashboard.putString("Drivetrain Gear", drivetrain.getGear() == Drivetrain.Gear.HIGH ? "HIGH" : "LOW");
-            SmartDashboard.putNumber("Left Distance", drivetrain.getLeftDistance());
-            SmartDashboard.putNumber("Right Distance", drivetrain.getRightDistance());
-            SmartDashboard.putNumber("Left Velocity", drivetrain.getLeftSpeed());
-            SmartDashboard.putNumber("Right Velocity", drivetrain.getRightSpeed());
+        if (isInDebugMode) {
+            drivetrainGearEntry.setString(drivetrain.getGear() == Drivetrain.Gear.HIGH ? "HIGH" : "LOW");
+            leftDistanceEntry.setDouble(drivetrain.getLeftDistance());
+            rightDistanceEntry.setDouble(drivetrain.getRightDistance());
+            leftVelocityEntry.setDouble(drivetrain.getLeftSpeed());
+            rightVelocityEntry.setDouble(drivetrain.getRightSpeed());
             var accelerations = drivetrain.getAccelerations();
-            SmartDashboard.putNumber("Left Acceleration", accelerations[0]);
-            SmartDashboard.putNumber("Right Acceleration", accelerations[1]);
+            leftAccelerationEntry.setDouble(accelerations[0]);
+            rightAccelerationEntry.setDouble(accelerations[1]);
 
-            SmartDashboard.putBoolean("Vision Enabled", vision.getVisionEnabled());
-            if(Robot.vision.getVisionEnabled()) {
+            visionEnabledEntry.setBoolean(vision.getVisionEnabled());
+            if (Robot.vision.getVisionEnabled()) {
                 try {
-                    SmartDashboard.putNumber("X Offset", vision.getTargetXOffset());
-                    SmartDashboard.putNumber("Y Offset", vision.getTargetYOffset());
-                    SmartDashboard.putNumber("Angle Offset", vision.getTargetAngleOffset());
-                }
-                catch(VisionException e) {
+                    visionXOffsetEntry.setDouble(vision.getTargetXOffset());
+                    visionYOffsetEntry.setDouble(vision.getTargetYOffset());
+                    visionAngleOffsetEntry.setDouble(vision.getTargetAngleOffset());
+                } catch (VisionException e) {
                     RobotLogger.logError("Vision went offline unexpectedly");
                 }
             }
@@ -311,24 +411,25 @@ public class Robot extends TimedRobot {
     }
 
     /**
-     * Note: Although the 2019 game technically has no autonomous period
-     * as it is replaced by the Sandstorm, to keep names consistent, it
-     * is still referred to as the "autonomous period". This means that
-     * although the robot can still receive operator control, the methods
-     * for autonomous mode are called at the start of the game instead of 
-     * those for teleop.
+     * Note: Although the 2019 game technically has no autonomous period as it is
+     * replaced by the Sandstorm, to keep names consistent, it is still referred to
+     * as the "autonomous period". This means that although the robot can still
+     * receive operator control, the methods for autonomous mode are called at the
+     * start of the game instead of those for teleop.
      */
     @Override
     public void autonomousInit() {
         RobotLogger.logInfo("Autonomous mode enabled");
-        if(beautifulRobot.getColor() != BeautifulRobotDriver.Color.fromAlliance(DriverStation.getInstance().getAlliance())) {
+        if (beautifulRobot.getColor() != BeautifulRobotDriver.Color
+                .fromAlliance(DriverStation.getInstance().getAlliance())) {
             // If the alliance colour is not set, do it here
             beautifulRobot.setColor(BeautifulRobotDriver.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
-            RobotLogger.logInfoFine("BeautifulRobot alliance colour changed to " + beautifulRobot.getColor().toString());
+            RobotLogger
+                    .logInfoFine("BeautifulRobot alliance colour changed to " + beautifulRobot.getColor().toString());
         }
         // Set the initial gear
         Drivetrain.Gear matchStartGear = matchStartGearChooser.getSelected();
-        if(matchStartGear != null) {
+        if (matchStartGear != null) {
             RobotLogger.logInfoFine("Match start gear is " + matchStartGear.toString());
             Robot.drivetrain.setGear(matchStartGear);
         }
@@ -339,11 +440,10 @@ public class Robot extends TimedRobot {
 
         autoCommand = AutoDispatcher.getAuto(modeChooser.getSelected(), habLevelChooser.getSelected(),
                 sideChooser.getSelected(), robotSideChooser.getSelected());
-        if(autoCommand != null) {
+        if (autoCommand != null) {
             autoCommand.start();
             RobotLogger.logInfo("Autonomous command started: " + autoCommand.getClass().getName());
-        }
-        else {
+        } else {
             RobotLogger.logWarning("No auto exists for the specified configuration");
             OI.errorRumbleDriverMinor.execute();
             OI.errorRumbleOperatorMinor.execute();
@@ -351,13 +451,12 @@ public class Robot extends TimedRobot {
     }
 
     /**
-    * Note: Although the 2019 game technically has no autonomous period
-    * as it is replaced by the Sandstorm, to keep names consistent, it
-    * is still referred to as the "autonomous period". This means that
-    * although the robot can still receive operator control, the methods
-    * for autonomous mode are called at the start of the game instead of 
-    * those for teleop.
-    */
+     * Note: Although the 2019 game technically has no autonomous period as it is
+     * replaced by the Sandstorm, to keep names consistent, it is still referred to
+     * as the "autonomous period". This means that although the robot can still
+     * receive operator control, the methods for autonomous mode are called at the
+     * start of the game instead of those for teleop.
+     */
     @Override
     public void autonomousPeriodic() {
         Scheduler.getInstance().run();
@@ -366,10 +465,12 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         RobotLogger.logInfo("Teleop mode enabled");
-        if(beautifulRobot.getColor() != BeautifulRobotDriver.Color.fromAlliance(DriverStation.getInstance().getAlliance())) {
+        if (beautifulRobot.getColor() != BeautifulRobotDriver.Color
+                .fromAlliance(DriverStation.getInstance().getAlliance())) {
             // If the alliance colour is not set, do it here
             beautifulRobot.setColor(BeautifulRobotDriver.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
-            RobotLogger.logInfoFine("BeautifulRobot alliance colour changed to " + beautifulRobot.getColor().toString());
+            RobotLogger
+                    .logInfoFine("BeautifulRobot alliance colour changed to " + beautifulRobot.getColor().toString());
         }
         beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.MOVING_PULSE);
         // This makes sure that the autonomous stops running when
@@ -390,9 +491,9 @@ public class Robot extends TimedRobot {
     }
 
     /**
-     * This function is called once each time the robot enters Disabled mode.
-     * You can use it to reset any subsystem information you want to clear when
-     * the robot is disabled.
+     * This function is called once each time the robot enters Disabled mode. You
+     * can use it to reset any subsystem information you want to clear when the
+     * robot is disabled.
      */
     @Override
     public void disabledInit() {
@@ -407,9 +508,9 @@ public class Robot extends TimedRobot {
         Scheduler.getInstance().run();
 
         // Check if the auto configuration is valid
-        SmartDashboard.putBoolean("Valid Auto Configuration", AutoDispatcher.isValidAuto(modeChooser.getSelected(), 
-                habLevelChooser.getSelected(), sideChooser.getSelected(), robotSideChooser.getSelected()));
-        if(isInDebugMode) {
+        validAutoEntry.setBoolean(AutoDispatcher.getAuto(modeChooser.getSelected(), habLevelChooser.getSelected(),
+                sideChooser.getSelected(), robotSideChooser.getSelected()) != null);
+        if (isInDebugMode) {
             getTuningEntries();
         }
     }

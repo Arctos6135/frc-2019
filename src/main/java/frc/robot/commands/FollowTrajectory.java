@@ -23,7 +23,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.misc.RobotLogger;
@@ -156,44 +155,20 @@ public class FollowTrajectory extends Command {
         if (Robot.isInDebugMode) {
             if (follower instanceof TankDriveFollower) {
                 TankDriveFollower f = (TankDriveFollower) follower;
-                SmartDashboard.putNumber("Follower Left Output", f.lastLeftOutput());
-                SmartDashboard.putNumber("Follower Right Output", f.lastRightOutput());
 
-                TankDriveMoment m = f.lastMoment();
-
-                SmartDashboard.putNumber("Follower Left Velocity", m.getLeftVelocity());
-                SmartDashboard.putNumber("Follower Right Velocity", m.getRightVelocity());
-
-                SmartDashboard.putNumber("Follower Left Acceleration", m.getLeftAcceleration());
-                SmartDashboard.putNumber("Follower Right Acceleration", m.getRightAcceleration());
-
-                SmartDashboard.putNumber("Follower Left Error", f.lastLeftError());
-                SmartDashboard.putNumber("Follower Right Error", f.lastRightError());
-
-                SmartDashboard.putNumber("Follower Left Error Derivative", f.lastLeftDerivative());
-                SmartDashboard.putNumber("Follower Right Error Derivative", f.lastRightDerivative());
-
-                SmartDashboard.putNumber("Follower Directional Error", f.lastDirectionalError());
+                Robot.followerLeftOutputEntry.setDouble(f.lastLeftOutput());
+                Robot.followerRightOutputEntry.setDouble(f.lastRightOutput());
+                Robot.followerLeftErrorEntry.setDouble(f.lastLeftError());
+                Robot.followerRightErrorEntry.setDouble(f.lastRightError());
+                Robot.followerDirectionalErrorEntry.setDouble(f.lastDirectionalError());
             } else if (follower instanceof DynamicTankDriveFollower) {
                 DynamicTankDriveFollower f = (DynamicTankDriveFollower) follower;
-                SmartDashboard.putNumber("Follower Left Output", f.lastLeftOutput());
-                SmartDashboard.putNumber("Follower Right Output", f.lastRightOutput());
 
-                TankDriveMoment m = f.lastMoment();
-
-                SmartDashboard.putNumber("Follower Left Velocity", m.getLeftVelocity());
-                SmartDashboard.putNumber("Follower Right Velocity", m.getRightVelocity());
-
-                SmartDashboard.putNumber("Follower Left Acceleration", m.getLeftAcceleration());
-                SmartDashboard.putNumber("Follower Right Acceleration", m.getRightAcceleration());
-
-                SmartDashboard.putNumber("Follower Left Error", f.lastLeftError());
-                SmartDashboard.putNumber("Follower Right Error", f.lastRightError());
-
-                SmartDashboard.putNumber("Follower Left Error Derivative", f.lastLeftDerivative());
-                SmartDashboard.putNumber("Follower Right Error Derivative", f.lastRightDerivative());
-
-                SmartDashboard.putNumber("Follower Directional Error", f.lastDirectionalError());
+                Robot.followerLeftOutputEntry.setDouble(f.lastLeftOutput());
+                Robot.followerRightOutputEntry.setDouble(f.lastRightOutput());
+                Robot.followerLeftErrorEntry.setDouble(f.lastLeftError());
+                Robot.followerRightErrorEntry.setDouble(f.lastRightError());
+                Robot.followerDirectionalErrorEntry.setDouble(f.lastDirectionalError());
             }
         }
     }
