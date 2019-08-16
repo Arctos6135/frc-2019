@@ -11,7 +11,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.misc.RobotLogger;
@@ -87,22 +86,11 @@ public class FollowTrajectory extends Command {
         follower.run();
 
         if(Robot.isInDebugMode) {
-            SmartDashboard.putNumber("Follower Left Output", follower.lastLeftOutput());
-            SmartDashboard.putNumber("Follower Right Output", follower.lastRightOutput());
-
-            SmartDashboard.putNumber("Follower Left Velocity", follower.lastLeftVelocity());
-            SmartDashboard.putNumber("Follower Right Velocity", follower.lastRightVelocity());
-
-            SmartDashboard.putNumber("Follower Left Acceleration", follower.lastLeftAcceleration());
-            SmartDashboard.putNumber("Follower Right Acceleration", follower.lastRightAcceleration());
-
-            SmartDashboard.putNumber("Follower Left Error", follower.lastLeftError());
-            SmartDashboard.putNumber("Follower Right Error", follower.lastRightError());
-            
-            SmartDashboard.putNumber("Follower Left Error Derivative", follower.lastLeftDerivative());
-            SmartDashboard.putNumber("Follower Right Error Derivative", follower.lastRightDerivative());
-
-            SmartDashboard.putNumber("Follower Directional Error", follower.lastDirectionalError());
+            Robot.followerLeftOutputEntry.setDouble(follower.lastLeftOutput());
+            Robot.followerRightOutputEntry.setDouble(follower.lastRightOutput());
+            Robot.followerLeftErrorEntry.setDouble(follower.lastLeftError());
+            Robot.followerRightErrorEntry.setDouble(follower.lastRightError());
+            Robot.followerDirectionalErrorEntry.setDouble(follower.lastDirectionalError());
         }
     }
 

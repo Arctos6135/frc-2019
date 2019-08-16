@@ -12,7 +12,6 @@ package frc.robot.commands;
 //import java.util.concurrent.Future;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.OI;
 import frc.robot.Robot;
 import frc.robot.misc.RobotLogger;
@@ -128,9 +127,9 @@ public class AdvancedVisionAlign extends Command {
         followerCommand.initialize();
         
         if(Robot.isInDebugMode) {
-            SmartDashboard.putNumber("Auto Align X Offset", visionXOffset);
+            /*SmartDashboard.putNumber("Auto Align X Offset", visionXOffset);
             SmartDashboard.putNumber("Auto Align Y Offset", visionYOffset);
-            SmartDashboard.putNumber("Auto Align Angle Offset", visionAngleOffset);
+            SmartDashboard.putNumber("Auto Align Angle Offset", visionAngleOffset);*/
 
             RobotLogger.logInfoFiner("Auto align X offset: " + visionXOffset);
             RobotLogger.logInfoFiner("Auto align Y offset: " + visionYOffset);

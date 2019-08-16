@@ -8,7 +8,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Robot;
 import frc.robot.misc.RobotLogger;
 import frc.robot.subsystems.Climber;
 
@@ -24,7 +24,8 @@ public class AutoClimb extends CommandGroup {
         addSequential(new OperateClimber(Climber.Side.ESSIE, Climber.State.EXTENDED, true));
 
         // Drive so that the front wheels are on the platform
-        // Drive a negative distance since the front climber side is actually the back robot side
+        // Drive a negative distance since the front climber side is actually the back
+        // robot side
         addSequential(new DriveDistance(-20));
 
         // Retract front pistons
@@ -43,24 +44,24 @@ public class AutoClimb extends CommandGroup {
 
     }
 
+    // Override these methods in order to add debug info output
+    // No need to call the superclass implementations here; if you look at the
+    // source, they're empty
     @Override
     protected void initialize() {
-        super.initialize();
-        SmartDashboard.putBoolean("Climbing", true);
+        Robot.climbingEntry.setBoolean(true);
         RobotLogger.logInfoFine("Auto climb sequence started");
     }
 
     @Override
     protected void interrupted() {
-        super.interrupted();
-        SmartDashboard.putBoolean("Climbing", false);
+        Robot.climbingEntry.setBoolean(false);
         RobotLogger.logInfoFine("Auto climb sequence interrupted");
     }
 
     @Override
     protected void end() {
-        super.end();
-        SmartDashboard.putBoolean("Climbing", false);
+        Robot.climbingEntry.setBoolean(false);
         RobotLogger.logInfoFine("Auto climb sequence ended");
     }
 }

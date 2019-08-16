@@ -75,11 +75,12 @@ public class Robot extends TimedRobot {
     private static final NetworkTableEntry cameraURLsEntry = NetworkTableInstance.getDefault()
             .getTable("CameraPublisher").getSubTable("JetsonCameras").getEntry("streams");
     private static String[] cameraStreamURLs = new String[] { FRONT_CAMERA_URL, REAR_CAMERA_URL };
-    
+
     public static void setMainCameraURL(String url) {
         cameraStreamURLs[0] = url;
         cameraURLsEntry.setStringArray(cameraStreamURLs);
     }
+
     public static void setSecondaryCameraURL(String url) {
         cameraStreamURLs[1] = url;
         cameraURLsEntry.setStringArray(cameraStreamURLs);
@@ -135,7 +136,7 @@ public class Robot extends TimedRobot {
     public static final NetworkTableEntry essieCargoEntry = driveTab.add("Essie Cargo", false)
             .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
     public static final NetworkTableEntry pressureLevelEntry = driveTab.add("Pressure Level", 0.0)
-            .withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 150, "center", 0)).getEntry();
+            .withWidget(BuiltInWidgets.kDial).withProperties(Map.of("min", 0, "max", 150)).getEntry();
     public static final NetworkTableEntry canClimbEntry = driveTab.add("Can Climb", false)
             .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
     public static final NetworkTableEntry drivetrainGearEntry = driveTab.add("Drivetrain Gear", "LOW")
@@ -180,6 +181,17 @@ public class Robot extends TimedRobot {
             .add("Follower kA (Low Gear)", FollowTrajectory.kA_l).withWidget(BuiltInWidgets.kTextView).getEntry();
     public static final NetworkTableEntry followerDPLow = debugPathfindingTab
             .add("Follower kDP (Low Gear)", FollowTrajectory.kDP_l).withWidget(BuiltInWidgets.kTextView).getEntry();
+    // No need to configure properties; the default is from -1.0 to 1.0
+    public static final NetworkTableEntry followerLeftOutputEntry = debugPathfindingTab.add("Follower Left Output", 0.0)
+            .withWidget(BuiltInWidgets.kNumberBar).getEntry();
+    public static final NetworkTableEntry followerRightOutputEntry = debugPathfindingTab
+            .add("Follower Right Output", 0.0).withWidget(BuiltInWidgets.kNumberBar).getEntry();
+    public static final NetworkTableEntry followerLeftErrorEntry = debugPathfindingTab.add("Follower Left Error", 0.0)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerRightErrorEntry = debugPathfindingTab.add("Follower Right Error", 0.0)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerDirectionalErrorEntry = debugPathfindingTab
+            .add("Follower Directional Error", 0.0).withWidget(BuiltInWidgets.kTextView).getEntry();
 
     public static final NetworkTableEntry visionEnabledEntry = debugVisionTab.add("Vision Enabled", false)
             .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
