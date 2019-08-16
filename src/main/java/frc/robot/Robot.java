@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.FollowTrajectory;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
@@ -87,9 +86,17 @@ public class Robot extends TimedRobot {
      */
     public static final ShuffleboardTab driveTab = Shuffleboard.getTab("Drive");
     /**
-     * This Shuffleboard tab is used for debug information.
+     * This Shuffleboard tab is used for regular debug information.
      */
-    public static final ShuffleboardTab debugTab = Shuffleboard.getTab("Debug");
+    public static final ShuffleboardTab debugTab = Shuffleboard.getTab("Debug - General");
+    /**
+     * This shuffleboard tab is used for vision debug information.
+     */
+    public static final ShuffleboardTab debugVisionTab = Shuffleboard.getTab("Debug - Vision");
+    /**
+     * This shuffleboard tab is used for pathfinding/following debug information.
+     */
+    public static final ShuffleboardTab debugPathfindingTab = Shuffleboard.getTab("Debug - Pathfinding/following");
     /**
      * This Shuffleboard tab is used for miscellaneous options.
      */
@@ -100,6 +107,8 @@ public class Robot extends TimedRobot {
     // for Shuffleboard docs.
 
     /*************************** Pre-match Tab Entries ***************************/
+    public static final NetworkTableEntry validAutoEntry = prematchTab.add("Valid Auto Configuration", false)
+            .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
 
     /*************************** Drive Tab Entries ***************************/
 
@@ -121,33 +130,57 @@ public class Robot extends TimedRobot {
             .withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 150, "center", 0)).getEntry();
     public static final NetworkTableEntry canClimbEntry = driveTab.add("Can Climb", false)
             .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+    public static final NetworkTableEntry drivetrainGearEntry = driveTab.add("Drivetrain Gear", "LOW")
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
 
-    /*************************** Debug Tab Entries ***************************/
+    /*************************** Debug Tabs Entries ***************************/
 
-    public static final NetworkTableEntry climbingEntry = debugTab.add("Climbing", false)
-            .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
-    public static final NetworkTableEntry followerPHigh = debugTab.add("Follower kP (High Gear)", FollowTrajectory.kP_h)
-            .withWidget(BuiltInWidgets.kTextView).getEntry();
-    public static final NetworkTableEntry followerDHigh = debugTab.add("Follower kD (High Gear)", FollowTrajectory.kD_h)
-            .withWidget(BuiltInWidgets.kTextView).getEntry();
-    public static final NetworkTableEntry followerVHigh = debugTab.add("Follower kV (High Gear)", FollowTrajectory.kV_h)
-            .withWidget(BuiltInWidgets.kTextView).getEntry();
-    public static final NetworkTableEntry followerAHigh = debugTab.add("Follower kA (High Gear)", FollowTrajectory.kA_h)
-            .withWidget(BuiltInWidgets.kTextView).getEntry();
-    public static final NetworkTableEntry followerDPHigh = debugTab
-            .add("Follower kDP (High Gear)", FollowTrajectory.kDP_h).withWidget(BuiltInWidgets.kTextView).getEntry();
-    public static final NetworkTableEntry followerPLow = debugTab.add("Follower kP (Low Gear)", FollowTrajectory.kP_l)
-            .withWidget(BuiltInWidgets.kTextView).getEntry();
-    public static final NetworkTableEntry followerDLow = debugTab.add("Follower kD (Low Gear)", FollowTrajectory.kD_l)
-            .withWidget(BuiltInWidgets.kTextView).getEntry();
-    public static final NetworkTableEntry followerVLow = debugTab.add("Follower kV (Low Gear)", FollowTrajectory.kV_l)
-            .withWidget(BuiltInWidgets.kTextView).getEntry();
-    public static final NetworkTableEntry followerALow = debugTab.add("Follower kA (Low Gear)", FollowTrajectory.kA_l)
-            .withWidget(BuiltInWidgets.kTextView).getEntry();
-    public static final NetworkTableEntry followerDPLow = debugTab
-            .add("Follower kDP (Low Gear)", FollowTrajectory.kDP_l).withWidget(BuiltInWidgets.kTextView).getEntry();
     public static final NetworkTableEntry debugModeEntry = debugTab.add("Debug Mode", isInDebugMode)
             .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+    public static final NetworkTableEntry climbingEntry = debugTab.add("Climbing", false)
+            .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+    public static final NetworkTableEntry leftDistanceEntry = debugTab.add("Left Distance", 0.0)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry rightDistanceEntry = debugTab.add("Right Distance", 0.0)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry leftVelocityEntry = debugTab.add("Left Velocity", 0.0)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry rightVelocityEntry = debugTab.add("Right Velocity", 0.0)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry leftAccelerationEntry = debugTab.add("Left Acceleration", 0.0)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry rightAccelerationEntry = debugTab.add("Right Acceleration", 0.0)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+
+    public static final NetworkTableEntry followerPHigh = debugPathfindingTab
+            .add("Follower kP (High Gear)", FollowTrajectory.kP_h).withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerDHigh = debugPathfindingTab
+            .add("Follower kD (High Gear)", FollowTrajectory.kD_h).withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerVHigh = debugPathfindingTab
+            .add("Follower kV (High Gear)", FollowTrajectory.kV_h).withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerAHigh = debugPathfindingTab
+            .add("Follower kA (High Gear)", FollowTrajectory.kA_h).withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerDPHigh = debugPathfindingTab
+            .add("Follower kDP (High Gear)", FollowTrajectory.kDP_h).withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerPLow = debugPathfindingTab
+            .add("Follower kP (Low Gear)", FollowTrajectory.kP_l).withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerDLow = debugPathfindingTab
+            .add("Follower kD (Low Gear)", FollowTrajectory.kD_l).withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerVLow = debugPathfindingTab
+            .add("Follower kV (Low Gear)", FollowTrajectory.kV_l).withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerALow = debugPathfindingTab
+            .add("Follower kA (Low Gear)", FollowTrajectory.kA_l).withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry followerDPLow = debugPathfindingTab
+            .add("Follower kDP (Low Gear)", FollowTrajectory.kDP_l).withWidget(BuiltInWidgets.kTextView).getEntry();
+
+    public static final NetworkTableEntry visionEnabledEntry = debugVisionTab.add("Vision Enabled", false)
+            .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+    public static final NetworkTableEntry visionXOffsetEntry = debugVisionTab.add("Vision X Offset", 0.0)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry visionYOffsetEntry = debugVisionTab.add("Vision Y Offset", 0.0)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
+    public static final NetworkTableEntry visionAngleOffsetEntry = debugVisionTab.add("Vision Angle Offset", 0.0)
+            .withWidget(BuiltInWidgets.kTextView).getEntry();
 
     /*************************** Misc Tab Entries ***************************/
 
@@ -282,6 +315,10 @@ public class Robot extends TimedRobot {
             }
         }
 
+        // Put the gyro on the dashboard
+        // TODO: Change tab?
+        driveTab.add("Gyro", drivetrain.new Gyro()).withWidget(BuiltInWidgets.kGyro);
+
         RobotLogger.logInfo("Robot initialization complete");
     }
 
@@ -332,23 +369,21 @@ public class Robot extends TimedRobot {
         canClimbEntry.setBoolean(pressureSensor.canClimb());
 
         if (isInDebugMode) {
-            SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
-
-            SmartDashboard.putString("Drivetrain Gear", drivetrain.getGear() == Drivetrain.Gear.HIGH ? "HIGH" : "LOW");
-            SmartDashboard.putNumber("Left Distance", drivetrain.getLeftDistance());
-            SmartDashboard.putNumber("Right Distance", drivetrain.getRightDistance());
-            SmartDashboard.putNumber("Left Velocity", drivetrain.getLeftSpeed());
-            SmartDashboard.putNumber("Right Velocity", drivetrain.getRightSpeed());
+            drivetrainGearEntry.setString(drivetrain.getGear() == Drivetrain.Gear.HIGH ? "HIGH" : "LOW");
+            leftDistanceEntry.setDouble(drivetrain.getLeftDistance());
+            rightDistanceEntry.setDouble(drivetrain.getRightDistance());
+            leftVelocityEntry.setDouble(drivetrain.getLeftSpeed());
+            rightVelocityEntry.setDouble(drivetrain.getRightSpeed());
             var accelerations = drivetrain.getAccelerations();
-            SmartDashboard.putNumber("Left Acceleration", accelerations[0]);
-            SmartDashboard.putNumber("Right Acceleration", accelerations[1]);
+            leftAccelerationEntry.setDouble(accelerations[0]);
+            rightAccelerationEntry.setDouble(accelerations[1]);
 
-            SmartDashboard.putBoolean("Vision Enabled", vision.getVisionEnabled());
+            visionEnabledEntry.setBoolean(vision.getVisionEnabled());
             if (Robot.vision.getVisionEnabled()) {
                 try {
-                    SmartDashboard.putNumber("X Offset", vision.getTargetXOffset());
-                    SmartDashboard.putNumber("Y Offset", vision.getTargetYOffset());
-                    SmartDashboard.putNumber("Angle Offset", vision.getTargetAngleOffset());
+                    visionXOffsetEntry.setDouble(vision.getTargetXOffset());
+                    visionYOffsetEntry.setDouble(vision.getTargetYOffset());
+                    visionAngleOffsetEntry.setDouble(vision.getTargetAngleOffset());
                 } catch (VisionException e) {
                     RobotLogger.logError("Vision went offline unexpectedly");
                 }
@@ -469,8 +504,8 @@ public class Robot extends TimedRobot {
         Scheduler.getInstance().run();
 
         // Check if the auto configuration is valid
-        SmartDashboard.putBoolean("Valid Auto Configuration", AutoDispatcher.getAuto(modeChooser.getSelected(),
-                habLevelChooser.getSelected(), sideChooser.getSelected(), robotSideChooser.getSelected()) != null);
+        validAutoEntry.setBoolean(AutoDispatcher.getAuto(modeChooser.getSelected(), habLevelChooser.getSelected(),
+                sideChooser.getSelected(), robotSideChooser.getSelected()) != null);
         if (isInDebugMode) {
             getTuningEntries();
         }
