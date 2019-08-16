@@ -125,8 +125,6 @@ public class RobotMap {
 
     public static final int SHIFT_LOW_TO_HIGH_MAX = Integer.MAX_VALUE;
     public static final int SHIFT_HIGH_TO_LOW_MAX = 48;
-
-    public static final double GUEST_MODE_SPEED_MULTIPLIER = 0.7;
   
     public static void init() {
         // Set the motors to follow

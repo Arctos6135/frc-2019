@@ -26,7 +26,6 @@ import frc.robot.commands.FollowTrajectory;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.commands.sandstorm.AutoDispatcher;
-import frc.robot.commands.sandstorm.AutoDispatcher.GuestMode;
 import frc.robot.misc.AutoPaths;
 import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.misc.RobotLogger;
@@ -62,11 +61,8 @@ public class Robot extends TimedRobot {
     static SendableChooser<AutoDispatcher.HabLevel> habLevelChooser = new SendableChooser<>();
     static SendableChooser<AutoDispatcher.Side> sideChooser = new SendableChooser<>();
     static SendableChooser<AutoDispatcher.RobotSide> robotSideChooser = new SendableChooser<>();
-    static SendableChooser<AutoDispatcher.GuestMode> guestModeChooser = new SendableChooser<>();
     static SendableChooser<Drivetrain.Gear> followerGearChooser = new SendableChooser<>();
     static SendableChooser<Drivetrain.Gear> matchStartGearChooser = new SendableChooser<>();
-
-    static GuestMode prevGuestMode = GuestMode.OFF;
 
     public static boolean isInDebugMode = false;
 
@@ -217,8 +213,8 @@ public class Robot extends TimedRobot {
         essie = new Essie();
         climber = new Climber();
         beautifulRobot = new BeautifulRobot();
-        oi = new OI(false);
         pressureSensor = new PressureSensor();
+        oi = new OI();
 
         // Warm up RobotPathfinder and generate auto paths
         FollowTrajectory.warmupRobotPathfinder(10);
@@ -298,11 +294,6 @@ public class Robot extends TimedRobot {
         matchStartGearChooser.addOption("High Gear", Drivetrain.Gear.HIGH);
         matchStartGearChooser.addOption("Current Gear", null);
         prematchTab.add("Match Start Gear", matchStartGearChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
-
-        // Create Guest Mode chooser
-        guestModeChooser.setDefaultOption("OFF", AutoDispatcher.GuestMode.OFF);
-        guestModeChooser.addOption("ON", AutoDispatcher.GuestMode.ON);
-        miscTab.add("Guest Mode", guestModeChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
 
         RobotLogger.logInfo("Basic initialization complete. Waiting for vision to come online...");
 
@@ -408,21 +399,6 @@ public class Robot extends TimedRobot {
                     RobotLogger.logError("Vision went offline unexpectedly");
                 }
             }
-        }
-
-        /**
-         * Changes controls based on guest mode Simplifies controls and lowers speed
-         */
-        if (guestModeChooser.getSelected() != prevGuestMode) {
-            if (guestModeChooser.getSelected() == GuestMode.OFF) {
-                oi.setGuestMode(false);
-                drivetrain.setSpeedMultiplier(1);
-            } else {
-                oi.setGuestMode(true);
-                drivetrain.setSpeedMultiplier(RobotMap.GUEST_MODE_SPEED_MULTIPLIER);
-            }
-
-            prevGuestMode = guestModeChooser.getSelected();
         }
     }
 
