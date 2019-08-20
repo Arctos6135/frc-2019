@@ -18,6 +18,7 @@ import com.arctos6135.robotpathfinder.follower.Follower.DirectionSource;
 import com.arctos6135.robotpathfinder.follower.Follower.Motor;
 import com.arctos6135.robotpathfinder.follower.Follower.TimestampSource;
 import com.arctos6135.robotpathfinder.follower.TankDriveFollower;
+import com.arctos6135.stdplug.api.datatypes.PIDVADPGains;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.Encoder;
@@ -81,8 +82,8 @@ public class FollowTrajectory extends Command {
             Robot.drivetrain.getRightEncoder());
     public static final TimestampSource TIMESTAMP_SOURCE = Timer::getFPGATimestamp;
 
-    public static double kP_l = 0.2, kI_l = 0, kD_l = 0.00015, kV_l = 0.025, kA_l = 0.0015, kDP_l = 0.01;
-    public static double kP_h = 0.1, kI_h = 0, kD_h = 0.00025, kV_h = 0.007, kA_h = 0.002, kDP_h = 0.01;
+    public static final PIDVADPGains GAINS_L = new PIDVADPGains(0.2, 0.0, 0.00015, 0.025, 0.0015, 0.01);
+    public static final PIDVADPGains GAINS_H = new PIDVADPGains(0.1, 0.0, 0.00025, 0.007, 0.002, 0.01);
     public static double updateDelay = 0.75;
 
     // This is the gear the robot must be in for trajectory following
@@ -126,21 +127,26 @@ public class FollowTrajectory extends Command {
 
         // Check the current gear since high and low gear have different gains
         if (Robot.drivetrain.getGear() == Drivetrain.Gear.HIGH) {
-            // Check if the profile can be followed using a dynamic follower instead of a regular one
+            // Check if the profile can be followed using a dynamic follower instead of a
+            // regular one
             if (profile instanceof DynamicFollowable) {
                 follower = new DynamicTankDriveFollower((DynamicFollowable<TankDriveMoment>) profile, L_MOTOR, R_MOTOR,
-                        L_POS_SRC, R_POS_SRC, TIMESTAMP_SOURCE, GYRO, kV_h, kA_h, kP_h, kI_h, kD_h, kDP_h, updateDelay);
+                        L_POS_SRC, R_POS_SRC, TIMESTAMP_SOURCE, GYRO, GAINS_H.getV(), GAINS_H.getA(), GAINS_H.getP(),
+                        GAINS_H.getI(), GAINS_H.getD(), GAINS_H.getDP(), updateDelay);
             } else {
                 follower = new TankDriveFollower(profile, L_MOTOR, R_MOTOR, L_POS_SRC, R_POS_SRC, TIMESTAMP_SOURCE,
-                        GYRO, kV_h, kA_h, kP_h, kI_h, kD_h, kDP_h);
+                        GYRO, GAINS_H.getV(), GAINS_H.getA(), GAINS_H.getP(), GAINS_H.getI(), GAINS_H.getD(),
+                        GAINS_H.getDP());
             }
         } else {
             if (profile instanceof DynamicFollowable) {
                 follower = new DynamicTankDriveFollower((DynamicFollowable<TankDriveMoment>) profile, L_MOTOR, R_MOTOR,
-                        L_POS_SRC, R_POS_SRC, TIMESTAMP_SOURCE, GYRO, kV_l, kA_l, kP_l, kI_l, kD_l, kDP_l, updateDelay);
+                        L_POS_SRC, R_POS_SRC, TIMESTAMP_SOURCE, GYRO, GAINS_L.getV(), GAINS_L.getA(), GAINS_L.getP(),
+                        GAINS_L.getI(), GAINS_L.getD(), GAINS_L.getDP(), updateDelay);
             } else {
                 follower = new TankDriveFollower(profile, L_MOTOR, R_MOTOR, L_POS_SRC, R_POS_SRC, TIMESTAMP_SOURCE,
-                        GYRO, kV_l, kA_l, kP_l, kI_l, kD_l, kDP_l);
+                        GYRO, GAINS_L.getV(), GAINS_L.getA(), GAINS_L.getP(), GAINS_L.getI(), GAINS_L.getD(),
+                        GAINS_L.getDP());
             }
         }
 
