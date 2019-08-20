@@ -7,6 +7,7 @@
 
 package frc.robot.commands;
 
+import com.arctos6135.stdplug.api.datatypes.PIDVADPGains;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -37,8 +38,8 @@ public class FollowTrajectory extends Command {
     public static final DistanceSource R_DISTANCE_SOURCE = Robot.drivetrain::getRightDistance;
     public static final TimestampSource TIMESTAMP_SOURCE = Timer::getFPGATimestamp;
 
-    public static double kP_l = 0.2, kD_l = 0.00015, kV_l = 0.025, kA_l = 0.0015, kDP_l = 0.01;
-    public static double kP_h = 0.1, kD_h = 0.00025, kV_h = 0.007, kA_h = 0.002, kDP_h = 0.01;
+    public static final PIDVADPGains GAINS_L = new PIDVADPGains(0.2, 0.0, 0.00015, 0.025, 0.0015, 0.01);
+    public static final PIDVADPGains GAINS_H = new PIDVADPGains(0.1, 0.0, 0.00025, 0.007, 0.002, 0.01);
 
     // This is the gear the robot must be in for trajectory following
     // If set to null, the robot will accept both
@@ -70,11 +71,11 @@ public class FollowTrajectory extends Command {
 
         if(Robot.drivetrain.getGear() == Drivetrain.Gear.HIGH) {
             follower = new TankFollower(trajectory, L_MOTOR, R_MOTOR, L_DISTANCE_SOURCE, R_DISTANCE_SOURCE, TIMESTAMP_SOURCE, 
-                    GYRO, kV_h, kA_h, kP_h, kD_h, kDP_h);
+                    GYRO, GAINS_H.getV(), GAINS_H.getA(), GAINS_H.getP(), GAINS_H.getD(), GAINS_H.getDP());
         }
         else {
             follower = new TankFollower(trajectory, L_MOTOR, R_MOTOR, L_DISTANCE_SOURCE, R_DISTANCE_SOURCE, TIMESTAMP_SOURCE, 
-                    GYRO, kV_l, kA_l, kP_l, kD_l, kDP_l);
+                    GYRO, GAINS_L.getV(), GAINS_L.getA(), GAINS_L.getP(), GAINS_L.getD(), GAINS_L.getDP());
         }
 
         follower.initialize();

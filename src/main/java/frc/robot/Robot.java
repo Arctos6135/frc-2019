@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.TimerTask;
 
+import com.arctos6135.stdplug.api.StdPlugWidgets;
+
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -156,27 +158,6 @@ public class Robot extends TimedRobot {
             .withWidget(BuiltInWidgets.kTextView).getEntry();
     public static final NetworkTableEntry rightAccelerationEntry = debugTab.add("Right Acceleration", 0.0)
             .withWidget(BuiltInWidgets.kTextView).getEntry();
-
-    public static final NetworkTableEntry followerPHigh = debugPathfindingTab
-            .add("Follower kP (High Gear)", FollowTrajectory.kP_h).withWidget(BuiltInWidgets.kTextView).getEntry();
-    public static final NetworkTableEntry followerDHigh = debugPathfindingTab
-            .add("Follower kD (High Gear)", FollowTrajectory.kD_h).withWidget(BuiltInWidgets.kTextView).getEntry();
-    public static final NetworkTableEntry followerVHigh = debugPathfindingTab
-            .add("Follower kV (High Gear)", FollowTrajectory.kV_h).withWidget(BuiltInWidgets.kTextView).getEntry();
-    public static final NetworkTableEntry followerAHigh = debugPathfindingTab
-            .add("Follower kA (High Gear)", FollowTrajectory.kA_h).withWidget(BuiltInWidgets.kTextView).getEntry();
-    public static final NetworkTableEntry followerDPHigh = debugPathfindingTab
-            .add("Follower kDP (High Gear)", FollowTrajectory.kDP_h).withWidget(BuiltInWidgets.kTextView).getEntry();
-    public static final NetworkTableEntry followerPLow = debugPathfindingTab
-            .add("Follower kP (Low Gear)", FollowTrajectory.kP_l).withWidget(BuiltInWidgets.kTextView).getEntry();
-    public static final NetworkTableEntry followerDLow = debugPathfindingTab
-            .add("Follower kD (Low Gear)", FollowTrajectory.kD_l).withWidget(BuiltInWidgets.kTextView).getEntry();
-    public static final NetworkTableEntry followerVLow = debugPathfindingTab
-            .add("Follower kV (Low Gear)", FollowTrajectory.kV_l).withWidget(BuiltInWidgets.kTextView).getEntry();
-    public static final NetworkTableEntry followerALow = debugPathfindingTab
-            .add("Follower kA (Low Gear)", FollowTrajectory.kA_l).withWidget(BuiltInWidgets.kTextView).getEntry();
-    public static final NetworkTableEntry followerDPLow = debugPathfindingTab
-            .add("Follower kDP (Low Gear)", FollowTrajectory.kDP_l).withWidget(BuiltInWidgets.kTextView).getEntry();
     // No need to configure properties; the default is from -1.0 to 1.0
     public static final NetworkTableEntry followerLeftOutputEntry = debugPathfindingTab.add("Follower Left Output", 0.0)
             .withWidget(BuiltInWidgets.kNumberBar).getEntry();
@@ -330,6 +311,10 @@ public class Robot extends TimedRobot {
         // TODO: Change tab?
         driveTab.add("Gyro", drivetrain.new Gyro()).withWidget(BuiltInWidgets.kGyro);
 
+        // Put the follower gains on the dashboard
+        debugPathfindingTab.add("High Gear Gains", FollowTrajectory.GAINS_H).withWidget(StdPlugWidgets.PIDVA_GAINS);
+        debugPathfindingTab.add("Low Gear Gains", FollowTrajectory.GAINS_L).withWidget(StdPlugWidgets.PIDVA_GAINS);
+
         RobotLogger.logInfo("Robot initialization complete");
     }
 
@@ -346,18 +331,6 @@ public class Robot extends TimedRobot {
             FollowTrajectory.gearToUse = newGearToUse;
             AutoPaths.generateAll();
         }
-
-        FollowTrajectory.kP_h = followerPHigh.getDouble(FollowTrajectory.kP_h);
-        FollowTrajectory.kD_h = followerDHigh.getDouble(FollowTrajectory.kD_h);
-        FollowTrajectory.kV_h = followerVHigh.getDouble(FollowTrajectory.kV_h);
-        FollowTrajectory.kA_h = followerAHigh.getDouble(FollowTrajectory.kA_h);
-        FollowTrajectory.kDP_h = followerDPHigh.getDouble(FollowTrajectory.kDP_h);
-
-        FollowTrajectory.kP_l = followerPLow.getDouble(FollowTrajectory.kP_l);
-        FollowTrajectory.kD_l = followerDLow.getDouble(FollowTrajectory.kD_l);
-        FollowTrajectory.kV_l = followerVLow.getDouble(FollowTrajectory.kV_l);
-        FollowTrajectory.kA_l = followerALow.getDouble(FollowTrajectory.kA_l);
-        FollowTrajectory.kDP_l = followerDPLow.getDouble(FollowTrajectory.kDP_l);
     }
 
     /**
