@@ -18,6 +18,8 @@ import com.arctos6135.robotpathfinder.follower.Follower.DirectionSource;
 import com.arctos6135.robotpathfinder.follower.Follower.Motor;
 import com.arctos6135.robotpathfinder.follower.Follower.TimestampSource;
 import com.arctos6135.robotpathfinder.follower.TankDriveFollower;
+import com.arctos6135.robotpathfinder.follower.TankDriveFollower.TankDriveGains;
+import com.arctos6135.robotpathfinder.follower.TankDriveFollower.TankDriveRobot;
 import com.arctos6135.stdplug.api.datatypes.PIDVADPGains;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
@@ -71,17 +73,21 @@ public class FollowTrajectory extends Command {
         }
     }
 
-    public static final Motor L_MOTOR = Robot.drivetrain::setLeftMotor;
-    public static final Motor R_MOTOR = Robot.drivetrain::setRightMotor;
-    public static final DirectionSource GYRO = () -> {
+    private static final Motor L_MOTOR = Robot.drivetrain::setLeftMotor;
+    private static final Motor R_MOTOR = Robot.drivetrain::setRightMotor;
+    private static final DirectionSource GYRO = () -> {
         return Math.toRadians(Robot.drivetrain.getHeading());
     };
-    public static final AdvancedPositionSource L_POS_SRC = new EncoderAdvancedPositionSource(
+    private static final AdvancedPositionSource L_POS_SRC = new EncoderAdvancedPositionSource(
             Robot.drivetrain.getLeftEncoder());
-    public static final AdvancedPositionSource R_POS_SRC = new EncoderAdvancedPositionSource(
+    private static final AdvancedPositionSource R_POS_SRC = new EncoderAdvancedPositionSource(
             Robot.drivetrain.getRightEncoder());
-    public static final TimestampSource TIMESTAMP_SOURCE = Timer::getFPGATimestamp;
+    private static final TimestampSource TIMESTAMP_SOURCE = Timer::getFPGATimestamp;
 
+    private static final TankDriveRobot ROBOT_COMPONENTS = new TankDriveRobot(L_MOTOR, R_MOTOR, L_POS_SRC, R_POS_SRC,
+            TIMESTAMP_SOURCE, GYRO);
+
+    // These fields are made public so they can be configured from the dashboard
     public static final PIDVADPGains GAINS_L = new PIDVADPGains(0.2, 0.0, 0.00015, 0.025, 0.0015, 0.01);
     public static final PIDVADPGains GAINS_H = new PIDVADPGains(0.1, 0.0, 0.00025, 0.007, 0.002, 0.01);
     public static double updateDelay = 0.75;
@@ -90,8 +96,24 @@ public class FollowTrajectory extends Command {
     // If set to null, the robot will accept both
     public static Drivetrain.Gear gearToUse = null;
 
-    public final Followable<TankDriveMoment> profile;
-    public Follower<TankDriveMoment> follower;
+    private final Followable<TankDriveMoment> profile;
+    private Follower<TankDriveMoment> follower;
+
+    /**
+     * Constructs a {@link TankDriveGains} object from a {@link PIDVADPGains}
+     * object.
+     * 
+     * This is because the class has to store the gains as StdPlug
+     * {@link PIDVADPGains} objects in order to have them sent to Shuffleboard and
+     * configured, but the {@link Follower} constructors only take
+     * {@link TankDriveGains}.
+     * 
+     * @param stdPlugGains The {@link PIDVADPGains} object
+     */
+    private static TankDriveGains constructGainsObject(PIDVADPGains stdPlugGains) {
+        return new TankDriveGains(stdPlugGains.getV(), stdPlugGains.getA(), stdPlugGains.getP(), stdPlugGains.getI(),
+                stdPlugGains.getD(), stdPlugGains.getDP());
+    }
 
     /**
      * Constructs a new {@link FollowTrajectory} command.
@@ -130,23 +152,17 @@ public class FollowTrajectory extends Command {
             // Check if the profile can be followed using a dynamic follower instead of a
             // regular one
             if (profile instanceof DynamicFollowable) {
-                follower = new DynamicTankDriveFollower((DynamicFollowable<TankDriveMoment>) profile, L_MOTOR, R_MOTOR,
-                        L_POS_SRC, R_POS_SRC, TIMESTAMP_SOURCE, GYRO, GAINS_H.getV(), GAINS_H.getA(), GAINS_H.getP(),
-                        GAINS_H.getI(), GAINS_H.getD(), GAINS_H.getDP(), updateDelay);
+                follower = new DynamicTankDriveFollower((DynamicFollowable<TankDriveMoment>) profile, ROBOT_COMPONENTS,
+                        constructGainsObject(GAINS_H), updateDelay);
             } else {
-                follower = new TankDriveFollower(profile, L_MOTOR, R_MOTOR, L_POS_SRC, R_POS_SRC, TIMESTAMP_SOURCE,
-                        GYRO, GAINS_H.getV(), GAINS_H.getA(), GAINS_H.getP(), GAINS_H.getI(), GAINS_H.getD(),
-                        GAINS_H.getDP());
+                follower = new TankDriveFollower(profile, ROBOT_COMPONENTS, constructGainsObject(GAINS_H));
             }
         } else {
             if (profile instanceof DynamicFollowable) {
-                follower = new DynamicTankDriveFollower((DynamicFollowable<TankDriveMoment>) profile, L_MOTOR, R_MOTOR,
-                        L_POS_SRC, R_POS_SRC, TIMESTAMP_SOURCE, GYRO, GAINS_L.getV(), GAINS_L.getA(), GAINS_L.getP(),
-                        GAINS_L.getI(), GAINS_L.getD(), GAINS_L.getDP(), updateDelay);
+                follower = new DynamicTankDriveFollower((DynamicFollowable<TankDriveMoment>) profile, ROBOT_COMPONENTS,
+                        constructGainsObject(GAINS_L), updateDelay);
             } else {
-                follower = new TankDriveFollower(profile, L_MOTOR, R_MOTOR, L_POS_SRC, R_POS_SRC, TIMESTAMP_SOURCE,
-                        GYRO, GAINS_L.getV(), GAINS_L.getA(), GAINS_L.getP(), GAINS_L.getI(), GAINS_L.getD(),
-                        GAINS_L.getDP());
+                follower = new TankDriveFollower(profile, ROBOT_COMPONENTS, constructGainsObject(GAINS_L));
             }
         }
 

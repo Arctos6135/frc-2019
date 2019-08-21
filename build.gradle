@@ -53,7 +53,7 @@ dependencies {
     compile wpi.deps.wpilib()
     compile wpi.deps.vendor.java()
 
-    compile files("lib/RobotPathfinder-3.0.0-alpha.1.jar")
+    compile files("lib/RobotPathfinder-3.0.0-alpha.1.1-dev.jar")
     nativeLib files("lib/libRobotPathfinder.so")
     compile files("lib/StdPlug-API-0.1.0.jar")
     
