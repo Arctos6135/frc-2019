@@ -31,6 +31,15 @@ public class RobotLogger {
 
     static boolean isInitialized = false;
 
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                flush();
+            }
+        });
+    }
+
     static class RobotLoggerFormatter extends Formatter {
 
         static DateFormat format = new SimpleDateFormat("(yyyy/MM/dd HH:mm:ss)");
@@ -118,12 +127,20 @@ public class RobotLogger {
     }
 
     public static void flush() {
-        fileHandler.flush();
+        if(isInitialized) {
+            fileHandler.flush();
+        }
     }
 
     public static void cleanLogs(File logDir, DateFormat logDateFormat, long maxAgeHours) {
         if(!logDir.isDirectory()) {
-            throw new IllegalArgumentException("logDir must be a directory");
+            if(logDir.exists()) {
+                throw new IllegalArgumentException("logDir must be a directory");
+            }
+            else {
+                logWarning("The log directory passed to cleanLogs does not exist!");
+                return;
+            }
         }
         // Cache the current date and time
         Date now = new Date();
