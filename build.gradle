@@ -1,6 +1,6 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2019.3.2"
+    id "edu.wpi.first.GradleRIO" version "2019.4.1"
 }
 
 compileJava {
@@ -9,6 +9,9 @@ compileJava {
 }
 
 def ROBOT_MAIN_CLASS = "frc.robot.Main"
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
 // This is added by GradleRIO's backing project EmbeddedTools.
@@ -40,7 +43,7 @@ deploy {
 }
 
 // Set this to true to enable desktop support.
-def includeDesktopSupport = false
+def includeDesktopSupport = true
 
 // Maven central needed for JUnit
 repositories {

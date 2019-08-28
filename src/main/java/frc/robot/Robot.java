@@ -70,18 +70,17 @@ public class Robot extends TimedRobot {
 
     public static final String FRONT_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/main_camera/image_raw&quality=20&width=320&height=180";
     public static final String REAR_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/secondary_camera/image_raw&quality=20&width=320&height=240";
-    private static final NetworkTableEntry cameraURLsEntry = NetworkTableInstance.getDefault()
-            .getTable("CameraPublisher").getSubTable("JetsonCameras").getEntry("streams");
-    private static String[] cameraStreamURLs = new String[] { FRONT_CAMERA_URL, REAR_CAMERA_URL };
+    private static final NetworkTableEntry mainCameraUrlEntry = NetworkTableInstance.getDefault()
+            .getTable("CameraPublisher").getSubTable("MainCamera").getEntry("streams");
+    private static final NetworkTableEntry secondaryCameraUrlEntry = NetworkTableInstance.getDefault()
+            .getTable("CameraPublisher").getSubTable("SecondaryCamera").getEntry("streams");
 
     public static void setMainCameraURL(String url) {
-        cameraStreamURLs[0] = url;
-        cameraURLsEntry.setStringArray(cameraStreamURLs);
+        mainCameraUrlEntry.forceSetStringArray(new String[] { url });
     }
 
     public static void setSecondaryCameraURL(String url) {
-        cameraStreamURLs[1] = url;
-        cameraURLsEntry.setStringArray(cameraStreamURLs);
+        secondaryCameraUrlEntry.forceSetStringArray(new String[] { url });
     }
 
     /**
@@ -103,7 +102,7 @@ public class Robot extends TimedRobot {
     /**
      * This shuffleboard tab is used for pathfinding/following debug information.
      */
-    public static final ShuffleboardTab debugPathfindingTab = Shuffleboard.getTab("Debug - Pathfinding/following");
+    public static final ShuffleboardTab debugPathfindingTab = Shuffleboard.getTab("Debug - Pathfinding & following");
     /**
      * This Shuffleboard tab is used for miscellaneous options.
      */
