@@ -103,7 +103,7 @@ public class Robot extends TimedRobot {
     /**
      * This shuffleboard tab is used for pathfinding/following debug information.
      */
-    public static final ShuffleboardTab debugPathfindingTab = Shuffleboard.getTab("Debug - Pathfinding/following");
+    public static final ShuffleboardTab debugPathfindingTab = Shuffleboard.getTab("Debug - Pathfinding & following");
     /**
      * This Shuffleboard tab is used for miscellaneous options.
      */
