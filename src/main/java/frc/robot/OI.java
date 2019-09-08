@@ -204,18 +204,21 @@ public class OI {
                 new JoystickButton(driverController, Controls.VISION_ALIGN_ADVANCED), this.guestMode, false);
         Button visionAlignBasic = new ConditionalButton(
                 new JoystickButton(driverController, Controls.VISION_ALIGN_BASIC), this.guestMode, false);
-        Button reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
+        Button reverse = new ConditionalButton(new JoystickButton(driverController, Controls.REVERSE_DRIVE), this.guestMode,
+                false);
         Button stopAuto = new JoystickButton(driverController, Controls.STOP_AUTO);
         Button turn180 = new ConditionalButton(new JoystickButton(driverController, Controls.TURN_180), this.guestMode,
                 false);
-        Button gearShiftHigh = new JoystickButton(driverController, Controls.GEARSHIFT_HIGH);
-        Button gearShiftLow = new JoystickButton(driverController, Controls.GEARSHIFT_LOW);
+        Button gearShiftHigh = new ConditionalButton(new JoystickButton(driverController, Controls.GEARSHIFT_HIGH), this.guestMode,
+                false);
+        Button gearShiftLow = new ConditionalButton(new JoystickButton(driverController, Controls.GEARSHIFT_LOW), this.guestMode,
+                false);
         Button autoClimb = new ConditionalButton(
                 new HeldButton(new POVButton(driverController, Controls.POV_AUTO_CLIMB), 0.5), this.guestMode, false);
 
         Button essieAutoIntake = new JoystickButton(operatorController, Controls.ESSIE_AUTOPICKUP);
         Button cancelEssie = new JoystickButton(operatorController, Controls.CANCEL_ESSIE);
-        Button operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
+        Button operateHank = new ConditionalButton(new JoystickButton(operatorController, Controls.OPERATE_HANK), this.guestMode, false);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
             RobotMap.essieMotorHigh.overrideBlacklist();

@@ -290,6 +290,8 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Pressure Level", pressureSensor.getPressure());
         SmartDashboard.putBoolean("Can Climb", pressureSensor.canClimb());
 
+        SmartDashboard.putBoolean("Guest Mode Status", oi.isGuestMode());
+
         if(isInDebugMode) {     
             SmartDashboard.putNumber("Gyro Reading", drivetrain.getHeading());
 
@@ -322,11 +324,15 @@ public class Robot extends TimedRobot {
 		if (guestModeChooser.getSelected() != prevGuestMode) {
 			if (guestModeChooser.getSelected() == GuestMode.OFF) {
                 oi.setGuestMode(false);
-				drivetrain.setSpeedMultiplier(1);
+                drivetrain.setSpeedMultiplier(1);
+                RobotLogger.logInfo("Guest Mode DISABLED.");
 			} else {
                 oi.setGuestMode(true);
-				drivetrain.setSpeedMultiplier(RobotMap.GUEST_MODE_SPEED_MULTIPLIER);
-			}
+                drivetrain.setSpeedMultiplier(RobotMap.GUEST_MODE_SPEED_MULTIPLIER);
+                RobotLogger.logInfo("Guest Mode ENABLED.");
+            }
+            Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
+            RobotLogger.logInfo("Gear shifted to LOW because Guest Mode was enabled.");
 
 			prevGuestMode = guestModeChooser.getSelected();
 		}
