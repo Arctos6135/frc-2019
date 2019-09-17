@@ -23,12 +23,12 @@ public class PressureSensor extends Subsystem {
 
     private double pressure;
     private final double supplyVoltage = 5;
-    private final double requiredToClimb = 50;
+    private final double requiredToClimb = 45;
 
     public void findPressure() {
         // apply a formula for turning voltage to psi value
         // 250 (voltageOut/supplyVoltage) - 25
-        pressure = 250 * (RobotMap.pressureSensor.getAverageValue() / supplyVoltage) - 25;
+        pressure = 250 * (RobotMap.pressureSensor.getAverageVoltage() / supplyVoltage) - 25;
     }
     public double getPressure() {
         findPressure();
