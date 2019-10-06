@@ -13,16 +13,13 @@ import java.util.TimerTask;
 
 import com.arctos6135.stdplug.api.StdPlugWidgets;
 
-import edu.wpi.cscore.HttpCamera;
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.SendableCameraWrapper;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -72,19 +69,13 @@ public class Robot extends TimedRobot {
 
     public static final String FRONT_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/main_camera/image_raw&quality=20&width=320&height=180";
     public static final String REAR_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/secondary_camera/image_raw&quality=20&width=320&height=240";
-    public static final HttpCamera mainCamera = new HttpCamera("Main Camera", FRONT_CAMERA_URL, HttpCamera.HttpCameraKind.kMJPGStreamer);
-    public static final HttpCamera secondaryCamera = new HttpCamera("Secondary Camera", REAR_CAMERA_URL, HttpCamera.HttpCameraKind.kMJPGStreamer);
-    private static final NetworkTableEntry mainCameraUrlEntry = NetworkTableInstance.getDefault()
-            .getTable("CameraPublisher").getSubTable("MainCamera").getEntry("streams");
-    private static final NetworkTableEntry secondaryCameraUrlEntry = NetworkTableInstance.getDefault()
-            .getTable("CameraPublisher").getSubTable("SecondaryCamera").getEntry("streams");
 
     public static void setMainCameraURL(String url) {
-        mainCameraUrlEntry.forceSetStringArray(new String[] { url });
+        mainCameraUrlEntry.setString(url);
     }
 
     public static void setSecondaryCameraURL(String url) {
-        secondaryCameraUrlEntry.forceSetStringArray(new String[] { url });
+        secondaryCameraUrlEntry.setString(url);
     }
 
     /**
@@ -142,6 +133,11 @@ public class Robot extends TimedRobot {
             .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
     public static final NetworkTableEntry drivetrainGearEntry = driveTab.add("Drivetrain Gear", "LOW")
             .withWidget(BuiltInWidgets.kTextView).getEntry();
+
+    private static final NetworkTableEntry mainCameraUrlEntry = driveTab.add("Main Camera", FRONT_CAMERA_URL)
+            .withWidget(StdPlugWidgets.MJPEG_STREAM_VIEWER).getEntry();
+    private static final NetworkTableEntry secondaryCameraUrlEntry = driveTab.add("Secondary Camera", REAR_CAMERA_URL)
+            .withWidget(StdPlugWidgets.MJPEG_STREAM_VIEWER).getEntry();
 
     /*************************** Debug Tabs Entries ***************************/
 
@@ -244,8 +240,6 @@ public class Robot extends TimedRobot {
             }
         }, 10, 2000);
 
-        driveTab.add(SendableCameraWrapper.wrap(mainCamera));
-        driveTab.add(SendableCameraWrapper.wrap(secondaryCamera));
         setMainCameraURL(FRONT_CAMERA_URL);
         setSecondaryCameraURL(REAR_CAMERA_URL);
 
