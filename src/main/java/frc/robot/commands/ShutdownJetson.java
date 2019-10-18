@@ -8,7 +8,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.misc.RobotLogger;
 
@@ -36,7 +35,7 @@ public class ShutdownJetson extends InstantCommand {
             return;
         }
         Robot.vision.shutdownJetson();
-        SmartDashboard.putBoolean("Vision Status", false);
+        Robot.visionStatusEntry.setBoolean(false);
         RobotLogger.logInfoFine("Jetson has been shutdown");
     }
 }
