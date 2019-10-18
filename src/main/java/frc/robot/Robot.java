@@ -14,7 +14,6 @@ import java.util.TimerTask;
 import com.arctos6135.stdplug.api.StdPlugWidgets;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -70,17 +69,13 @@ public class Robot extends TimedRobot {
 
     public static final String FRONT_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/main_camera/image_raw&quality=20&width=320&height=180";
     public static final String REAR_CAMERA_URL = "http://10.61.35.19:1180/stream?topic=/secondary_camera/image_raw&quality=20&width=320&height=240";
-    private static final NetworkTableEntry mainCameraUrlEntry = NetworkTableInstance.getDefault()
-            .getTable("CameraPublisher").getSubTable("MainCamera").getEntry("streams");
-    private static final NetworkTableEntry secondaryCameraUrlEntry = NetworkTableInstance.getDefault()
-            .getTable("CameraPublisher").getSubTable("SecondaryCamera").getEntry("streams");
 
     public static void setMainCameraURL(String url) {
-        mainCameraUrlEntry.forceSetStringArray(new String[] { url });
+        mainCameraUrlEntry.setString(url);
     }
 
     public static void setSecondaryCameraURL(String url) {
-        secondaryCameraUrlEntry.forceSetStringArray(new String[] { url });
+        secondaryCameraUrlEntry.setString(url);
     }
 
     /**
@@ -138,6 +133,11 @@ public class Robot extends TimedRobot {
             .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
     public static final NetworkTableEntry drivetrainGearEntry = driveTab.add("Drivetrain Gear", "LOW")
             .withWidget(BuiltInWidgets.kTextView).getEntry();
+
+    private static final NetworkTableEntry mainCameraUrlEntry = driveTab.add("Main Camera", FRONT_CAMERA_URL)
+            .withWidget(StdPlugWidgets.MJPEG_STREAM_VIEWER).getEntry();
+    private static final NetworkTableEntry secondaryCameraUrlEntry = driveTab.add("Secondary Camera", REAR_CAMERA_URL)
+            .withWidget(StdPlugWidgets.MJPEG_STREAM_VIEWER).getEntry();
 
     /*************************** Debug Tabs Entries ***************************/
 
