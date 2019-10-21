@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.AdvancedVisionAlign;
 import frc.robot.commands.AutoCargoIntake;
 import frc.robot.commands.AutoClimb;
-import frc.robot.commands.FlashBeautifulRobot;
 import frc.robot.commands.OperateClimber;
 import frc.robot.commands.OperateEssie;
 import frc.robot.commands.OperateHank;
@@ -27,7 +26,6 @@ import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.commands.VisionAlign;
-import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.misc.RobotLogger;
 import frc.robot.misc.Rumble;
 import frc.robot.subsystems.Climber;
@@ -128,9 +126,6 @@ public class OI {
         
         public static final int VISION_ALIGN_ADVANCED = ControllerMap.BUTTON_Y;
         public static final int VISION_ALIGN_BASIC = ControllerMap.BUTTON_RSTICK;
-
-        public static final int POV_LED_FLASH_GREEN = ControllerMap.POV_UP;
-        public static final int POV_LED_FLASH_YELLOW = ControllerMap.POV_DOWN;
         
         public static final int REVERSE_DRIVE = ControllerMap.BUTTON_LSTICK;
 
@@ -167,8 +162,6 @@ public class OI {
         Button essieLow = new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_LOW);
         Button essieReverse = new JoystickButton(operatorController, Controls.ESSIE_REVERSE_INTAKE);
         Button operateHank = new JoystickButton(operatorController, Controls.OPERATE_HANK);
-        Button ledFlashGreen = new POVButton(operatorController, Controls.POV_LED_FLASH_GREEN);
-        Button ledFlashYellow = new POVButton(operatorController, Controls.POV_LED_FLASH_YELLOW);
         Button climberPistonToggleEssie = new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_ESSIE);
         Button climberPistonToggleHank = new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_HANK);
         Button precisionDrive = new JoystickButton(driverController, Controls.PRECISION_DRIVE);
@@ -237,9 +230,6 @@ public class OI {
         });
         debugCmd.setRunWhenDisabled(true);
         debug.whenPressed(debugCmd);
-        
-        ledFlashGreen.whenPressed(new FlashBeautifulRobot(BeautifulRobotDriver.Color.GREEN, 150, 5));
-        ledFlashYellow.whenPressed(new FlashBeautifulRobot(BeautifulRobotDriver.Color.CUSTOM, 150, 5));
 
         stopAuto.whenPressed(new InstantCommand(() -> {
             Command c = Robot.drivetrain.getCurrentCommand();

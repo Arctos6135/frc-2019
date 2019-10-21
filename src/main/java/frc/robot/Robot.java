@@ -28,9 +28,7 @@ import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.commands.sandstorm.AutoDispatcher;
 import frc.robot.misc.AutoPaths;
-import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.misc.RobotLogger;
-import frc.robot.subsystems.BeautifulRobot;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Essie;
@@ -51,7 +49,6 @@ public class Robot extends TimedRobot {
     public static Drivetrain drivetrain;
     public static Essie essie;
     public static Vision vision;
-    public static BeautifulRobot beautifulRobot;
     public static Climber climber;
     public static OI oi;
     public static PressureSensor pressureSensor;
@@ -192,17 +189,8 @@ public class Robot extends TimedRobot {
         drivetrain = new Drivetrain();
         essie = new Essie();
         climber = new Climber();
-        beautifulRobot = new BeautifulRobot();
         pressureSensor = new PressureSensor();
         oi = new OI();
-        
-        beautifulRobot.init();
-        beautifulRobot.setEnabled(true);
-        beautifulRobot.setCustomColor((byte) 255, (byte) 102, (byte) 0);
-        beautifulRobot.writeCommand(BeautifulRobotDriver.Operation.SPEED_HIGH, (byte) 0);
-        beautifulRobot.writeCommand(BeautifulRobotDriver.Operation.SPEED_LOW, (byte) 0x80);
-        beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.RAINBOW_DASH);
-        beautifulRobot.turnOn();
 
         AutoPaths.generateAll();
 
@@ -217,10 +205,6 @@ public class Robot extends TimedRobot {
             }
         }
 
-        beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.RAINBOW);
-        beautifulRobot.writeCommand(BeautifulRobotDriver.Operation.SPEED_HIGH, (byte) 0x01);
-        beautifulRobot.writeCommand(BeautifulRobotDriver.Operation.SPEED_LOW, (byte) 0x00);
-
         try {
             RobotLogger.init();
         } catch (IOException e) {
@@ -228,7 +212,6 @@ public class Robot extends TimedRobot {
             lastErrorEntry.setString("Failed to initialize logger!");
         }
         RobotLogger.logInfo("Logger initialized");
-        beautifulRobot.setAlliance(DriverStation.getInstance().getAlliance());
 
         java.util.Timer timer = new java.util.Timer();
         timer.schedule(new TimerTask() {
@@ -382,13 +365,6 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         RobotLogger.logInfo("Autonomous mode enabled");
-        if (beautifulRobot.getColor() != BeautifulRobotDriver.Color
-                .fromAlliance(DriverStation.getInstance().getAlliance())) {
-            // If the alliance colour is not set, do it here
-            beautifulRobot.setColor(BeautifulRobotDriver.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
-            RobotLogger
-                    .logInfoFine("BeautifulRobot alliance colour changed to " + beautifulRobot.getColor().toString());
-        }
         // Set the initial gear
         Drivetrain.Gear matchStartGear = matchStartGearChooser.getSelected();
         if (matchStartGear != null) {
@@ -397,8 +373,6 @@ public class Robot extends TimedRobot {
         }
         // Un-reverse driving
         TeleopDrive.setReversed(false);
-
-        beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.PULSATING);
 
         autoCommand = AutoDispatcher.getAuto(modeChooser.getSelected(), habLevelChooser.getSelected(),
                 sideChooser.getSelected(), robotSideChooser.getSelected());
@@ -427,14 +401,6 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         RobotLogger.logInfo("Teleop mode enabled");
-        if (beautifulRobot.getColor() != BeautifulRobotDriver.Color
-                .fromAlliance(DriverStation.getInstance().getAlliance())) {
-            // If the alliance colour is not set, do it here
-            beautifulRobot.setColor(BeautifulRobotDriver.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
-            RobotLogger
-                    .logInfoFine("BeautifulRobot alliance colour changed to " + beautifulRobot.getColor().toString());
-        }
-        beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.MOVING_PULSE);
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
@@ -462,7 +428,6 @@ public class Robot extends TimedRobot {
         RobotLogger.logInfo("Robot disabled");
         // Flush the log buffer when the robot is disabled
         RobotLogger.flush();
-        beautifulRobot.setPattern(BeautifulRobotDriver.Pattern.RAINBOW);
     }
 
     @Override
