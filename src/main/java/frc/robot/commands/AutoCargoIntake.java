@@ -7,11 +7,9 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
 import frc.robot.Robot;
-import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.misc.RobotLogger;
 
 /**
@@ -44,9 +42,6 @@ public class AutoCargoIntake extends Command {
         if(Robot.essie.hasCargo()) {
             OI.pickupRumbleOperator.execute();
             OI.pickupRumbleDriver.execute();
-            @SuppressWarnings("resource")
-            Command pulse = new PulseBeautifulRobot(1.5, 10, BeautifulRobotDriver.Color.fromAlliance(DriverStation.getInstance().getAlliance()));
-            pulse.start();
             RobotLogger.logInfoFine("Essie autopickup ended");
             return true;
         }
