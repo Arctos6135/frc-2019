@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.commands.AdvancedVisionAlign;
 import frc.robot.commands.AutoCargoIntake;
 import frc.robot.commands.AutoClimb;
-import frc.robot.commands.FlashBeautifulRobot;
 import frc.robot.commands.OperateClimber;
 import frc.robot.commands.OperateEssie;
 import frc.robot.commands.OperateHank;
@@ -29,7 +28,6 @@ import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.commands.VisionAlign;
-import frc.robot.misc.BeautifulRobotDriver;
 import frc.robot.misc.RobotLogger;
 import frc.robot.misc.Rumble;
 import frc.robot.subsystems.Climber;
@@ -133,9 +131,6 @@ public class OI {
 
         public static final int VISION_ALIGN_ADVANCED = ControllerMap.BUTTON_Y;
         public static final int VISION_ALIGN_BASIC = ControllerMap.BUTTON_RSTICK;
-
-        public static final int POV_LED_FLASH_GREEN = ControllerMap.POV_UP;
-        public static final int POV_LED_FLASH_YELLOW = ControllerMap.POV_DOWN;
 
         public static final int REVERSE_DRIVE = ControllerMap.BUTTON_LSTICK;
 
@@ -357,10 +352,6 @@ public class OI {
                 this.guestMode, false);
         Button essieLow = new ConditionalButton(new JoystickButton(operatorController, Controls.ESSIE_OUTTAKE_LOW),
                 this.guestMode, false);
-        Button ledFlashGreen = new ConditionalButton(new POVButton(operatorController, Controls.POV_LED_FLASH_GREEN),
-                this.guestMode, false);
-        Button ledFlashYellow = new ConditionalButton(new POVButton(operatorController, Controls.POV_LED_FLASH_YELLOW),
-                this.guestMode, false);
         Button essieReverse = new JoystickButton(operatorController, Controls.ESSIE_REVERSE_INTAKE);
 
         overrideMotorBlacklist2.whenActive(new InstantCommand(() -> {
@@ -373,10 +364,6 @@ public class OI {
         essieHigh.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_HIGH));
         essieLow.whileHeld(new OperateEssie(OperateEssie.Mode.OUT_LOW));
         essieReverse.whileHeld(new OperateEssie(OperateEssie.Mode.REVERSE));
-
-        ledFlashGreen.whenPressed(new FlashBeautifulRobot(BeautifulRobotDriver.Color.GREEN, 150, 5));
-        ledFlashYellow.whenPressed(new FlashBeautifulRobot(BeautifulRobotDriver.Color.CUSTOM, 150, 5));
-
         restartVisionServer.whenPressed(new RestartVisionServer());
 
         Button essieHighGuest0 = new ConditionalButton(
