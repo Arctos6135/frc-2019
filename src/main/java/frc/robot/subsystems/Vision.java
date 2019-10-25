@@ -98,6 +98,14 @@ public class Vision extends Subsystem {
         return visionOnline.getBoolean(false);
     }
 
+    /**
+     * Gets the NetworkTables entry that will be set to true when vision is online.
+     * @return The NetworkTables entry for vision-online
+     */
+    public NetworkTableEntry readyEntry() {
+        return visionOnline;
+    }
+
     // This class was created so that notifyWhenReady can remove its callback after it's done.
     static class NotifyWhenReadyCallback implements Consumer<EntryNotification> {
         Object objectToNotify;

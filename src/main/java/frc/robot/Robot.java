@@ -13,6 +13,7 @@ import java.util.TimerTask;
 
 import com.arctos6135.stdplug.api.StdPlugWidgets;
 
+import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
@@ -191,7 +192,6 @@ public class Robot extends TimedRobot {
         climber = new Climber();
         pressureSensor = new PressureSensor();
         oi = new OI();
-
         // Warm up RobotPathfinder and generate auto paths
         FollowTrajectory.warmupRobotPathfinder(10);
         AutoPaths.generateAll();
@@ -265,7 +265,7 @@ public class Robot extends TimedRobot {
             long start = System.currentTimeMillis();
             try {
                 // Wait for up to a minute for the vision subsystem to come online
-                while (!vision.ready() && System.currentTimeMillis() - start < 60000) {
+                while (!vision.ready() && System.currentTimeMillis() - start < 1000) {
                     Thread.sleep(300);
                     if (OI.operatorController.getRawButton(OI.Controls.SKIP_VISION_INIT)) {
                         break;
@@ -276,6 +276,15 @@ public class Robot extends TimedRobot {
             }
         }
         visionStatusEntry.setBoolean(vision.ready());
+        vision.readyEntry().addListener((notif) -> {
+            visionStatusEntry.setBoolean(notif.value.getBoolean());
+            if(notif.value.getBoolean()) {
+                RobotLogger.logInfo("Vision came online");
+            }
+            else {
+                RobotLogger.logError("Vision went offline!");
+            }
+        }, EntryListenerFlags.kImmediate | EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
         if (!vision.ready()) {
             RobotLogger.logError("Wait for vision initialization timed out");
