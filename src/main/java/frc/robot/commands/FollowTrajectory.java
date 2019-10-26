@@ -17,15 +17,15 @@ import com.arctos6135.robotpathfinder.follower.Follower.AdvancedPositionSource;
 import com.arctos6135.robotpathfinder.follower.Follower.DirectionSource;
 import com.arctos6135.robotpathfinder.follower.Follower.Motor;
 import com.arctos6135.robotpathfinder.follower.Follower.TimestampSource;
+import com.arctos6135.robotpathfinder.follower.TankDriveFollower;
 import com.arctos6135.robotpathfinder.follower.TankDriveFollower.TankDriveGains;
 import com.arctos6135.robotpathfinder.follower.TankDriveFollower.TankDriveRobot;
-import com.arctos6135.robotpathfinder.follower.TankDriveFollower;
+import com.arctos6135.stdplug.api.datatypes.PIDVADPGains;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.misc.RobotLogger;
@@ -88,8 +88,8 @@ public class FollowTrajectory extends Command {
             TIMESTAMP_SOURCE, GYRO);
 
     // These fields are made public so they can be configured from the dashboard
-    public static final TankDriveGains GAINS_L = new TankDriveGains(0.025, 0.0015, 0.2, 0, 0.00015, 0.01);
-    public static final TankDriveGains GAINS_H = new TankDriveGains(0.007, 0.002, 0.2, 0, 0.00025, 0.01);
+    public static final PIDVADPGains GAINS_L = new PIDVADPGains(0.2, 0.0, 0.00015, 0.025, 0.0015, 0.01);
+    public static final PIDVADPGains GAINS_H = new PIDVADPGains(0.1, 0.0, 0.00025, 0.007, 0.002, 0.01);
     public static double updateDelay = 0.75;
 
     // This is the gear the robot must be in for trajectory following
@@ -98,6 +98,22 @@ public class FollowTrajectory extends Command {
 
     private final Followable<TankDriveMoment> profile;
     private Follower<TankDriveMoment> follower;
+
+    /**
+     * Constructs a {@link TankDriveGains} object from a {@link PIDVADPGains}
+     * object.
+     * 
+     * This is because the class has to store the gains as StdPlug
+     * {@link PIDVADPGains} objects in order to have them sent to Shuffleboard and
+     * configured, but the {@link Follower} constructors only take
+     * {@link TankDriveGains}.
+     * 
+     * @param stdPlugGains The {@link PIDVADPGains} object
+     */
+    private static TankDriveGains constructGainsObject(PIDVADPGains stdPlugGains) {
+        return new TankDriveGains(stdPlugGains.getV(), stdPlugGains.getA(), stdPlugGains.getP(), stdPlugGains.getI(),
+                stdPlugGains.getD(), stdPlugGains.getDP());
+    }
 
     /**
      * Constructs a new {@link FollowTrajectory} command.
@@ -137,16 +153,16 @@ public class FollowTrajectory extends Command {
             // regular one
             if (profile instanceof DynamicFollowable) {
                 follower = new DynamicTankDriveFollower((DynamicFollowable<TankDriveMoment>) profile, ROBOT_COMPONENTS,
-                        GAINS_H, updateDelay);
+                        constructGainsObject(GAINS_H), updateDelay);
             } else {
-                follower = new TankDriveFollower(profile, ROBOT_COMPONENTS, GAINS_H);
+                follower = new TankDriveFollower(profile, ROBOT_COMPONENTS, constructGainsObject(GAINS_H));
             }
         } else {
             if (profile instanceof DynamicFollowable) {
                 follower = new DynamicTankDriveFollower((DynamicFollowable<TankDriveMoment>) profile, ROBOT_COMPONENTS,
-                        GAINS_L, updateDelay);
+                        constructGainsObject(GAINS_L), updateDelay);
             } else {
-                follower = new TankDriveFollower(profile, ROBOT_COMPONENTS, GAINS_L);
+                follower = new TankDriveFollower(profile, ROBOT_COMPONENTS, constructGainsObject(GAINS_L));
             }
         }
 
@@ -161,44 +177,20 @@ public class FollowTrajectory extends Command {
         if (Robot.isInDebugMode) {
             if (follower instanceof TankDriveFollower) {
                 TankDriveFollower f = (TankDriveFollower) follower;
-                SmartDashboard.putNumber("Follower Left Output", f.lastLeftOutput());
-                SmartDashboard.putNumber("Follower Right Output", f.lastRightOutput());
 
-                TankDriveMoment m = f.lastMoment();
-
-                SmartDashboard.putNumber("Follower Left Velocity", m.getLeftVelocity());
-                SmartDashboard.putNumber("Follower Right Velocity", m.getRightVelocity());
-
-                SmartDashboard.putNumber("Follower Left Acceleration", m.getLeftAcceleration());
-                SmartDashboard.putNumber("Follower Right Acceleration", m.getRightAcceleration());
-
-                SmartDashboard.putNumber("Follower Left Error", f.lastLeftError());
-                SmartDashboard.putNumber("Follower Right Error", f.lastRightError());
-
-                SmartDashboard.putNumber("Follower Left Error Derivative", f.lastLeftDerivative());
-                SmartDashboard.putNumber("Follower Right Error Derivative", f.lastRightDerivative());
-
-                SmartDashboard.putNumber("Follower Directional Error", f.lastDirectionalError());
+                Robot.followerLeftOutputEntry.setDouble(f.lastLeftOutput());
+                Robot.followerRightOutputEntry.setDouble(f.lastRightOutput());
+                Robot.followerLeftErrorEntry.setDouble(f.lastLeftError());
+                Robot.followerRightErrorEntry.setDouble(f.lastRightError());
+                Robot.followerDirectionalErrorEntry.setDouble(f.lastDirectionalError());
             } else if (follower instanceof DynamicTankDriveFollower) {
                 DynamicTankDriveFollower f = (DynamicTankDriveFollower) follower;
-                SmartDashboard.putNumber("Follower Left Output", f.lastLeftOutput());
-                SmartDashboard.putNumber("Follower Right Output", f.lastRightOutput());
 
-                TankDriveMoment m = f.lastMoment();
-
-                SmartDashboard.putNumber("Follower Left Velocity", m.getLeftVelocity());
-                SmartDashboard.putNumber("Follower Right Velocity", m.getRightVelocity());
-
-                SmartDashboard.putNumber("Follower Left Acceleration", m.getLeftAcceleration());
-                SmartDashboard.putNumber("Follower Right Acceleration", m.getRightAcceleration());
-
-                SmartDashboard.putNumber("Follower Left Error", f.lastLeftError());
-                SmartDashboard.putNumber("Follower Right Error", f.lastRightError());
-
-                SmartDashboard.putNumber("Follower Left Error Derivative", f.lastLeftDerivative());
-                SmartDashboard.putNumber("Follower Right Error Derivative", f.lastRightDerivative());
-
-                SmartDashboard.putNumber("Follower Directional Error", f.lastDirectionalError());
+                Robot.followerLeftOutputEntry.setDouble(f.lastLeftOutput());
+                Robot.followerRightOutputEntry.setDouble(f.lastRightOutput());
+                Robot.followerLeftErrorEntry.setDouble(f.lastLeftError());
+                Robot.followerRightErrorEntry.setDouble(f.lastRightError());
+                Robot.followerDirectionalErrorEntry.setDouble(f.lastDirectionalError());
             }
         }
     }
