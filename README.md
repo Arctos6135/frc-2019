@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.com/Arctos6135/frc-2019.svg?branch=master)](https://travis-ci.com/Arctos6135/frc-2019)\
 Code repository of FRC Team Arctos 6135 in Destination: Deep Space
 
-**Note: This is the `dev/guest-mode` branch. As the name suggests, this branch contains code for a "guest-mode", which is used at outreach events for demonstration purposes. It should NOT ever be merged into `master` or vice versa.***
+**Note: This is the `dev/guest-mode` branch. As the name suggests, this branch contains code for a "guest-mode", which is used at outreach events for demonstration purposes. It should NOT ever be merged into `master` or vice versa. Take great care when merging other branches into this.***
 
 Thank you to our generous sponsors:<br/>
 <img src="https://dynamicmedia.zuza.com/zz/m/original_/3/a/3aae60b3-ff18-4be5-b2b1-e244943a85fb/TDSB_Gallery.png" alt="Toronto District School Board" height="200px"/>
