@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.TeleopDrive;
 
@@ -198,9 +199,11 @@ public class Drivetrain extends Subsystem {
     public void setGear(Gear gear) {
         if(gear == Gear.HIGH) {
             RobotMap.gearShifter.set(DoubleSolenoid.Value.kForward);
+            Robot.drivetrainGearEntry.setString("HIGH");
         }
         else {
             RobotMap.gearShifter.set(DoubleSolenoid.Value.kReverse);
+            Robot.drivetrainGearEntry.setString("LOW");
         }
         this.gear = gear;
     }
