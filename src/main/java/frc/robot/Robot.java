@@ -129,7 +129,7 @@ public class Robot extends TimedRobot {
             .withWidget(BuiltInWidgets.kDial).withProperties(Map.of("min", 0, "max", 150)).getEntry();
     public static final NetworkTableEntry canClimbEntry = driveTab.add("Can Climb", false)
             .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
-    public static final NetworkTableEntry drivetrainGearEntry = driveTab.add("Drivetrain Gear", "LOW")
+    public static final NetworkTableEntry drivetrainGearEntry = driveTab.add("Gear", "LOW")
             .withWidget(BuiltInWidgets.kTextView).getEntry();
 
     private static final NetworkTableEntry mainCameraUrlEntry = driveTab.add("Main Camera", FRONT_CAMERA_URL)
@@ -343,7 +343,6 @@ public class Robot extends TimedRobot {
         canClimbEntry.setBoolean(pressureSensor.canClimb());
 
         if (isInDebugMode) {
-            drivetrainGearEntry.setString(drivetrain.getGear() == Drivetrain.Gear.HIGH ? "HIGH" : "LOW");
             leftDistanceEntry.setDouble(drivetrain.getLeftDistance());
             rightDistanceEntry.setDouble(drivetrain.getRightDistance());
             leftVelocityEntry.setDouble(drivetrain.getLeftSpeed());
