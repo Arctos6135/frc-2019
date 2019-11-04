@@ -138,8 +138,8 @@ public class OI {
 
         public static final int STOP_AUTO = ControllerMap.BUTTON_B;
 
-        public static final int POV_CLIMBER_TOGGLE_HANK = ControllerMap.POV_UP;
-        public static final int POV_CLIMBER_TOGGLE_ESSIE = ControllerMap.POV_DOWN;
+        public static final int POV_CLIMBER_TOGGLE_HANK = ControllerMap.POV_DOWN;
+        public static final int POV_CLIMBER_TOGGLE_ESSIE = ControllerMap.POV_UP;
 
         public static final int TURN_180 = ControllerMap.BUTTON_A;
 
