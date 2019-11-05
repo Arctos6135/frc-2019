@@ -18,7 +18,6 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -27,8 +26,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.commands.FollowTrajectory;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
-import frc.robot.commands.sandstorm.AutoDispatcher;
-import frc.robot.commands.sandstorm.AutoDispatcher.GuestMode;
 import frc.robot.misc.AutoPaths;
 import frc.robot.misc.RobotLogger;
 import frc.robot.subsystems.Climber;
@@ -55,17 +52,8 @@ public class Robot extends TimedRobot {
     public static OI oi;
     public static PressureSensor pressureSensor;
 
-    public static Command autoCommand;
-
-    static SendableChooser<AutoDispatcher.Mode> modeChooser = new SendableChooser<>();
-    static SendableChooser<AutoDispatcher.HabLevel> habLevelChooser = new SendableChooser<>();
-    static SendableChooser<AutoDispatcher.Side> sideChooser = new SendableChooser<>();
-	static SendableChooser<AutoDispatcher.RobotSide> robotSideChooser = new SendableChooser<>();
-	static SendableChooser<AutoDispatcher.GuestMode> guestModeChooser = new SendableChooser<>();
     static SendableChooser<Drivetrain.Gear> followerGearChooser = new SendableChooser<>();
 	static SendableChooser<Drivetrain.Gear> matchStartGearChooser = new SendableChooser<>();
-	
-	static GuestMode prevGuestMode = GuestMode.OFF;
 
     public static boolean isInDebugMode = false;
 
@@ -110,9 +98,6 @@ public class Robot extends TimedRobot {
     // for Shuffleboard docs.
 
     /*************************** Pre-match Tab Entries ***************************/
-    public static final NetworkTableEntry validAutoEntry = prematchTab.add("Valid Auto Configuration", false)
-            .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
-
     /*************************** Drive Tab Entries ***************************/
 
     public static final NetworkTableEntry lastErrorEntry = driveTab.add("Last Error", "")
@@ -234,24 +219,6 @@ public class Robot extends TimedRobot {
 
         // Add a shutdown Jetson command
         debugTab.add("Shutdown Jetson", new ShutdownJetson()).withWidget(BuiltInWidgets.kCommand);
-
-        // Create auto chooser
-        modeChooser.setDefaultOption("None", AutoDispatcher.Mode.NONE);
-        modeChooser.addOption("Cargo Ship Front", AutoDispatcher.Mode.FRONT);
-        modeChooser.addOption("Cargo Ship Side", AutoDispatcher.Mode.SIDE);
-        modeChooser.addOption("Vision", AutoDispatcher.Mode.VISION);
-        modeChooser.addOption("Side Vision", AutoDispatcher.Mode.SIDE_VISION);
-        modeChooser.addOption("Debug", AutoDispatcher.Mode.DEBUG);
-        prematchTab.add("Auto Mode", modeChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
-        habLevelChooser.setDefaultOption("Level 1", AutoDispatcher.HabLevel.ONE);
-        habLevelChooser.addOption("Level 2", AutoDispatcher.HabLevel.TWO);
-        prematchTab.add("Auto Start Hab Level", habLevelChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
-        sideChooser.setDefaultOption("Left", AutoDispatcher.Side.LEFT);
-        sideChooser.addOption("Right", AutoDispatcher.Side.RIGHT);
-        prematchTab.add("Auto Side", sideChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
-        robotSideChooser.setDefaultOption("Hank Side", AutoDispatcher.RobotSide.HANK);
-        robotSideChooser.addOption("Essie Side", AutoDispatcher.RobotSide.ESSIE);
-        prematchTab.add("Auto Robot Side", robotSideChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
 
         // Create follower gear chooser and match start gear chooser
         followerGearChooser.setDefaultOption("Low Gear", Drivetrain.Gear.LOW);
@@ -410,17 +377,7 @@ public class Robot extends TimedRobot {
         }
         // Un-reverse driving
         TeleopDrive.setReversed(false);
-
-        autoCommand = AutoDispatcher.getAuto(modeChooser.getSelected(), habLevelChooser.getSelected(),
-                sideChooser.getSelected(), robotSideChooser.getSelected());
-        if (autoCommand != null) {
-            autoCommand.start();
-            RobotLogger.logInfo("Autonomous command started: " + autoCommand.getClass().getName());
-        } else {
-            RobotLogger.logWarning("No auto exists for the specified configuration");
-            OI.errorRumbleDriverMinor.execute();
-            OI.errorRumbleOperatorMinor.execute();
-        }
+        RobotLogger.logWarning("Auto is enabled, but they're not supported in Guest Mode!");
     }
 
     /**
@@ -438,13 +395,6 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         RobotLogger.logInfo("Teleop mode enabled");
-        // This makes sure that the autonomous stops running when
-        // teleop starts running. If you want the autonomous to
-        // continue until interrupted by another command, remove
-        // this line or comment it out.
-        if (autoCommand != null) {
-            autoCommand.cancel();
-        }
     }
 
     /**
@@ -471,9 +421,6 @@ public class Robot extends TimedRobot {
     public void disabledPeriodic() {
         Scheduler.getInstance().run();
 
-        // Check if the auto configuration is valid
-        validAutoEntry.setBoolean(AutoDispatcher.getAuto(modeChooser.getSelected(), habLevelChooser.getSelected(),
-                sideChooser.getSelected(), robotSideChooser.getSelected()) != null);
         if (isInDebugMode) {
             getTuningEntries();
         }
