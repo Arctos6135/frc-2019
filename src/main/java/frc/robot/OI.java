@@ -22,7 +22,6 @@ import frc.robot.commands.OperateClimber;
 import frc.robot.commands.OperateEssie;
 import frc.robot.commands.OperateHank;
 import frc.robot.commands.RestartVisionServer;
-import frc.robot.commands.RotateToAngle;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.commands.VisionAlign;
@@ -136,8 +135,6 @@ public class OI {
         public static final int POV_CLIMBER_TOGGLE_HANK = ControllerMap.POV_DOWN;
         public static final int POV_CLIMBER_TOGGLE_ESSIE = ControllerMap.POV_UP;
 
-        public static final int TURN_180 = ControllerMap.BUTTON_A;
-
         public static final int POV_AUTO_CLIMB = ControllerMap.POV_LEFT;
     }
 
@@ -170,11 +167,10 @@ public class OI {
         Button visionAlignBasic = new JoystickButton(driverController, Controls.VISION_ALIGN_BASIC);
         Button reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
         Button stopAuto = new JoystickButton(driverController, Controls.STOP_AUTO);
-        Button turn180 = new JoystickButton(driverController, Controls.TURN_180);
         Button gearShiftHigh = new JoystickButton(driverController, Controls.GEARSHIFT_HIGH);
         Button gearShiftLow = new JoystickButton(driverController, Controls.GEARSHIFT_LOW);
         Button restartVisionServer = new JoystickButton(operatorController, Controls.RESTART_VISION_SERVER);
-        Button autoClimb = new HeldButton(new POVButton(driverController, Controls.POV_AUTO_CLIMB), 0.5);
+        Button autoClimb = new HeldButton(new POVButton(driverController, Controls.POV_AUTO_CLIMB), 0);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
             RobotMap.essieMotorHigh.overrideBlacklist();
@@ -259,9 +255,6 @@ public class OI {
                 RobotLogger.logInfoFine("Cancelled a command of type " + c.getClass().getName());
             }
         }));
-
-        // Turns 180 degrees in place
-        turn180.whenPressed(new RotateToAngle(187, RotateToAngle.Direction.LEFT));
 
         gearShiftHigh.whenPressed(new InstantCommand(() -> {
             // Do nothing if the current gear is already high
