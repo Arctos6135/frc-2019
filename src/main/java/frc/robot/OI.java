@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.buttons.POVButton;
 import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import frc.robot.commands.AdvancedVisionAlign;
 import frc.robot.commands.AutoCargoIntake;
 import frc.robot.commands.AutoClimb;
 import frc.robot.commands.OperateClimber;
@@ -24,12 +23,10 @@ import frc.robot.commands.OperateHank;
 import frc.robot.commands.RestartVisionServer;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
-import frc.robot.commands.VisionAlign;
 import frc.robot.misc.RobotLogger;
 import frc.robot.misc.Rumble;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
-import frc.robot.triggers.HeldButton;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -123,9 +120,6 @@ public class OI {
         public static final int SKIP_VISION_INIT = ControllerMap.BUTTON_START;
         public static final int RESTART_VISION_SERVER = ControllerMap.BUTTON_START;
         
-        public static final int VISION_ALIGN_ADVANCED = ControllerMap.BUTTON_Y;
-        public static final int VISION_ALIGN_BASIC = ControllerMap.BUTTON_RSTICK;
-        
         public static final int REVERSE_DRIVE = ControllerMap.BUTTON_LSTICK;
 
         public static final int PRECISION_DRIVE = ControllerMap.BUTTON_X;
@@ -163,14 +157,12 @@ public class OI {
         Button climberPistonToggleHank = new POVButton(driverController, Controls.POV_CLIMBER_TOGGLE_HANK);
         Button precisionDrive = new JoystickButton(driverController, Controls.PRECISION_DRIVE);
         Button debug = new JoystickButton(driverController, Controls.DEBUG);
-        Button visionAlignAdvanced = new JoystickButton(driverController, Controls.VISION_ALIGN_ADVANCED);
-        Button visionAlignBasic = new JoystickButton(driverController, Controls.VISION_ALIGN_BASIC);
         Button reverse = new JoystickButton(driverController, Controls.REVERSE_DRIVE);
         Button stopAuto = new JoystickButton(driverController, Controls.STOP_AUTO);
         Button gearShiftHigh = new JoystickButton(driverController, Controls.GEARSHIFT_HIGH);
         Button gearShiftLow = new JoystickButton(driverController, Controls.GEARSHIFT_LOW);
         Button restartVisionServer = new JoystickButton(operatorController, Controls.RESTART_VISION_SERVER);
-        Button autoClimb = new HeldButton(new POVButton(driverController, Controls.POV_AUTO_CLIMB), 0);
+        Button autoClimb = new POVButton(driverController, Controls.POV_AUTO_CLIMB);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
             RobotMap.essieMotorHigh.overrideBlacklist();
@@ -207,8 +199,6 @@ public class OI {
         };
         shutdownJetson.whileActive(new ShutdownJetson());
 
-        visionAlignAdvanced.whenPressed(new AdvancedVisionAlign());
-        visionAlignBasic.whenPressed(new VisionAlign());
         precisionDrive.whenPressed(new InstantCommand(() -> {
             // Precision drive is disabled when the robot is in low gear,
             // as the robot already goes very slowly anyways.
