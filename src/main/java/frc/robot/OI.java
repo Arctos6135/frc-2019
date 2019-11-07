@@ -119,7 +119,7 @@ public class OI {
         public static final int DEBUG = ControllerMap.BUTTON_START;
         public static final int SKIP_VISION_INIT = ControllerMap.BUTTON_START;
         public static final int RESTART_VISION_SERVER = ControllerMap.BUTTON_START;
-        
+
         public static final int REVERSE_DRIVE = ControllerMap.BUTTON_LSTICK;
 
         public static final int PRECISION_DRIVE = ControllerMap.BUTTON_X;
