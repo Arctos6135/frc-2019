@@ -7,6 +7,8 @@
 
 package frc.robot;
 
+import com.arctos6135.robotlib.logging.RobotLogger;
+
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.Button;
@@ -23,7 +25,6 @@ import frc.robot.commands.OperateHank;
 import frc.robot.commands.RestartVisionServer;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
-import frc.robot.misc.RobotLogger;
 import frc.robot.misc.Rumble;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
@@ -165,13 +166,13 @@ public class OI {
         Button autoClimb = new POVButton(driverController, Controls.POV_AUTO_CLIMB);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
-            RobotMap.essieMotorHigh.overrideBlacklist();
-            RobotMap.essieMotorLow.overrideBlacklist();
+            RobotMap.essieMotorHigh.clearBlacklist();
+            RobotMap.essieMotorLow.clearBlacklist();
             RobotLogger.logWarning("Motor protection manually overridden");
         }));
         overrideMotorBlacklist2.whenActive(new InstantCommand(() -> {
-            RobotMap.essieMotorHigh.overrideBlacklist();
-            RobotMap.essieMotorLow.overrideBlacklist();
+            RobotMap.essieMotorHigh.clearBlacklist();
+            RobotMap.essieMotorLow.clearBlacklist();
             RobotLogger.logWarning("Motor protection manually overridden");
         }));
 

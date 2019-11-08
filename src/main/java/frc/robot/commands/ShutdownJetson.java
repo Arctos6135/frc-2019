@@ -7,9 +7,10 @@
 
 package frc.robot.commands;
 
+import com.arctos6135.robotlib.logging.RobotLogger;
+
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.Robot;
-import frc.robot.misc.RobotLogger;
 
 /**
  * Shuts down the Jetson. <b>Use with extreme care!!</b>

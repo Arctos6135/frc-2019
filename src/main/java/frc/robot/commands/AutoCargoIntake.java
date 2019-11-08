@@ -7,10 +7,11 @@
 
 package frc.robot.commands;
 
+import com.arctos6135.robotlib.logging.RobotLogger;
+
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
 import frc.robot.Robot;
-import frc.robot.misc.RobotLogger;
 
 /**
  * Runs Essie to intake cargo until the sensor inside it is activated.

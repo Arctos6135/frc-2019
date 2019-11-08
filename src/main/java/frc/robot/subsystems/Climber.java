@@ -7,12 +7,13 @@
 
 package frc.robot.subsystems;
 
+import com.arctos6135.robotlib.logging.RobotLogger;
+
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.OI;
 import frc.robot.RobotMap;
-import frc.robot.misc.RobotLogger;
 
 /**
  * Controls Hab 2 climber pistons.

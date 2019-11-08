@@ -7,9 +7,10 @@
 
 package frc.robot.commands;
 
+import com.arctos6135.robotlib.logging.RobotLogger;
+
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.misc.RobotLogger;
 import robot.pathfinder.core.trajectory.TankDriveTrajectory;
 import robot.pathfinder.core.trajectory.TrajectoryGenerator;
 

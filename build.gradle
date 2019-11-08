@@ -53,6 +53,7 @@ dependencies {
 
     compile files("lib/RobotPathfinder-2.2.0-beta.jar")
     compile files("lib/StdPlug-API-0.2.0.jar")
+    compile files("lib/RobotLib-0.1.0.jar")
     
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)

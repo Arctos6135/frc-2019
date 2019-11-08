@@ -7,9 +7,12 @@
 
 package frc.robot.commands;
 
+import com.arctos6135.robotlib.logging.RobotLogger;
+
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.misc.RobotLogger;
 
 /**
  * This command operates Essie. When started, it operates Essie in the mode specified, and when stopped/interrupted,

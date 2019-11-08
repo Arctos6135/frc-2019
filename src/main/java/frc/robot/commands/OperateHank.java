@@ -7,11 +7,12 @@
 
 package frc.robot.commands;
 
+import com.arctos6135.robotlib.logging.RobotLogger;
+
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.misc.RobotLogger;
 
 /**
  * This command operates Hank. When started, it pushes Hank out, and when ending/interrupted, it retracts Hank.

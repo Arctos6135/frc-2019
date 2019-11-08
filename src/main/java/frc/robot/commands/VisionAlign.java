@@ -7,10 +7,11 @@
 
 package frc.robot.commands;
 
+import com.arctos6135.robotlib.logging.RobotLogger;
+
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
 import frc.robot.Robot;
-import frc.robot.misc.RobotLogger;
 import frc.robot.subsystems.Vision.VisionException;
 
 public class VisionAlign extends Command {

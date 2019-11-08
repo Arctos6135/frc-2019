@@ -10,7 +10,9 @@ package frc.robot;
 import java.io.IOException;
 import java.util.Map;
 import java.util.TimerTask;
+import java.util.logging.Level;
 
+import com.arctos6135.robotlib.logging.RobotLogger;
 import com.arctos6135.stdplug.api.StdPlugWidgets;
 
 import edu.wpi.first.networktables.EntryListenerFlags;
@@ -29,7 +31,6 @@ import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.commands.sandstorm.AutoDispatcher;
 import frc.robot.misc.AutoPaths;
-import frc.robot.misc.RobotLogger;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Essie;
@@ -207,12 +208,26 @@ public class Robot extends TimedRobot {
             }
         }
 
+        // Initialize logger
         try {
-            RobotLogger.init();
+            RobotLogger.init(Robot.class);
         } catch (IOException e) {
             e.printStackTrace();
             lastErrorEntry.setString("Failed to initialize logger!");
         }
+        // Set level
+        RobotLogger.setLevel(Level.FINER);
+        // Set log handler to also set the last error and warning
+        RobotLogger.setLogHandler((level, message) -> {
+            if(level == Level.SEVERE) {
+                lastErrorEntry.setString(message);
+            }
+            else if(level == Level.WARNING) {
+                lastWarningEntry.setString(message);
+            }
+        });
+        // Delete logs more than 72h old
+        RobotLogger.cleanLogs(72);
         RobotLogger.logInfo("Logger initialized");
 
         java.util.Timer timer = new java.util.Timer();

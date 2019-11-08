@@ -7,9 +7,10 @@
 
 package frc.robot.commands;
 
+import com.arctos6135.robotlib.logging.RobotLogger;
+
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.Robot;
-import frc.robot.misc.RobotLogger;
 import frc.robot.subsystems.Climber;
 
 /**

@@ -7,12 +7,12 @@
 
 package frc.robot.commands;
 
+import com.arctos6135.robotlib.logging.RobotLogger;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
 import frc.robot.Robot;
-import frc.robot.misc.RobotLogger;
 import frc.robot.subsystems.Drivetrain;
 
 public class TeleopDrive extends Command {

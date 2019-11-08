@@ -7,12 +7,13 @@
 
 package frc.robot.commands;
 
+import com.arctos6135.robotlib.logging.RobotLogger;
+
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.misc.RobotLogger;
 import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Climber.Side;
+import frc.robot.subsystems.Drivetrain;
 
 /**
  * Operates the climber.
