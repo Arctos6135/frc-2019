@@ -15,12 +15,11 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Robot;
 
 /**
  * This class logs messages to a log file and/or the Driver
- * Station/SmartDashboard.
+ * Station/Shuffleboard.
  */
 public class RobotLogger {
     static Handler fileHandler;
@@ -30,6 +29,15 @@ public class RobotLogger {
     static DateFormat dateFormat;
 
     static boolean isInitialized = false;
+
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                flush();
+            }
+        });
+    }
 
     static class RobotLoggerFormatter extends Formatter {
 
@@ -85,7 +93,7 @@ public class RobotLogger {
 
     public static void logError(String error) {
         if(isInitialized) {
-            SmartDashboard.putString("Last Error", error);
+            Robot.lastErrorEntry.setString(error);
             DriverStation.reportError(error, false);
             logger.severe(error);
         }
@@ -93,7 +101,7 @@ public class RobotLogger {
     
     public static void logWarning(String warning) {
         if(isInitialized) {
-            SmartDashboard.putString("Last Warning", warning);
+            Robot.lastWarningEntry.setString(warning);
             DriverStation.reportWarning(warning, false);
             logger.warning(warning);
         }
@@ -118,12 +126,20 @@ public class RobotLogger {
     }
 
     public static void flush() {
-        fileHandler.flush();
+        if(isInitialized) {
+            fileHandler.flush();
+        }
     }
 
     public static void cleanLogs(File logDir, DateFormat logDateFormat, long maxAgeHours) {
         if(!logDir.isDirectory()) {
-            throw new IllegalArgumentException("logDir must be a directory");
+            if(logDir.exists()) {
+                throw new IllegalArgumentException("logDir must be a directory");
+            }
+            else {
+                logWarning("The log directory passed to cleanLogs does not exist!");
+                return;
+            }
         }
         // Cache the current date and time
         Date now = new Date();
