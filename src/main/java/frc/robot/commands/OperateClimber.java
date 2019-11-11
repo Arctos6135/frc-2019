@@ -7,8 +7,6 @@
 
 package frc.robot.commands;
 
-import com.arctos6135.robotlib.logging.RobotLogger;
-
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import frc.robot.subsystems.Climber;
@@ -89,26 +87,26 @@ public class OperateClimber extends Command {
     @Override
     protected void initialize() {
         // Go into low gear
-        RobotLogger.logInfoFiner("Putting robot into low gear for climbing");
+        Robot.logger.logInfoFiner("Putting robot into low gear for climbing");
         Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
         if (state == null || toggle) {
             Climber.State climberState = Robot.climber.getState(side);
             if(climberState == Climber.State.UNKNOWN) {
                 wait = false;
-                RobotLogger.logInfoFiner("Attempting to toggle climber, but state is UNKNOWN");
+                Robot.logger.logInfoFiner("Attempting to toggle climber, but state is UNKNOWN");
                 return;
             }
             state = climberState.opposite();
         }
         Robot.climber.setState(side, state);
-        RobotLogger.logInfoFiner("Setting climber: " + side.toString() + " to " + state.toString());
+        Robot.logger.logInfoFiner("Setting climber: " + side.toString() + " to " + state.toString());
     }
 
     @Override
     protected boolean isFinished() {
         if (wait) {
             if (timeSinceInitialized() >= 2.0) {
-                RobotLogger.logError("Wait for climber pistons to go into position timed out");
+                Robot.logger.logError("Wait for climber pistons to go into position timed out");
                 return true;
             }
             return Robot.climber.getState(side) == state;

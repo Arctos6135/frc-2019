@@ -7,8 +7,6 @@
 
 package frc.robot.commands;
 
-import com.arctos6135.robotlib.logging.RobotLogger;
-
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
 import frc.robot.Robot;
@@ -32,12 +30,12 @@ public class VisionAlign extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        RobotLogger.logInfoFine("Basic vision align started");
+        Robot.logger.logInfoFine("Basic vision align started");
         error = false;
         // Check that vision is ready
         if(!Robot.vision.ready()) {
             error = true; // Signal an error
-            RobotLogger.logError("Vision is offline");
+            Robot.logger.logError("Vision is offline");
             OI.errorRumbleDriverMajor.execute();
             return;
         }
@@ -48,7 +46,7 @@ public class VisionAlign extends Command {
             }
             catch(VisionException e) {
                 error = true;
-                RobotLogger.logError("Vision enable failed");
+                Robot.logger.logError("Vision enable failed");
                 OI.errorRumbleDriverMajor.execute();
                 return;
             }
@@ -63,7 +61,7 @@ public class VisionAlign extends Command {
                 try {
                     // If we exceeded the time limit, signal an error
                     if(System.currentTimeMillis() - start >= RESPONSE_TIMEOUT) {
-                        RobotLogger.logWarning("Could not find vision target");
+                        Robot.logger.logWarning("Could not find vision target");
                         OI.errorRumbleDriverMinor.execute();
                         error = true;
                         return;
@@ -73,7 +71,7 @@ public class VisionAlign extends Command {
                     Thread.sleep(20);
                 }
                 catch(InterruptedException e) {
-                    RobotLogger.logError("Unexpected InterruptedException");
+                    Robot.logger.logError("Unexpected InterruptedException");
                     OI.errorRumbleDriverMinor.execute();
                     error = true;
                     return;
@@ -81,7 +79,7 @@ public class VisionAlign extends Command {
             }
         }
         catch(VisionException e) {
-            RobotLogger.logError("Vision went offline unexpectedly");
+            Robot.logger.logError("Vision went offline unexpectedly");
             OI.errorRumbleDriverMajor.execute();
             error = true;
             return;
@@ -125,11 +123,11 @@ public class VisionAlign extends Command {
                 Robot.vision.setVisionEnabled(false);
             }
             catch(VisionException e) {
-                RobotLogger.logError("Failed to disable vision");
+                Robot.logger.logError("Failed to disable vision");
                 OI.errorRumbleDriverMinor.execute();
             }
         }
-        RobotLogger.logInfoFine("Basic vision align ended");
+        Robot.logger.logInfoFine("Basic vision align ended");
     }
 
     // Called when another command which requires one or more of the same
@@ -144,10 +142,10 @@ public class VisionAlign extends Command {
                 Robot.vision.setVisionEnabled(false);
             }
             catch(VisionException e) {
-                RobotLogger.logError("Failed to disable vision");
+                Robot.logger.logError("Failed to disable vision");
                 OI.errorRumbleDriverMinor.execute();
             }
         }
-        RobotLogger.logInfoFine("Basic vision align interrupted");
+        Robot.logger.logInfoFine("Basic vision align interrupted");
     }
 }

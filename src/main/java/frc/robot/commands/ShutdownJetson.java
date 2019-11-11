@@ -7,8 +7,6 @@
 
 package frc.robot.commands;
 
-import com.arctos6135.robotlib.logging.RobotLogger;
-
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.Robot;
 
@@ -32,11 +30,11 @@ public class ShutdownJetson extends InstantCommand {
     @Override
     protected void initialize() {
         if(!Robot.vision.ready()) {
-            RobotLogger.logWarning("Attempting to shutdown the Jetson, but it is not up!");
+            Robot.logger.logWarning("Attempting to shutdown the Jetson, but it is not up!");
             return;
         }
         Robot.vision.shutdownJetson();
         Robot.visionStatusEntry.setBoolean(false);
-        RobotLogger.logInfoFine("Jetson has been shutdown");
+        Robot.logger.logInfoFine("Jetson has been shutdown");
     }
 }

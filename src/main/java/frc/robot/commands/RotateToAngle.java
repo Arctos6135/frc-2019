@@ -7,8 +7,6 @@
 
 package frc.robot.commands;
 
-import com.arctos6135.robotlib.logging.RobotLogger;
-
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
 import robot.pathfinder.core.trajectory.TankDriveTrajectory;
@@ -55,7 +53,7 @@ public class RotateToAngle extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        RobotLogger.logInfoFine("Rotating to angle " + angle + " to " + direction.toString());
+        Robot.logger.logInfoFine("Rotating to angle " + angle + " to " + direction.toString());
         // We cannot actually start the FollowTrajectory command, as it also requires drivetrain and will interrupt this command.
         // Therefore we must call its methods manually without handing control to WPILib.
         followerCommand.initialize();

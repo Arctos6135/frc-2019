@@ -7,8 +7,6 @@
 
 package frc.robot.commands;
 
-import com.arctos6135.robotlib.logging.RobotLogger;
-
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.Robot;
 import frc.robot.subsystems.Climber;
@@ -51,18 +49,18 @@ public class AutoClimb extends CommandGroup {
     @Override
     protected void initialize() {
         Robot.climbingEntry.setBoolean(true);
-        RobotLogger.logInfoFine("Auto climb sequence started");
+        Robot.logger.logInfoFine("Auto climb sequence started");
     }
 
     @Override
     protected void interrupted() {
         Robot.climbingEntry.setBoolean(false);
-        RobotLogger.logInfoFine("Auto climb sequence interrupted");
+        Robot.logger.logInfoFine("Auto climb sequence interrupted");
     }
 
     @Override
     protected void end() {
         Robot.climbingEntry.setBoolean(false);
-        RobotLogger.logInfoFine("Auto climb sequence ended");
+        Robot.logger.logInfoFine("Auto climb sequence ended");
     }
 }

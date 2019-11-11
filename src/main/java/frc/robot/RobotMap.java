@@ -7,7 +7,6 @@
 
 package frc.robot;
 
-import com.arctos6135.robotlib.logging.RobotLogger;
 import com.arctos6135.robotlib.motors.ProtectedMotor;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -83,12 +82,12 @@ public class RobotMap {
         essieMotorLowUnprotected.set(ControlMode.PercentOutput, speed);
     }, 35, 2, () -> {
         OI.errorRumbleOperatorMajor.execute();
-        RobotLogger.logError("Critical error: Essie low motor protection tripped");
+        Robot.logger.logError("Critical error: Essie low motor protection tripped");
     });
     public static final ProtectedMotor essieMotorHigh = new ProtectedMotor(pdp, 7, essieMotorHighUnprotected::set, 35, 2, 
     () -> {
         OI.errorRumbleOperatorMajor.execute();
-        RobotLogger.logError("Critical error: Essie high motor protection tripped");
+        Robot.logger.logError("Critical error: Essie high motor protection tripped");
     });
     public static final DigitalInput essiePhotoElectric = new DigitalInput(4);
 

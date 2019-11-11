@@ -7,8 +7,6 @@
 
 package frc.robot.commands;
 
-import com.arctos6135.robotlib.logging.RobotLogger;
-
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.OI;
 import frc.robot.Robot;
@@ -27,7 +25,7 @@ public class AutoCargoIntake extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        RobotLogger.logInfoFine("Essie autointake started");
+        Robot.logger.logInfoFine("Essie autointake started");
         Robot.essie.startIntake();
     }
 
@@ -43,7 +41,7 @@ public class AutoCargoIntake extends Command {
         if(Robot.essie.hasCargo()) {
             OI.pickupRumbleOperator.execute();
             OI.pickupRumbleDriver.execute();
-            RobotLogger.logInfoFine("Essie autopickup ended");
+            Robot.logger.logInfoFine("Essie autopickup ended");
             return true;
         }
         else {

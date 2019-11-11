@@ -57,6 +57,8 @@ public class Robot extends TimedRobot {
 
     public static Command autoCommand;
 
+    public static final RobotLogger logger = new RobotLogger();
+
     static SendableChooser<AutoDispatcher.Mode> modeChooser = new SendableChooser<>();
     static SendableChooser<AutoDispatcher.HabLevel> habLevelChooser = new SendableChooser<>();
     static SendableChooser<AutoDispatcher.Side> sideChooser = new SendableChooser<>();
@@ -210,15 +212,15 @@ public class Robot extends TimedRobot {
 
         // Initialize logger
         try {
-            RobotLogger.init(Robot.class);
+            logger.init(Robot.class);
         } catch (IOException e) {
             e.printStackTrace();
             lastErrorEntry.setString("Failed to initialize logger!");
         }
         // Set level
-        RobotLogger.setLevel(Level.FINER);
+        logger.setLevel(Level.FINER);
         // Set log handler to also set the last error and warning
-        RobotLogger.setLogHandler((level, message) -> {
+        logger.setLogHandler((level, message) -> {
             if(level == Level.SEVERE) {
                 lastErrorEntry.setString(message);
             }
@@ -227,14 +229,14 @@ public class Robot extends TimedRobot {
             }
         });
         // Delete logs more than 72h old
-        RobotLogger.cleanLogs(72);
-        RobotLogger.logInfo("Logger initialized");
+        logger.cleanLogs(72);
+        logger.logInfo("Logger initialized");
 
         java.util.Timer timer = new java.util.Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                RobotLogger.logInfoFine("Battery Voltage: " + RobotController.getBatteryVoltage());
+                logger.logInfoFine("Battery Voltage: " + RobotController.getBatteryVoltage());
             }
         }, 10, 2000);
 
@@ -273,7 +275,7 @@ public class Robot extends TimedRobot {
         matchStartGearChooser.addOption("Current Gear", null);
         prematchTab.add("Match Start Gear", matchStartGearChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
 
-        RobotLogger.logInfo("Basic initialization complete. Waiting for vision to come online...");
+        logger.logInfo("Basic initialization complete. Waiting for vision to come online...");
 
         // Wait for vision to be ready if it's not already
         if (!vision.ready()) {
@@ -294,22 +296,22 @@ public class Robot extends TimedRobot {
         vision.readyEntry().addListener((notif) -> {
             visionStatusEntry.setBoolean(notif.value.getBoolean());
             if(notif.value.getBoolean()) {
-                RobotLogger.logInfo("Vision came online");
+                logger.logInfo("Vision came online");
             }
             else {
-                RobotLogger.logError("Vision went offline!");
+                logger.logError("Vision went offline!");
             }
         }, EntryListenerFlags.kImmediate | EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
         if (!vision.ready()) {
-            RobotLogger.logError("Wait for vision initialization timed out");
+            logger.logError("Wait for vision initialization timed out");
             OI.errorRumbleDriverMajor.execute();
             OI.errorRumbleOperatorMajor.execute();
         } else {
             try {
                 vision.setVisionEnabled(false);
             } catch (VisionException e) {
-                RobotLogger.logError("Vision went offline unexpectedly");
+                logger.logError("Vision went offline unexpectedly");
             }
         }
 
@@ -321,7 +323,7 @@ public class Robot extends TimedRobot {
         debugPathfindingTab.add("High Gear Gains", FollowTrajectory.GAINS_H).withWidget(StdPlugWidgets.PIDVA_GAINS);
         debugPathfindingTab.add("Low Gear Gains", FollowTrajectory.GAINS_L).withWidget(StdPlugWidgets.PIDVA_GAINS);
 
-        RobotLogger.logInfo("Robot initialization complete");
+        logger.logInfo("Robot initialization complete");
     }
 
     /**
@@ -332,7 +334,7 @@ public class Robot extends TimedRobot {
         // Change the gear to use in autos
         // If the option was changed, the auto paths have to be regenerated
         if (FollowTrajectory.gearToUse != newGearToUse) {
-            RobotLogger.logInfoFine(
+            logger.logInfoFine(
                     "Auto gear has been changed to " + newGearToUse.toString() + ". Regenerating trajectories...");
             FollowTrajectory.gearToUse = newGearToUse;
             AutoPaths.generateAll();
@@ -374,7 +376,7 @@ public class Robot extends TimedRobot {
                     visionYOffsetEntry.setDouble(vision.getTargetYOffset());
                     visionAngleOffsetEntry.setDouble(vision.getTargetAngleOffset());
                 } catch (VisionException e) {
-                    RobotLogger.logError("Vision went offline unexpectedly");
+                    logger.logError("Vision went offline unexpectedly");
                 }
             }
         }
@@ -389,11 +391,11 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
-        RobotLogger.logInfo("Autonomous mode enabled");
+        logger.logInfo("Autonomous mode enabled");
         // Set the initial gear
         Drivetrain.Gear matchStartGear = matchStartGearChooser.getSelected();
         if (matchStartGear != null) {
-            RobotLogger.logInfoFine("Match start gear is " + matchStartGear.toString());
+            logger.logInfoFine("Match start gear is " + matchStartGear.toString());
             Robot.drivetrain.setGear(matchStartGear);
         }
         // Un-reverse driving
@@ -403,9 +405,9 @@ public class Robot extends TimedRobot {
                 sideChooser.getSelected(), robotSideChooser.getSelected());
         if (autoCommand != null) {
             autoCommand.start();
-            RobotLogger.logInfo("Autonomous command started: " + autoCommand.getClass().getName());
+            logger.logInfo("Autonomous command started: " + autoCommand.getClass().getName());
         } else {
-            RobotLogger.logWarning("No auto exists for the specified configuration");
+            logger.logWarning("No auto exists for the specified configuration");
             OI.errorRumbleDriverMinor.execute();
             OI.errorRumbleOperatorMinor.execute();
         }
@@ -425,7 +427,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        RobotLogger.logInfo("Teleop mode enabled");
+        logger.logInfo("Teleop mode enabled");
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
@@ -450,9 +452,9 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
-        RobotLogger.logInfo("Robot disabled");
+        logger.logInfo("Robot disabled");
         // Flush the log buffer when the robot is disabled
-        RobotLogger.flush();
+        logger.flush();
     }
 
     @Override

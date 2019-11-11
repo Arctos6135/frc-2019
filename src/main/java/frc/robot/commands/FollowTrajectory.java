@@ -7,7 +7,6 @@
 
 package frc.robot.commands;
 
-import com.arctos6135.robotlib.logging.RobotLogger;
 import com.arctos6135.stdplug.api.datatypes.PIDVADPGains;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
@@ -61,7 +60,7 @@ public class FollowTrajectory extends Command {
     // Note we made this method public! This is so that Commands that wrap around this one have an easier time.
     @Override
     public void initialize() {
-        RobotLogger.logInfoFine("FollowTrajectory started");
+        Robot.logger.logInfoFine("FollowTrajectory started");
         Robot.drivetrain.setNeutralMode(NeutralMode.Brake);
         // If the gear to use is not null, make sure the robot is in the correct gear
         if(gearToUse != null) {
@@ -111,7 +110,7 @@ public class FollowTrajectory extends Command {
             Robot.drivetrain.setGear(startingGear);
         }
 
-        RobotLogger.logInfoFine("FollowTrajectory ended");
+        Robot.logger.logInfoFine("FollowTrajectory ended");
     }
 
     // Called when another command which requires one or more of the same
@@ -125,7 +124,7 @@ public class FollowTrajectory extends Command {
             Robot.drivetrain.setGear(startingGear);
         }
 
-        RobotLogger.logInfoFine("FollowTrajectory interrupted");
+        Robot.logger.logInfoFine("FollowTrajectory interrupted");
     }
 
     /**
