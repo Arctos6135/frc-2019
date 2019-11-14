@@ -7,11 +7,13 @@
 
 package frc.robot;
 
+import com.arctos6135.robotlib.motors.ProtectedMotor;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -22,10 +24,7 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
-import edu.wpi.first.wpilibj.AnalogInput;
 import frc.robot.misc.BeautifulRobotDriver;
-import frc.robot.misc.RobotLogger;
-import frc.robot.misc.protectedmotor.ProtectedMotor;
 import robot.pathfinder.core.RobotSpecs;
 
 
@@ -79,16 +78,16 @@ public class RobotMap {
     // Essie motors
     public static final WPI_VictorSPX essieMotorLowUnprotected = new WPI_VictorSPX(7);
     public static final VictorSP essieMotorHighUnprotected = new VictorSP(0);
-    public static final ProtectedMotor essieMotorLow = new ProtectedMotor((speed) -> {
+    public static final ProtectedMotor essieMotorLow = new ProtectedMotor(pdp, 6, (speed) -> {
         essieMotorLowUnprotected.set(ControlMode.PercentOutput, speed);
-    }, 6, 35, 2, () -> {
+    }, 35, 2, () -> {
         OI.errorRumbleOperatorMajor.execute();
-        RobotLogger.logError("Critical error: Essie low motor protection tripped");
+        Robot.logger.logError("Critical error: Essie low motor protection tripped");
     });
-    public static final ProtectedMotor essieMotorHigh = new ProtectedMotor(essieMotorHighUnprotected::set, 7, 35, 2, 
+    public static final ProtectedMotor essieMotorHigh = new ProtectedMotor(pdp, 7, essieMotorHighUnprotected::set, 35, 2, 
     () -> {
         OI.errorRumbleOperatorMajor.execute();
-        RobotLogger.logError("Critical error: Essie high motor protection tripped");
+        Robot.logger.logError("Critical error: Essie high motor protection tripped");
     });
     public static final DigitalInput essiePhotoElectric = new DigitalInput(4);
 

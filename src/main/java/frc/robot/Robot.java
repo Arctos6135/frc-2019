@@ -10,7 +10,9 @@ package frc.robot;
 import java.io.IOException;
 import java.util.Map;
 import java.util.TimerTask;
+import java.util.logging.Level;
 
+import com.arctos6135.robotlib.logging.RobotLogger;
 import com.arctos6135.stdplug.api.StdPlugWidgets;
 
 import edu.wpi.first.networktables.EntryListenerFlags;
@@ -27,7 +29,6 @@ import frc.robot.commands.FollowTrajectory;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
 import frc.robot.misc.AutoPaths;
-import frc.robot.misc.RobotLogger;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Essie;
@@ -51,6 +52,8 @@ public class Robot extends TimedRobot {
     public static Climber climber;
     public static OI oi;
     public static PressureSensor pressureSensor;
+
+    public static final RobotLogger logger = new RobotLogger();
 
     static SendableChooser<Drivetrain.Gear> followerGearChooser = new SendableChooser<>();
 	static SendableChooser<Drivetrain.Gear> matchStartGearChooser = new SendableChooser<>();
@@ -198,19 +201,33 @@ public class Robot extends TimedRobot {
             }
         }
 
+        // Initialize logger
         try {
-            RobotLogger.init();
+            logger.init(Robot.class);
         } catch (IOException e) {
             e.printStackTrace();
             lastErrorEntry.setString("Failed to initialize logger!");
         }
-        RobotLogger.logInfo("Logger initialized");
+        // Set level
+        logger.setLevel(Level.FINER);
+        // Set log handler to also set the last error and warning
+        logger.setLogHandler((level, message) -> {
+            if(level == Level.SEVERE) {
+                lastErrorEntry.setString(message);
+            }
+            else if(level == Level.WARNING) {
+                lastWarningEntry.setString(message);
+            }
+        });
+        // Delete logs more than 72h old
+        logger.cleanLogs(72);
+        logger.logInfo("Logger initialized");
 
         java.util.Timer timer = new java.util.Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                RobotLogger.logInfoFine("Battery Voltage: " + RobotController.getBatteryVoltage());
+                logger.logInfoFine("Battery Voltage: " + RobotController.getBatteryVoltage());
             }
         }, 10, 2000);
 
@@ -231,7 +248,7 @@ public class Robot extends TimedRobot {
         matchStartGearChooser.addOption("Current Gear", null);
         prematchTab.add("Match Start Gear", matchStartGearChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
 
-        RobotLogger.logInfo("Basic initialization complete. Waiting for vision to come online...");
+        logger.logInfo("Basic initialization complete. Waiting for vision to come online...");
 
         // Wait for vision to be ready if it's not already
         if (!vision.ready()) {
@@ -252,22 +269,22 @@ public class Robot extends TimedRobot {
         vision.readyEntry().addListener((notif) -> {
             visionStatusEntry.setBoolean(notif.value.getBoolean());
             if(notif.value.getBoolean()) {
-                RobotLogger.logInfo("Vision came online");
+                logger.logInfo("Vision came online");
             }
             else {
-                RobotLogger.logError("Vision went offline!");
+                logger.logError("Vision went offline!");
             }
         }, EntryListenerFlags.kImmediate | EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
         if (!vision.ready()) {
-            RobotLogger.logError("Wait for vision initialization timed out");
+            logger.logError("Wait for vision initialization timed out");
             OI.errorRumbleDriverMajor.execute();
             OI.errorRumbleOperatorMajor.execute();
         } else {
             try {
                 vision.setVisionEnabled(false);
             } catch (VisionException e) {
-                RobotLogger.logError("Vision went offline unexpectedly");
+                logger.logError("Vision went offline unexpectedly");
             }
         }
 
@@ -279,7 +296,7 @@ public class Robot extends TimedRobot {
         debugPathfindingTab.add("High Gear Gains", FollowTrajectory.GAINS_H).withWidget(StdPlugWidgets.PIDVA_GAINS);
         debugPathfindingTab.add("Low Gear Gains", FollowTrajectory.GAINS_L).withWidget(StdPlugWidgets.PIDVA_GAINS);
 
-        RobotLogger.logInfo("Initializing Guest Mode...");
+        logger.logInfo("Initializing Guest Mode...");
         // Add an entry listener to the guest mode entry
         guestModeEntry.addListener(notif -> {
             /**
@@ -289,18 +306,18 @@ public class Robot extends TimedRobot {
             if(notif.value.getBoolean()) {
                 oi.setGuestMode(true);
                 drivetrain.setSpeedMultiplier(RobotMap.GUEST_MODE_SPEED_MULTIPLIER);
-                RobotLogger.logInfo("Guest Mode ENABLED.");
+                logger.logInfo("Guest Mode ENABLED.");
                 Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
-                RobotLogger.logInfo("Gear shifted to LOW because Guest Mode was enabled.");
+                logger.logInfo("Gear shifted to LOW because Guest Mode was enabled.");
             }
             else {
                 oi.setGuestMode(false);
                 drivetrain.setSpeedMultiplier(1);
-                RobotLogger.logInfo("Guest Mode DISABLED.");
+                logger.logInfo("Guest Mode DISABLED.");
             }
         }, EntryListenerFlags.kUpdate | EntryListenerFlags.kImmediate | EntryListenerFlags.kNew);
 
-        RobotLogger.logInfo("Robot initialization complete");
+        logger.logInfo("Robot initialization complete");
     }
 
     /**
@@ -311,7 +328,7 @@ public class Robot extends TimedRobot {
         // Change the gear to use in autos
         // If the option was changed, the auto paths have to be regenerated
         if (FollowTrajectory.gearToUse != newGearToUse) {
-            RobotLogger.logInfoFine(
+            logger.logInfoFine(
                     "Auto gear has been changed to " + newGearToUse.toString() + ". Regenerating trajectories...");
             FollowTrajectory.gearToUse = newGearToUse;
             AutoPaths.generateAll();
@@ -353,7 +370,7 @@ public class Robot extends TimedRobot {
                     visionYOffsetEntry.setDouble(vision.getTargetYOffset());
                     visionAngleOffsetEntry.setDouble(vision.getTargetAngleOffset());
                 } catch (VisionException e) {
-                    RobotLogger.logError("Vision went offline unexpectedly");
+                    logger.logError("Vision went offline unexpectedly");
                 }
             }
 		}
@@ -368,16 +385,16 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
-        RobotLogger.logInfo("Autonomous mode enabled");
+        logger.logInfo("Autonomous mode enabled");
         // Set the initial gear
         Drivetrain.Gear matchStartGear = matchStartGearChooser.getSelected();
         if (matchStartGear != null) {
-            RobotLogger.logInfoFine("Match start gear is " + matchStartGear.toString());
+            logger.logInfoFine("Match start gear is " + matchStartGear.toString());
             Robot.drivetrain.setGear(matchStartGear);
         }
         // Un-reverse driving
         TeleopDrive.setReversed(false);
-        RobotLogger.logWarning("Auto is enabled, but they're not supported in Guest Mode!");
+        logger.logWarning("Auto is enabled, but they're not supported in Guest Mode!");
     }
 
     /**
@@ -394,7 +411,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        RobotLogger.logInfo("Teleop mode enabled");
+        logger.logInfo("Teleop mode enabled");
     }
 
     /**
@@ -412,9 +429,9 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
-        RobotLogger.logInfo("Robot disabled");
+        logger.logInfo("Robot disabled");
         // Flush the log buffer when the robot is disabled
-        RobotLogger.flush();
+        logger.flush();
     }
 
     @Override
