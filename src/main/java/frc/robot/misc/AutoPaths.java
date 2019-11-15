@@ -78,7 +78,7 @@ public final class AutoPaths {
 
         params.waypoints = new Waypoint[] {
             new Waypoint(0, 0, Math.PI / 2),
-            new Waypoint(-60, 84, Math.PI / 2),
+            new Waypoint(-300, 84, Math.PI / 2),
         };
         params.alpha = 100;
         debug = new TankDriveTrajectory(specs, params);

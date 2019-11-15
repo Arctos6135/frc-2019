@@ -13,7 +13,6 @@ import com.arctos6135.robotpathfinder.motionprofile.followable.profiles.Trapezoi
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.misc.RobotLogger;
 
 /**
  * Rotates the robot in place a certain number of degrees in a specified direction.
@@ -51,12 +50,12 @@ public class RotateToAngle extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        RobotLogger.logInfoFiner("Generating trajectory to rotate to angle...");
+        Robot.logger.logInfoFiner("Generating trajectory to rotate to angle...");
         // Use a RobotPathfinder trajectory here to save time and improve accuracy with the already tuned PIDs
         profile = new TrapezoidalTankDriveRotationProfile(FollowTrajectory.getSpecs(), 
                 direction == Direction.LEFT ? Math.toRadians(angle) : Math.toRadians(-angle));
         followerCommand = new FollowTrajectory(profile);
-        RobotLogger.logInfoFiner("Rotating to angle " + angle + " to " + direction.toString());
+        Robot.logger.logInfoFiner("Rotating to angle " + angle + " to " + direction.toString());
         // We cannot actually start the FollowTrajectory command, as it also requires drivetrain and will interrupt this command.
         // Therefore we must call its methods manually without handing control to WPILib.
         followerCommand.initialize();

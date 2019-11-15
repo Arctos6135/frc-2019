@@ -13,7 +13,6 @@ import com.arctos6135.robotpathfinder.motionprofile.followable.profiles.Trapezoi
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.misc.RobotLogger;
 
 public class DriveDistance extends Command {
 
@@ -33,7 +32,7 @@ public class DriveDistance extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        RobotLogger.logInfoFiner("Driving distance " + distance);
+        Robot.logger.logInfoFiner("Driving distance " + distance);
         profile = new TrapezoidalTankDriveProfile(FollowTrajectory.getSpecs(), distance);
         // Wrap around a FollowTrajectory
         followerCommand = new FollowTrajectory(profile);

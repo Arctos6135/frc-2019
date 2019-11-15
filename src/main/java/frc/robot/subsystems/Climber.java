@@ -11,8 +11,8 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.OI;
+import frc.robot.Robot;
 import frc.robot.RobotMap;
-import frc.robot.misc.RobotLogger;
 
 /**
  * Controls Hab 2 climber pistons.
@@ -90,7 +90,7 @@ public class Climber extends Subsystem {
         if(state == State.UNKNOWN) {
             throw new IllegalArgumentException("State cannot be UNKNOWN");
         }
-        RobotLogger.logInfoFine("Setting " + side.toString() + " climbers to " + state.toString() + " wait=" + wait);
+        Robot.logger.logInfoFine("Setting " + side.toString() + " climbers to " + state.toString() + " wait=" + wait);
         @SuppressWarnings("resource")
         Solenoid climber = side == Side.ESSIE ? RobotMap.essieClimber : RobotMap.hankClimber;
 
@@ -100,7 +100,7 @@ public class Climber extends Subsystem {
             double start = Timer.getFPGATimestamp();
             while (getState(side) != state) {
                 if (Timer.getFPGATimestamp() - start >= 2.0) {
-                    RobotLogger.logError("Waiting for front pistons to extend timed out (2 seconds)");
+                    Robot.logger.logError("Waiting for front pistons to extend timed out (2 seconds)");
                     OI.errorRumbleDriverMajor.execute();
                     OI.errorRumbleOperatorMajor.execute();
                     return;
