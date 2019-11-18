@@ -20,14 +20,82 @@ import frc.robot.RobotMap;
 import frc.robot.commands.TeleopDrive;
 
 public class Drivetrain extends Subsystem {
-    // Put methods for controlling this subsystem
-    // here. Call these from Commands.
-
-	double leftLastRate = 0, rightLastRate = 0;
-    double lastTime;
     
-    static final double LEFT_MULT = 1.0;
-    static final double RIGHT_MULT = 1.0;
+    public static class Position {
+        public double x;
+        public double y;
+        public double heading;
+
+        public Position(double x, double y, double heading) {
+            this.x = x;
+            this.y = y;
+            this.heading = heading;
+        }
+    }
+
+    private volatile Position position;
+
+    /**
+     * Integrates position using the navX and wheel encoders.
+     */
+    private class PositionIntegrator extends Thread {
+
+        private long loopDelay;
+        private double lastLeft;
+        private double lastRight;
+        private double initHeading;
+
+        public PositionIntegrator(int freq) {
+            loopDelay = Math.round(1000.0 / freq);
+            lastLeft = getLeftDistance();
+            lastRight = getRightDistance();
+            initHeading = getHeading();
+        }
+
+        @Override
+        public void run() {
+            while(!Thread.interrupted()) {
+                double left = getLeftDistance();
+                double right = getRightDistance();
+                // Change in distance for left and right wheels
+                double dl = left - lastLeft;
+                double dr = right - lastRight;
+                // Change in euclidean distance
+                double ds = (dl + dr) / 2;
+                // Heading is absolute as obtained with the gyro
+                double heading = getHeading() - initHeading;
+
+                double dx = ds * Math.cos(heading);
+                double dy = ds * Math.sin(heading);
+
+                lastLeft = left;
+                lastRight = right;
+
+                // Update position
+                // Watch for synchronization
+                synchronized(position) {
+                    position.x += dx;
+                    position.y += dy;
+                    position.heading = heading;
+                }
+
+                try {
+                    Thread.sleep(loopDelay);
+                }
+                catch(InterruptedException e) {
+                    break;
+                }
+            }
+        }
+    }
+
+    PositionIntegrator integrator;
+
+	private double leftLastRate = 0, rightLastRate = 0;
+    private double lastTime;
+    
+    private static final double LEFT_MULT = 1.0;
+    private static final double RIGHT_MULT = 1.0;
 
     @Override
     public void initDefaultCommand() {
@@ -261,6 +329,76 @@ public class Drivetrain extends Subsystem {
     public void disableSafety() {
         //RobotMap.lVictor.setSafetyEnabled(false);
         //RobotMap.rVictor.setSafetyEnabled(false);
+    }
+
+    /**
+     * Returns the estimated position of the robot.
+     * 
+     * <p>
+     * {@link #startIntegration(int)} must be called before this.
+     * </p>
+     * 
+     * @return The estimated position.
+     */
+    public Position getPosition() {
+        synchronized(position) {
+            return new Position(position.x, position.y, position.heading);
+        }
+    }
+
+    /**
+     * Resets the estimated position of the robot.
+     */
+    public void resetPosition() {
+        synchronized(position) {
+            position.x = 0;
+            position.y = 0;
+            position.heading = 0;
+        }
+    }
+    
+    /**
+     * Starts the integration to estimate the robot's position.
+     * 
+     * <p>
+     * If integration has already started, this will have no effect. Note that this
+     * does not reset the estimated position.
+     * </p>
+     * 
+     * @param freq The approx. number of times per second the integration loop 
+     *             should run
+     */
+    public void startIntegration(int freq) {
+        if(integrator != null) {
+            return;
+        }
+        integrator = new PositionIntegrator(freq);
+        integrator.start();
+    }
+
+    /**
+     * Stops the integration to estimate the robot's position.
+     * 
+     * <p>
+     * If integration has already stopped, this will have no effect. Note that this
+     * does not reset the estimated position.
+     * </p>
+     */
+    public void stopIntegration() {
+        if(integrator == null) {
+            return;
+        }
+        integrator.interrupt();
+        integrator = null;
+    }
+
+    /**
+     * Gets whether or not position integration has started.
+     * 
+     * @return Whether position integration has started
+     */
+    public boolean getIntegrationStarted() {
+        return integrator != null;
     }
 
     public Drivetrain() {
