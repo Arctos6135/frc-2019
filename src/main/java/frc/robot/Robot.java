@@ -341,6 +341,12 @@ public class Robot extends TimedRobot {
         }
     }
 
+    public static final NetworkTableEntry robotXEntry = debugTab.add("Robot X", 0).getEntry();
+    public static final NetworkTableEntry robotYEntry = debugTab.add("Robot Y", 0).getEntry();
+    public static final NetworkTableEntry robotHeadingEntry = debugTab.add("Robot Heading", 0).getEntry();
+    public static final NetworkTableEntry integrationStartedEntry = debugTab.add("Integration Started", false)
+            .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
+
     /**
      * This function is called every robot packet, no matter the mode. Use this for
      * items like diagnostics that you want ran during disabled, autonomous,
@@ -368,6 +374,11 @@ public class Robot extends TimedRobot {
             var accelerations = drivetrain.getAccelerations();
             leftAccelerationEntry.setDouble(accelerations[0]);
             rightAccelerationEntry.setDouble(accelerations[1]);
+
+            Drivetrain.Position position = drivetrain.getPosition();
+            robotXEntry.setNumber(position.x);
+            robotYEntry.setNumber(position.y);
+            robotHeadingEntry.setNumber(position.heading);
 
             visionEnabledEntry.setBoolean(vision.getVisionEnabled());
             if (Robot.vision.getVisionEnabled()) {
