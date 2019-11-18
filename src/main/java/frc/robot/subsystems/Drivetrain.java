@@ -33,7 +33,7 @@ public class Drivetrain extends Subsystem {
         }
     }
 
-    private volatile Position position;
+    private volatile Position position = new Position(0, 0, 0);
 
     /**
      * Integrates position using the navX and wheel encoders.
@@ -65,8 +65,8 @@ public class Drivetrain extends Subsystem {
                 // Heading is absolute as obtained with the gyro
                 double heading = getHeading() - initHeading;
 
-                double dx = ds * Math.cos(heading);
-                double dy = ds * Math.sin(heading);
+                double dx = ds * Math.cos(Math.toRadians(heading));
+                double dy = ds * Math.sin(Math.toRadians(heading));
 
                 lastLeft = left;
                 lastRight = right;
