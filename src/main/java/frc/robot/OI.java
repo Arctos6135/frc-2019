@@ -239,6 +239,7 @@ public class OI {
 
         Command debugCmd = new InstantCommand(() -> {
             Robot.isInDebugMode = !Robot.isInDebugMode;
+            Robot.debugModeEntry.setBoolean(Robot.isInDebugMode);
             if (Robot.isInDebugMode) {
                 Robot.logger.logInfo("Debug mode activated");
             }
