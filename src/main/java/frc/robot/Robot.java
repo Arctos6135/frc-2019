@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.commands.FollowTrajectory;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
-import frc.robot.misc.AutoPaths;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Essie;
@@ -188,7 +187,6 @@ public class Robot extends TimedRobot {
         oi = new OI(false);
         // Warm up RobotPathfinder and generate auto paths
         FollowTrajectory.warmupRobotPathfinder(10);
-        AutoPaths.generateAll();
 
         // Wait for the DS to connect before starting the logger
         // This is important as the roboRIO's system time is only updated when the DS is
@@ -331,7 +329,6 @@ public class Robot extends TimedRobot {
             logger.logInfoFine(
                     "Auto gear has been changed to " + newGearToUse.toString() + ". Regenerating trajectories...");
             FollowTrajectory.gearToUse = newGearToUse;
-            AutoPaths.generateAll();
         }
     }
 
