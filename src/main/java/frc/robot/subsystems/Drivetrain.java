@@ -33,75 +33,64 @@ public class Drivetrain extends Subsystem {
         }
     }
 
-    private volatile Position position = new Position(0, 0, 0);
+    // For position integration
+    private Position position = new Position(0, 0, 0);
+    private double lastLeft, lastRight, initHeading;
 
-    /**
-     * Integrates position using the navX and wheel encoders.
-     */
-    private class PositionIntegrator extends Thread {
-
-        private long loopDelay;
-        private double lastLeft;
-        private double lastRight;
-        private double initHeading;
-
-        public PositionIntegrator(int freq) {
-            loopDelay = Math.round(1000.0 / freq);
-            lastLeft = getLeftDistance();
-            lastRight = getRightDistance();
-            initHeading = getHeading();
-        }
-
-        @Override
-        public void run() {
-            while(!Thread.interrupted()) {
-                double left = getLeftDistance();
-                double right = getRightDistance();
-                // Change in distance for left and right wheels
-                double dl = left - lastLeft;
-                double dr = right - lastRight;
-                // Change in euclidean distance
-                double ds = (dl + dr) / 2;
-                // Heading is absolute as obtained with the gyro
-                double heading = getHeading() - initHeading;
-
-                double dx = ds * Math.cos(Math.toRadians(heading));
-                double dy = ds * Math.sin(Math.toRadians(heading));
-
-                lastLeft = left;
-                lastRight = right;
-
-                // Update position
-                // Watch for synchronization
-                synchronized(position) {
-                    position.x += dx;
-                    position.y += dy;
-                    position.heading = heading;
-                }
-
-                try {
-                    Thread.sleep(loopDelay);
-                }
-                catch(InterruptedException e) {
-                    break;
-                }
-            }
-        }
-    }
-
-    PositionIntegrator integrator;
-
+    // For calculating acceleration
 	private double leftLastRate = 0, rightLastRate = 0;
     private double lastTime;
-    
-    private static final double LEFT_MULT = 1.0;
-    private static final double RIGHT_MULT = 1.0;
+
+    public Drivetrain() {
+        // Reset variables for position integration
+        lastLeft = getLeftDistance();
+        lastRight = getRightDistance();
+        initHeading = getHeading();
+
+        setMotors(0, 0);
+        setGear(Gear.LOW);
+        resetHeading();
+        setNeutralMode(NeutralMode.Coast);
+    }
+    public Drivetrain(String name) {
+        super(name);
+
+        lastLeft = getLeftDistance();
+        lastRight = getRightDistance();
+        initHeading = getHeading();
+
+        setMotors(0, 0);
+        setGear(Gear.LOW);
+        resetHeading();
+        setNeutralMode(NeutralMode.Coast);
+    }
 
     @Override
     public void initDefaultCommand() {
-        // Set the default command for a subsystem here.
-        // setDefaultCommand(new MySpecialCommand());
         setDefaultCommand(new TeleopDrive());
+    }
+
+    @Override
+    public void periodic() {
+        double left = getLeftDistance();
+        double right = getRightDistance();
+        // Change in distance for left and right wheels
+        double dl = left - lastLeft;
+        double dr = right - lastRight;
+        // Change in euclidean distance
+        double ds = (dl + dr) / 2;
+        // Heading is absolute as obtained with the gyro
+        double heading = getHeading() - initHeading;
+
+        double dx = ds * Math.cos(Math.toRadians(heading));
+        double dy = ds * Math.sin(Math.toRadians(heading));
+
+        lastLeft = left;
+        lastRight = right;
+
+        position.x += dx;
+        position.y += dy;
+        position.heading = heading;
     }
 
     /**
@@ -154,18 +143,18 @@ public class Drivetrain extends Subsystem {
     public void setMotors(double left, double right) {
         prevLeft = left;
         prevRight = right;
-        RobotMap.lVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, -left * speedMultiplier * LEFT_MULT)));
+        RobotMap.lVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, -left * speedMultiplier)));
         // Invert right side
-        RobotMap.rVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, right * speedMultiplier * RIGHT_MULT)));
+        RobotMap.rVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, right * speedMultiplier)));
     }
     
     public void setLeftMotor(double output) {
         prevLeft = output;
-        RobotMap.lVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, -output * speedMultiplier * LEFT_MULT)));
+        RobotMap.lVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, -output * speedMultiplier)));
     }
     public void setRightMotor(double output) {
         prevRight = output;
-        RobotMap.rVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, output * speedMultiplier * RIGHT_MULT)));
+        RobotMap.rVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, output * speedMultiplier)));
     }
 	
 	// Encoders
@@ -322,15 +311,6 @@ public class Drivetrain extends Subsystem {
         return neutralMode;
     }
 
-    public void enableSafety() {
-        //RobotMap.lVictor.setSafetyEnabled(true);
-        //RobotMap.rVictor.setSafetyEnabled(true);
-    }
-    public void disableSafety() {
-        //RobotMap.lVictor.setSafetyEnabled(false);
-        //RobotMap.rVictor.setSafetyEnabled(false);
-    }
-
     /**
      * Returns the estimated position of the robot.
      * 
@@ -341,81 +321,16 @@ public class Drivetrain extends Subsystem {
      * @return The estimated position.
      */
     public Position getPosition() {
-        synchronized(position) {
-            return new Position(position.x, position.y, position.heading);
-        }
+        return new Position(position.x, position.y, position.heading);
     }
 
     /**
      * Resets the estimated position of the robot.
      */
     public void resetPosition() {
-        synchronized(position) {
-            position.x = 0;
-            position.y = 0;
-            position.heading = 0;
-        }
-    }
-    
-    /**
-     * Starts the integration to estimate the robot's position.
-     * 
-     * <p>
-     * If integration has already started, this will have no effect. Note that this
-     * does not reset the estimated position.
-     * </p>
-     * 
-     * @param freq The approx. number of times per second the integration loop 
-     *             should run
-     */
-    public void startIntegration(int freq) {
-        if(integrator != null) {
-            return;
-        }
-        integrator = new PositionIntegrator(freq);
-        integrator.start();
-    }
-
-    /**
-     * Stops the integration to estimate the robot's position.
-     * 
-     * <p>
-     * If integration has already stopped, this will have no effect. Note that this
-     * does not reset the estimated position.
-     * </p>
-     */
-    public void stopIntegration() {
-        if(integrator == null) {
-            return;
-        }
-        integrator.interrupt();
-        integrator = null;
-    }
-
-    /**
-     * Gets whether or not position integration has started.
-     * 
-     * @return Whether position integration has started
-     */
-    public boolean getIntegrationStarted() {
-        return integrator != null;
-    }
-
-    public Drivetrain() {
-        super();
-
-        setMotors(0, 0);
-        setGear(Gear.LOW);
-        resetHeading();
-        setNeutralMode(NeutralMode.Coast);
-    }
-    public Drivetrain(String name) {
-        super(name);
-
-        setMotors(0, 0);
-        setGear(Gear.LOW);
-        resetHeading();
-        setNeutralMode(NeutralMode.Coast);
+        position.x = 0;
+        position.y = 0;
+        position.heading = 0;
     }
 
     public class Gyro extends GyroBase {

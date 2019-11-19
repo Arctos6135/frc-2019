@@ -144,20 +144,6 @@ public class OI {
     
     @SuppressWarnings("resource")
     public OI() {
-        new JoystickButton(driverController, ControllerMap.BUTTON_Y).whenActive(new InstantCommand() {
-            @Override
-            protected void initialize() {
-                if(Robot.drivetrain.getIntegrationStarted()) {
-                    Robot.drivetrain.stopIntegration();
-                }
-                else {
-                    Robot.drivetrain.resetPosition();
-                    Robot.drivetrain.startIntegration(50);
-                }
-                Robot.integrationStartedEntry.setBoolean(Robot.drivetrain.getIntegrationStarted());
-            }
-        });
-
         Button overrideMotorBlacklist1 = new JoystickButton(driverController, Controls.OVERRIDE_MOTOR_BLACKLIST);
         Button overrideMotorBlacklist2 = new JoystickButton(operatorController, Controls.OVERRIDE_MOTOR_BLACKLIST);
         Button essieAutoIntake = new JoystickButton(operatorController, Controls.ESSIE_AUTOPICKUP);

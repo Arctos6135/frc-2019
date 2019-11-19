@@ -179,6 +179,10 @@ public class Robot extends TimedRobot {
     public static final NetworkTableEntry visionAngleOffsetEntry = debugVisionTab.add("Vision Angle Offset", 0.0)
             .withWidget(BuiltInWidgets.kTextView).getEntry();
 
+    public static final NetworkTableEntry robotXEntry = debugTab.add("Robot X", 0).getEntry();
+    public static final NetworkTableEntry robotYEntry = debugTab.add("Robot Y", 0).getEntry();
+    public static final NetworkTableEntry robotHeadingEntry = debugTab.add("Robot Heading", 0).getEntry();
+
     /*************************** Misc Tab Entries ***************************/
 
     /**
@@ -221,10 +225,9 @@ public class Robot extends TimedRobot {
         logger.setLevel(Level.FINER);
         // Set log handler to also set the last error and warning
         logger.setLogHandler((level, message) -> {
-            if(level == Level.SEVERE) {
+            if (level == Level.SEVERE) {
                 lastErrorEntry.setString(message);
-            }
-            else if(level == Level.WARNING) {
+            } else if (level == Level.WARNING) {
                 lastWarningEntry.setString(message);
             }
         });
@@ -295,10 +298,9 @@ public class Robot extends TimedRobot {
         visionStatusEntry.setBoolean(vision.ready());
         vision.readyEntry().addListener((notif) -> {
             visionStatusEntry.setBoolean(notif.value.getBoolean());
-            if(notif.value.getBoolean()) {
+            if (notif.value.getBoolean()) {
                 logger.logInfo("Vision came online");
-            }
-            else {
+            } else {
                 logger.logError("Vision went offline!");
             }
         }, EntryListenerFlags.kImmediate | EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
@@ -340,12 +342,6 @@ public class Robot extends TimedRobot {
             AutoPaths.generateAll();
         }
     }
-
-    public static final NetworkTableEntry robotXEntry = debugTab.add("Robot X", 0).getEntry();
-    public static final NetworkTableEntry robotYEntry = debugTab.add("Robot Y", 0).getEntry();
-    public static final NetworkTableEntry robotHeadingEntry = debugTab.add("Robot Heading", 0).getEntry();
-    public static final NetworkTableEntry integrationStartedEntry = debugTab.add("Integration Started", false)
-            .withWidget(BuiltInWidgets.kBooleanBox).getEntry();
 
     /**
      * This function is called every robot packet, no matter the mode. Use this for
