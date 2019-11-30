@@ -7,8 +7,8 @@
 
 package frc.robot;
 
-import com.arctos6135.robotpathfinder.core.RobotSpecs;
 import com.arctos6135.robotlib.motors.ProtectedMotor;
+import com.arctos6135.robotpathfinder.core.RobotSpecs;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -22,10 +22,8 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
-import edu.wpi.first.wpilibj.SerialPort.Port;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
-import frc.robot.misc.BeautifulRobotDriver;
 
 
 /**
@@ -95,9 +93,7 @@ public class RobotMap {
     public static final AHRS ahrs = new AHRS(I2C.Port.kOnboard);
 	public static Encoder rightEncoder = new Encoder(0, 1, false, EncodingType.k4X);
 	public static Encoder leftEncoder = new Encoder(2, 3, true, EncodingType.k4X);
-	
-    public static final BeautifulRobotDriver beautifulRobotDriver = new BeautifulRobotDriver(Port.kMXP);
-    
+	    
     /**
      * Holds robot dimensions.
      */
@@ -119,7 +115,7 @@ public class RobotMap {
         public static final double CARGOSHIP_FRONT_OFFSET = 10.875;
         public static final double CARGOSHIP_FRONT_OFFSET_SIDE = 12.875;
     }
-    public static final RobotSpecs specsLow = new RobotSpecs(42.5, 53, RobotDimensions.BASEPLATE_WIDTH);
+    public static final RobotSpecs specsLow = new RobotSpecs(42.5, 85, RobotDimensions.BASEPLATE_WIDTH);
     public static final RobotSpecs specsHigh = new RobotSpecs(150, 50, RobotDimensions.BASEPLATE_WIDTH);
 
     public static final int SHIFT_LOW_TO_HIGH_MAX = Integer.MAX_VALUE;

@@ -179,6 +179,10 @@ public class Robot extends TimedRobot {
     public static final NetworkTableEntry visionAngleOffsetEntry = debugVisionTab.add("Vision Angle Offset", 0.0)
             .withWidget(BuiltInWidgets.kTextView).getEntry();
 
+    public static final NetworkTableEntry robotXEntry = debugTab.add("Robot X", 0).getEntry();
+    public static final NetworkTableEntry robotYEntry = debugTab.add("Robot Y", 0).getEntry();
+    public static final NetworkTableEntry robotHeadingEntry = debugTab.add("Robot Heading", 0).getEntry();
+
     /*************************** Misc Tab Entries ***************************/
 
     /**
@@ -217,13 +221,12 @@ public class Robot extends TimedRobot {
             lastErrorEntry.setString("Failed to initialize logger!");
         }
         // Set level
-        logger.setLevel(Level.FINER);
+        logger.setLevel(Level.INFO);
         // Set log handler to also set the last error and warning
         logger.setLogHandler((level, message) -> {
-            if(level == Level.SEVERE) {
+            if (level == Level.SEVERE) {
                 lastErrorEntry.setString(message);
-            }
-            else if(level == Level.WARNING) {
+            } else if (level == Level.WARNING) {
                 lastWarningEntry.setString(message);
             }
         });
@@ -294,10 +297,9 @@ public class Robot extends TimedRobot {
         visionStatusEntry.setBoolean(vision.ready());
         vision.readyEntry().addListener((notif) -> {
             visionStatusEntry.setBoolean(notif.value.getBoolean());
-            if(notif.value.getBoolean()) {
+            if (notif.value.getBoolean()) {
                 logger.logInfo("Vision came online");
-            }
-            else {
+            } else {
                 logger.logError("Vision went offline!");
             }
         }, EntryListenerFlags.kImmediate | EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
@@ -367,6 +369,11 @@ public class Robot extends TimedRobot {
             var accelerations = drivetrain.getAccelerations();
             leftAccelerationEntry.setDouble(accelerations[0]);
             rightAccelerationEntry.setDouble(accelerations[1]);
+
+            Drivetrain.Position position = drivetrain.getPosition();
+            robotXEntry.setNumber(position.x);
+            robotYEntry.setNumber(position.y);
+            robotHeadingEntry.setNumber(position.heading);
 
             visionEnabledEntry.setBoolean(vision.getVisionEnabled());
             if (Robot.vision.getVisionEnabled()) {

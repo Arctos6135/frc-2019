@@ -9,6 +9,7 @@ package frc.robot.commands;
 
 import com.arctos6135.robotpathfinder.core.RobotSpecs;
 import com.arctos6135.robotpathfinder.core.trajectory.TankDriveMoment;
+import com.arctos6135.robotpathfinder.core.trajectory.Trajectory;
 import com.arctos6135.robotpathfinder.follower.DynamicFollowable;
 import com.arctos6135.robotpathfinder.follower.DynamicTankDriveFollower;
 import com.arctos6135.robotpathfinder.follower.Followable;
@@ -17,6 +18,8 @@ import com.arctos6135.robotpathfinder.follower.Follower.AdvancedPositionSource;
 import com.arctos6135.robotpathfinder.follower.Follower.DirectionSource;
 import com.arctos6135.robotpathfinder.follower.Follower.Motor;
 import com.arctos6135.robotpathfinder.follower.Follower.TimestampSource;
+import com.arctos6135.robotpathfinder.follower.FollowerRunner;
+import com.arctos6135.robotpathfinder.follower.SimpleFollowerRunner;
 import com.arctos6135.robotpathfinder.follower.TankDriveFollower;
 import com.arctos6135.robotpathfinder.follower.TankDriveFollower.TankDriveGains;
 import com.arctos6135.robotpathfinder.follower.TankDriveFollower.TankDriveRobot;
@@ -89,14 +92,15 @@ public class FollowTrajectory extends Command {
     // These fields are made public so they can be configured from the dashboard
     public static final PIDVADPGains GAINS_L = new PIDVADPGains(0.2, 0.0, 0.00015, 0.025, 0.0015, 0.01);
     public static final PIDVADPGains GAINS_H = new PIDVADPGains(0.1, 0.0, 0.00025, 0.007, 0.002, 0.01);
-    public static double updateDelay = 0.75;
+    public static double updateDelay = 0.5;
 
     // This is the gear the robot must be in for trajectory following
     // If set to null, the robot will accept both
     public static Drivetrain.Gear gearToUse = null;
 
     private final Followable<TankDriveMoment> profile;
-    private Follower<TankDriveMoment> follower;
+    private volatile Follower<TankDriveMoment> follower;
+    private FollowerRunner runner = new SimpleFollowerRunner();
 
     /**
      * Constructs a {@link TankDriveGains} object from a {@link PIDVADPGains}
@@ -133,6 +137,8 @@ public class FollowTrajectory extends Command {
 
     private Drivetrain.Gear startingGear;
 
+    private double initLeftPos, initRightPos, initTime;
+
     // Called just before this Command runs the first time
     // Note we made this method public! This is so that Commands that wrap around
     // this one have an easier time.
@@ -165,15 +171,35 @@ public class FollowTrajectory extends Command {
             }
         }
 
-        follower.initialize();
+        initLeftPos = L_POS_SRC.getPosition();
+        initRightPos = R_POS_SRC.getPosition();
+        initTime = TIMESTAMP_SOURCE.getTimestamp();
+        Robot.drivetrain.resetPosition();
+
+        runner.start(follower, 100);
     }
 
     // Called repeatedly when this Command is scheduled to run
     @Override
     public void execute() {
-        follower.run();
+        if (Robot.isInDebugMode && TIMESTAMP_SOURCE.getTimestamp() - initTime <= profile.totalTime()) {
+            var m = profile.get(TIMESTAMP_SOURCE.getTimestamp() - initTime);
+            String logStr = "[traj" + Integer.toHexString(profile.hashCode()) + "]t="
+                    + (TIMESTAMP_SOURCE.getTimestamp() - initTime) + ",lpe=" + m.getLeftPosition() + ",lpa="
+                    + (L_POS_SRC.getPosition() - initLeftPos) + ",lve=" + m.getLeftVelocity() + ",lva="
+                    + L_POS_SRC.getVelocity() + ",lae=" + m.getLeftAcceleration() + ",laa="
+                    + L_POS_SRC.getAcceleration() + ",rpe=" + m.getRightPosition() + ",rpa="
+                    + (R_POS_SRC.getPosition() - initRightPos) + ",rve=" + m.getRightVelocity() + ",rva="
+                    + R_POS_SRC.getVelocity() + ",rae=" + m.getRightAcceleration() + ",raa="
+                    + R_POS_SRC.getAcceleration();
+            if (profile instanceof Trajectory) {
+                var pos = ((Trajectory<?>) profile).getPosition(TIMESTAMP_SOURCE.getTimestamp() - initTime);
+                var posActual = Robot.drivetrain.getPosition();
+                logStr += ",xe=" + pos.getX() + ",xa=" + posActual.x + ",ye=" + pos.getY() + ",ya=" + posActual.y
+                        + ",he=" + pos.getHeading() + ",ha=" + posActual.heading;
+            }
+            Robot.logger.logInfo(logStr);
 
-        if (Robot.isInDebugMode) {
             if (follower instanceof TankDriveFollower) {
                 TankDriveFollower f = (TankDriveFollower) follower;
 
@@ -197,13 +223,12 @@ public class FollowTrajectory extends Command {
     // Make this return true when this Command no longer needs to run execute()
     @Override
     public boolean isFinished() {
-        return !follower.isRunning();
+        return runner.isFinished();
     }
 
     // Called once after isFinished returns true
     @Override
     public void end() {
-        follower.stop();
         Robot.drivetrain.setMotors(0, 0);
 
         if (gearToUse != null) {
@@ -217,7 +242,6 @@ public class FollowTrajectory extends Command {
     // subsystems is scheduled to run
     @Override
     public void interrupted() {
-        follower.stop();
         Robot.drivetrain.setMotors(0, 0);
 
         if (gearToUse != null) {

@@ -42,7 +42,13 @@ public class DriveDistance extends Command {
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        followerCommand.execute();
+        try {
+            followerCommand.execute();
+        }
+        catch(Exception e) {
+            System.out.println("DriveDistance exception:");
+            e.printStackTrace();
+        }
     }
 
     // Make this return true when this Command no longer needs to run execute()
