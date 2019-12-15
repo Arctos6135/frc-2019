@@ -322,6 +322,8 @@ public class Robot extends TimedRobot {
         // Put the follower gains on the dashboard
         debugPathfindingTab.add("High Gear Gains", FollowTrajectory.GAINS_H).withWidget(StdPlugWidgets.PIDVA_GAINS);
         debugPathfindingTab.add("Low Gear Gains", FollowTrajectory.GAINS_L).withWidget(StdPlugWidgets.PIDVA_GAINS);
+        
+        drivetrain.setDisabledHighGear();
 
         logger.logInfo("Robot initialization complete");
     }
@@ -391,6 +393,8 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
+        drivetrain.setDisabledHighGear();
+
         logger.logInfo("Autonomous mode enabled");
         // Set the initial gear
         Drivetrain.Gear matchStartGear = matchStartGearChooser.getSelected();
@@ -427,6 +431,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        drivetrain.restoreGearSetting();
+
         logger.logInfo("Teleop mode enabled");
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to
@@ -452,6 +458,8 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void disabledInit() {
+        drivetrain.restoreGearSetting();
+
         logger.logInfo("Robot disabled");
         // Flush the log buffer when the robot is disabled
         logger.flush();
@@ -467,6 +475,11 @@ public class Robot extends TimedRobot {
         if (isInDebugMode) {
             getTuningEntries();
         }
+    }
+
+    @Override
+    public void testInit() {
+        drivetrain.restoreGearSetting();
     }
 
     /**
