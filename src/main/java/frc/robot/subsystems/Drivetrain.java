@@ -189,14 +189,14 @@ public class Drivetrain extends Subsystem {
         LOW, HIGH;
     }
 
-    private Gear gear;
+    private Gear gear = Gear.LOW;
+
     /**
-     * Sets the drivetrain gearboxes to be in either low or high gear.
+     * Sets <strong>only</strong> the gear shifters. Does not change the value of the current gear.
      * 
-     * Note that the low and high gear values may be switched depending on how the pneumatics are wired!
-     * @param gear The new gear, {@link Gear#LOW} or {@link Gear#HIGH}.
+     * @param gear The gear to set to
      */
-    public void setGear(Gear gear) {
+    private void setShifterSolenoid(Gear gear) {
         if(gear == Gear.HIGH) {
             RobotMap.gearShifter.set(DoubleSolenoid.Value.kForward);
             Robot.drivetrainGearEntry.setString("HIGH");
@@ -205,6 +205,16 @@ public class Drivetrain extends Subsystem {
             RobotMap.gearShifter.set(DoubleSolenoid.Value.kReverse);
             Robot.drivetrainGearEntry.setString("LOW");
         }
+    }
+
+    /**
+     * Sets the drivetrain gearboxes to be in either low or high gear.
+     * 
+     * Note that the low and high gear values may be switched depending on how the pneumatics are wired!
+     * @param gear The new gear, {@link Gear#LOW} or {@link Gear#HIGH}.
+     */
+    public void setGear(Gear gear) {
+        setShifterSolenoid(gear);
         this.gear = gear;
     }
     /**
@@ -215,6 +225,30 @@ public class Drivetrain extends Subsystem {
      */
     public Gear getGear() {
         return gear;
+    }
+
+    /**
+     * Temporarily puts the robot in high gear (so it's easier to push), but does NOT change the internal 
+     * gear state.
+     * 
+     * <p>
+     * Call this method from {@link Robot#disabledInit()} and the end of {@link Robot#robotInit()}.
+     * </p>
+     */
+    public void setDisabledHighGear() {
+        setShifterSolenoid(Gear.HIGH);
+    }
+
+    /**
+     * Puts the robot in the gear it's supposed to be.
+     * 
+     * <p>
+     * For use with {@link #setDisabledHighGear()}. Call this method from the init methods (except 
+     * {@link Robot#disabledInit()}).
+     * </p>
+     */
+    public void restoreGearSetting() {
+        setShifterSolenoid(gear);
     }
 
     /**
@@ -252,15 +286,6 @@ public class Drivetrain extends Subsystem {
      */
     public NeutralMode getNeutralMode() {
         return neutralMode;
-    }
-
-    public void enableSafety() {
-        //RobotMap.lVictor.setSafetyEnabled(true);
-        //RobotMap.rVictor.setSafetyEnabled(true);
-    }
-    public void disableSafety() {
-        //RobotMap.lVictor.setSafetyEnabled(false);
-        //RobotMap.rVictor.setSafetyEnabled(false);
     }
 
     public Drivetrain() {
