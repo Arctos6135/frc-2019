@@ -199,8 +199,7 @@ public class Robot extends TimedRobot {
         climber = new Climber();
         pressureSensor = new PressureSensor();
         oi = new OI();
-        // Warm up RobotPathfinder and generate auto paths
-        FollowTrajectory.warmupRobotPathfinder(10);
+    
         AutoPaths.generateAll();
 
         // Wait for the DS to connect before starting the logger
@@ -222,7 +221,7 @@ public class Robot extends TimedRobot {
             lastErrorEntry.setString("Failed to initialize logger!");
         }
         // Set level
-        logger.setLevel(Level.FINER);
+        logger.setLevel(Level.INFO);
         // Set log handler to also set the last error and warning
         logger.setLogHandler((level, message) -> {
             if (level == Level.SEVERE) {

@@ -8,6 +8,7 @@
 package frc.robot;
 
 import com.arctos6135.robotlib.motors.ProtectedMotor;
+import com.arctos6135.robotpathfinder.core.RobotSpecs;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -23,7 +24,6 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.VictorSP;
-import robot.pathfinder.core.RobotSpecs;
 
 
 /**
@@ -115,7 +115,7 @@ public class RobotMap {
         public static final double CARGOSHIP_FRONT_OFFSET = 10.875;
         public static final double CARGOSHIP_FRONT_OFFSET_SIDE = 12.875;
     }
-    public static final RobotSpecs specsLow = new RobotSpecs(42.5, 53, RobotDimensions.BASEPLATE_WIDTH);
+    public static final RobotSpecs specsLow = new RobotSpecs(42.5, 85, RobotDimensions.BASEPLATE_WIDTH);
     public static final RobotSpecs specsHigh = new RobotSpecs(150, 50, RobotDimensions.BASEPLATE_WIDTH);
 
     public static final int SHIFT_LOW_TO_HIGH_MAX = Integer.MAX_VALUE;

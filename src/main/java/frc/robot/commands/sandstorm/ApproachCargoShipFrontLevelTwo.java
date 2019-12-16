@@ -7,19 +7,22 @@
 
 package frc.robot.commands.sandstorm;
 
+import com.arctos6135.robotpathfinder.core.trajectory.TankDriveTrajectory;
+
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.commands.FollowTrajectory;
 import frc.robot.misc.AutoPaths;
-import robot.pathfinder.core.trajectory.TankDriveTrajectory;
 
 public class ApproachCargoShipFrontLevelTwo extends CommandGroup {
-    
+
     public ApproachCargoShipFrontLevelTwo(AutoDispatcher.Side side, boolean reverse) {
-        addSequential(new FollowTrajectory(reverse ? AutoPaths.driveOffHabLevelTwo.mirrorFrontBack() 
-                : AutoPaths.driveOffHabLevelTwo));
+        addSequential(
+                new FollowTrajectory(reverse ? AutoPaths.driveOffHabLevelTwoReversed : AutoPaths.driveOffHabLevelTwo));
         TankDriveTrajectory t = side == AutoDispatcher.Side.LEFT
-        ? reverse ? AutoPaths.approachCargoShipFrontLevelOneSideL.mirrorFrontBack() : AutoPaths.approachCargoShipFrontLevelOneSideL
-        : reverse ? AutoPaths.approachCargoShipFrontLevelOneSideR.mirrorFrontBack() : AutoPaths.approachCargoShipFrontLevelOneSideR;
+                ? reverse ? AutoPaths.approachCargoShipFrontLevelOneSideL.mirrorFrontBack()
+                        : AutoPaths.approachCargoShipFrontLevelOneSideL
+                : reverse ? AutoPaths.approachCargoShipFrontLevelOneSideR.mirrorFrontBack()
+                        : AutoPaths.approachCargoShipFrontLevelOneSideR;
         addSequential(new FollowTrajectory(t));
     }
 }
