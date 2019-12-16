@@ -20,20 +20,77 @@ import frc.robot.RobotMap;
 import frc.robot.commands.TeleopDrive;
 
 public class Drivetrain extends Subsystem {
-    // Put methods for controlling this subsystem
-    // here. Call these from Commands.
-
-	double leftLastRate = 0, rightLastRate = 0;
-    double lastTime;
     
-    static final double LEFT_MULT = 1.0;
-    static final double RIGHT_MULT = 1.0;
+    public static class Position {
+        public double x;
+        public double y;
+        public double heading;
+
+        public Position(double x, double y, double heading) {
+            this.x = x;
+            this.y = y;
+            this.heading = heading;
+        }
+    }
+
+    // For position integration
+    private Position position = new Position(0, 0, 0);
+    private double lastLeft, lastRight, initHeading;
+
+    // For calculating acceleration
+	private double leftLastRate = 0, rightLastRate = 0;
+    private double lastTime;
+
+    public Drivetrain() {
+        // Reset variables for position integration
+        lastLeft = getLeftDistance();
+        lastRight = getRightDistance();
+        initHeading = getHeading();
+
+        setMotors(0, 0);
+        setGear(Gear.LOW);
+        resetHeading();
+        setNeutralMode(NeutralMode.Coast);
+    }
+    public Drivetrain(String name) {
+        super(name);
+
+        lastLeft = getLeftDistance();
+        lastRight = getRightDistance();
+        initHeading = getHeading();
+
+        setMotors(0, 0);
+        setGear(Gear.LOW);
+        resetHeading();
+        setNeutralMode(NeutralMode.Coast);
+    }
 
     @Override
     public void initDefaultCommand() {
-        // Set the default command for a subsystem here.
-        // setDefaultCommand(new MySpecialCommand());
         setDefaultCommand(new TeleopDrive());
+    }
+
+    @Override
+    public void periodic() {
+        double left = getLeftDistance();
+        double right = getRightDistance();
+        // Change in distance for left and right wheels
+        double dl = left - lastLeft;
+        double dr = right - lastRight;
+        // Change in euclidean distance
+        double ds = (dl + dr) / 2;
+        // Heading is absolute as obtained with the gyro
+        double heading = getHeading() - initHeading;
+
+        double dx = ds * Math.cos(Math.toRadians(heading));
+        double dy = ds * Math.sin(Math.toRadians(heading));
+
+        lastLeft = left;
+        lastRight = right;
+
+        position.x += dx;
+        position.y += dy;
+        position.heading = heading;
     }
 
     /**
@@ -86,18 +143,18 @@ public class Drivetrain extends Subsystem {
     public void setMotors(double left, double right) {
         prevLeft = left;
         prevRight = right;
-        RobotMap.lVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, -left * speedMultiplier * LEFT_MULT)));
+        RobotMap.lVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, -left * speedMultiplier)));
         // Invert right side
-        RobotMap.rVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, right * speedMultiplier * RIGHT_MULT)));
+        RobotMap.rVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, right * speedMultiplier)));
     }
     
     public void setLeftMotor(double output) {
         prevLeft = output;
-        RobotMap.lVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, -output * speedMultiplier * LEFT_MULT)));
+        RobotMap.lVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, -output * speedMultiplier)));
     }
     public void setRightMotor(double output) {
         prevRight = output;
-        RobotMap.rVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, output * speedMultiplier * RIGHT_MULT)));
+        RobotMap.rVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, output * speedMultiplier)));
     }
 	
 	// Encoders
@@ -288,21 +345,26 @@ public class Drivetrain extends Subsystem {
         return neutralMode;
     }
 
-    public Drivetrain() {
-        super();
-
-        setMotors(0, 0);
-        setGear(Gear.LOW);
-        resetHeading();
-        setNeutralMode(NeutralMode.Coast);
+    /**
+     * Returns the estimated position of the robot.
+     * 
+     * <p>
+     * {@link #startIntegration(int)} must be called before this.
+     * </p>
+     * 
+     * @return The estimated position.
+     */
+    public Position getPosition() {
+        return new Position(position.x, position.y, position.heading);
     }
-    public Drivetrain(String name) {
-        super(name);
 
-        setMotors(0, 0);
-        setGear(Gear.LOW);
-        resetHeading();
-        setNeutralMode(NeutralMode.Coast);
+    /**
+     * Resets the estimated position of the robot.
+     */
+    public void resetPosition() {
+        position.x = 0;
+        position.y = 0;
+        position.heading = 0;
     }
 
     public class Gyro extends GyroBase {
