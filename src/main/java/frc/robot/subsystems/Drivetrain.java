@@ -13,14 +13,16 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.GyroBase;
+import edu.wpi.first.wpilibj.SendableBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.TeleopDrive;
 
 public class Drivetrain extends Subsystem {
-    
+
     public static class Position {
         public double x;
         public double y;
@@ -38,7 +40,7 @@ public class Drivetrain extends Subsystem {
     private double lastLeft, lastRight, initHeading;
 
     // For calculating acceleration
-	private double leftLastRate = 0, rightLastRate = 0;
+    private double leftLastRate = 0, rightLastRate = 0;
     private double lastTime;
 
     public Drivetrain() {
@@ -52,6 +54,7 @@ public class Drivetrain extends Subsystem {
         resetHeading();
         setNeutralMode(NeutralMode.Coast);
     }
+
     public Drivetrain(String name) {
         super(name);
 
@@ -100,12 +103,12 @@ public class Drivetrain extends Subsystem {
      * @return The constrained angle
      */
     public static double constrainAngle(double angle) {
-        if(angle <= 180.0 && angle > -180.0)
+        if (angle <= 180.0 && angle > -180.0)
             return angle;
-        while(angle > 180.0) {
+        while (angle > 180.0) {
             angle -= 360.0;
         }
-        while(angle <= -180.0) {
+        while (angle <= -180.0) {
             angle += 360.0;
         }
         return angle;
@@ -117,10 +120,11 @@ public class Drivetrain extends Subsystem {
     public void setSpeedMultiplier(double multiplier) {
         speedMultiplier = multiplier;
     }
+
     public double getSpeedMultiplier() {
         return speedMultiplier;
     }
-    
+
     // Stores the previous left and right output values
     // Used by TeleopDrive for ramping
     double prevLeft = 0;
@@ -129,15 +133,17 @@ public class Drivetrain extends Subsystem {
     public double getPrevLeft() {
         return prevLeft;
     }
+
     public double getPrevRight() {
         return prevRight;
     }
 
     /**
-     * Sets the left and right side motors of the drivetrain. 
-     * The input values are first multiplied by the speed multiplier (see {@link #setSpeedMultiplier(double)}), 
-     * and then constrained to [-1, 1].
-     * @param left The left side motors percent output
+     * Sets the left and right side motors of the drivetrain. The input values are
+     * first multiplied by the speed multiplier (see
+     * {@link #setSpeedMultiplier(double)}), and then constrained to [-1, 1].
+     * 
+     * @param left  The left side motors percent output
      * @param right The right side motors percent output
      */
     public void setMotors(double left, double right) {
@@ -147,100 +153,114 @@ public class Drivetrain extends Subsystem {
         // Invert right side
         RobotMap.rVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, right * speedMultiplier)));
     }
-    
+
     public void setLeftMotor(double output) {
         prevLeft = output;
         RobotMap.lVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, -output * speedMultiplier)));
     }
+
     public void setRightMotor(double output) {
         prevRight = output;
         RobotMap.rVictor.set(ControlMode.PercentOutput, Math.max(-1, Math.min(1, output * speedMultiplier)));
     }
-	
-	// Encoders
-	/** 
-	 * Reset the left and right encoders
-	*/
-	public void resetEncoders() {
-		RobotMap.leftEncoder.reset();
-		RobotMap.rightEncoder.reset();
-	}
 
-	/**
-	 * Gets the distance travelled by the left encoder, using the
-	 * {@link edu.wpi.first.wpilibj.Encoder#getDistance() getDistance()} method of the {@code Encoder} class
-	 * @return The distance travelled by the left encoder
-	 */
-	public double getLeftDistance() {
-		return RobotMap.leftEncoder.getDistance();
-	}
+    // Encoders
+    /**
+     * Reset the left and right encoders
+     */
+    public void resetEncoders() {
+        RobotMap.leftEncoder.reset();
+        RobotMap.rightEncoder.reset();
+    }
 
-	/**
-	 * Gets the distance travelled by the right encoder, using the
-	 * {@link edu.wpi.first.wpilibj.Encoder#getDistance() getDistance()} method of the {@code Encoder} class
-	 * @return The distance travelled by the right encoder
-	 */
-	public double getRightDistance() {
-		return RobotMap.rightEncoder.getDistance();
-	}
+    /**
+     * Gets the distance travelled by the left encoder, using the
+     * {@link edu.wpi.first.wpilibj.Encoder#getDistance() getDistance()} method of
+     * the {@code Encoder} class
+     * 
+     * @return The distance travelled by the left encoder
+     */
+    public double getLeftDistance() {
+        return RobotMap.leftEncoder.getDistance();
+    }
 
-	/**
-	 * Gets the speed reading of the left encoder, using the
-	 * {@link edu.wpi.first.wpilibj.Encoder#getRate() getRate()} method of the {@code Encoder} class
-	 * @return The speed of the left encoder
-	 */
-	public double getLeftSpeed() {
-		return RobotMap.leftEncoder.getRate();
-	}
+    /**
+     * Gets the distance travelled by the right encoder, using the
+     * {@link edu.wpi.first.wpilibj.Encoder#getDistance() getDistance()} method of
+     * the {@code Encoder} class
+     * 
+     * @return The distance travelled by the right encoder
+     */
+    public double getRightDistance() {
+        return RobotMap.rightEncoder.getDistance();
+    }
 
-	/**
-	 * Gets the speed reading of the right encoder, using the
-	 * {@link edu.wpi.first.wpilibj.Encoder#getRate() getRate()} method of the {@code Encoder} class
-	 * @return The speed of the right encoder
-	 */
-	public double getRightSpeed() {
-		return RobotMap.rightEncoder.getRate();
-	}
+    /**
+     * Gets the speed reading of the left encoder, using the
+     * {@link edu.wpi.first.wpilibj.Encoder#getRate() getRate()} method of the
+     * {@code Encoder} class
+     * 
+     * @return The speed of the left encoder
+     */
+    public double getLeftSpeed() {
+        return RobotMap.leftEncoder.getRate();
+    }
 
-	/**
+    /**
+     * Gets the speed reading of the right encoder, using the
+     * {@link edu.wpi.first.wpilibj.Encoder#getRate() getRate()} method of the
+     * {@code Encoder} class
+     * 
+     * @return The speed of the right encoder
+     */
+    public double getRightSpeed() {
+        return RobotMap.rightEncoder.getRate();
+    }
+
+    /**
      * Calculates the acceleration of both sides.<br>
      * <br>
-     * Instead of being read directly from the encoder, the acceleration is calculated by deriving the result
-     * of {@link #getLeftSpeed()} and {@link #getRightSpeed()}. The derivation is done only when this method
-     * is called, therefore the result will be more accurate if this method was called a short time ago.
-     * However, please note that two subsequent calls right after each other may yield a result of 0, as the
-     * last known encoder rate from {@link edu.wpi.first.wpilibj.Encoder#getRate() getRate()} may not have time
+     * Instead of being read directly from the encoder, the acceleration is
+     * calculated by deriving the result of {@link #getLeftSpeed()} and
+     * {@link #getRightSpeed()}. The derivation is done only when this method is
+     * called, therefore the result will be more accurate if this method was called
+     * a short time ago. However, please note that two subsequent calls right after
+     * each other may yield a result of 0, as the last known encoder rate from
+     * {@link edu.wpi.first.wpilibj.Encoder#getRate() getRate()} may not have time
      * to update.
-     * @return An array containing the acceleration of both sides, with element 0 being the left and element 1 
-     * being the right
+     * 
+     * @return An array containing the acceleration of both sides, with element 0
+     *         being the left and element 1 being the right
      */
-	public double[] getAccelerations() {
-    	double dt = Timer.getFPGATimestamp() - lastTime;
-    	double leftRate = RobotMap.leftEncoder.getRate();
-    	double rightRate = RobotMap.rightEncoder.getRate();
-    	double leftAccel = (leftRate - leftLastRate) / dt;
-    	double rightAccel = (rightRate - rightLastRate) / dt;
-    	leftLastRate = leftRate;
-    	rightLastRate = rightRate;
-    	lastTime = Timer.getFPGATimestamp();
-    	return new double[] { leftAccel, rightAccel };
-	}
-	
-	/**
-	 * Gets the left {@code Encoder} object
-	 * @return The left encoder
-	 */
-	public Encoder getLeftEncoder() {
-		return RobotMap.leftEncoder;
-	}
+    public double[] getAccelerations() {
+        double dt = Timer.getFPGATimestamp() - lastTime;
+        double leftRate = RobotMap.leftEncoder.getRate();
+        double rightRate = RobotMap.rightEncoder.getRate();
+        double leftAccel = (leftRate - leftLastRate) / dt;
+        double rightAccel = (rightRate - rightLastRate) / dt;
+        leftLastRate = leftRate;
+        rightLastRate = rightRate;
+        lastTime = Timer.getFPGATimestamp();
+        return new double[] { leftAccel, rightAccel };
+    }
 
-	/**
-	 * Gets the right {@code Encoder} object
-	 * @return The right encoder
-	 */
-	public Encoder getRightEncoder() {
-		return RobotMap.rightEncoder;
-	}
+    /**
+     * Gets the left {@code Encoder} object
+     * 
+     * @return The left encoder
+     */
+    public Encoder getLeftEncoder() {
+        return RobotMap.leftEncoder;
+    }
+
+    /**
+     * Gets the right {@code Encoder} object
+     * 
+     * @return The right encoder
+     */
+    public Encoder getRightEncoder() {
+        return RobotMap.rightEncoder;
+    }
 
     public enum Gear {
         LOW, HIGH;
@@ -249,16 +269,16 @@ public class Drivetrain extends Subsystem {
     private Gear gear = Gear.LOW;
 
     /**
-     * Sets <strong>only</strong> the gear shifters. Does not change the value of the current gear.
+     * Sets <strong>only</strong> the gear shifters. Does not change the value of
+     * the current gear.
      * 
      * @param gear The gear to set to
      */
     private void setShifterSolenoid(Gear gear) {
-        if(gear == Gear.HIGH) {
+        if (gear == Gear.HIGH) {
             RobotMap.gearShifter.set(DoubleSolenoid.Value.kForward);
             Robot.drivetrainGearEntry.setString("HIGH");
-        }
-        else {
+        } else {
             RobotMap.gearShifter.set(DoubleSolenoid.Value.kReverse);
             Robot.drivetrainGearEntry.setString("LOW");
         }
@@ -267,17 +287,22 @@ public class Drivetrain extends Subsystem {
     /**
      * Sets the drivetrain gearboxes to be in either low or high gear.
      * 
-     * Note that the low and high gear values may be switched depending on how the pneumatics are wired!
+     * Note that the low and high gear values may be switched depending on how the
+     * pneumatics are wired!
+     * 
      * @param gear The new gear, {@link Gear#LOW} or {@link Gear#HIGH}.
      */
     public void setGear(Gear gear) {
         setShifterSolenoid(gear);
         this.gear = gear;
     }
+
     /**
      * Gets the gear the drivetrain gearboxes are in.
      * 
-     * Note that the low and high gear values may be switched depending on how the pneumatics are wired!
+     * Note that the low and high gear values may be switched depending on how the
+     * pneumatics are wired!
+     * 
      * @return The gear, {@link Gear#LOW} or {@link Gear#HIGH}.
      */
     public Gear getGear() {
@@ -285,11 +310,12 @@ public class Drivetrain extends Subsystem {
     }
 
     /**
-     * Temporarily puts the robot in high gear (so it's easier to push), but does NOT change the internal 
-     * gear state.
+     * Temporarily puts the robot in high gear (so it's easier to push), but does
+     * NOT change the internal gear state.
      * 
      * <p>
-     * Call this method from {@link Robot#disabledInit()} and the end of {@link Robot#robotInit()}.
+     * Call this method from {@link Robot#disabledInit()} and the end of
+     * {@link Robot#robotInit()}.
      * </p>
      */
     public void setDisabledHighGear() {
@@ -300,8 +326,8 @@ public class Drivetrain extends Subsystem {
      * Puts the robot in the gear it's supposed to be.
      * 
      * <p>
-     * For use with {@link #setDisabledHighGear()}. Call this method from the init methods (except 
-     * {@link Robot#disabledInit()}).
+     * For use with {@link #setDisabledHighGear()}. Call this method from the init
+     * methods (except {@link Robot#disabledInit()}).
      * </p>
      */
     public void restoreGearSetting() {
@@ -309,13 +335,15 @@ public class Drivetrain extends Subsystem {
     }
 
     /**
-     * Returns the heading (yaw) of the robot.
-     * The yaw is first passed into {@link #constrainAngle(double)}, so it is in the range (-180, 180].
+     * Returns the heading (yaw) of the robot. The yaw is first passed into
+     * {@link #constrainAngle(double)}, so it is in the range (-180, 180].
+     * 
      * @return The yaw of the robot
      */
     public double getHeading() {
         return constrainAngle(RobotMap.ahrs.getYaw());
     }
+
     /**
      * Resets the heading (yaw) of the robot.
      */
@@ -324,12 +352,13 @@ public class Drivetrain extends Subsystem {
     }
 
     NeutralMode neutralMode;
+
     /**
      * Sets the neutral mode (brake or coast) of all the drivetrain motors.
      */
     public void setNeutralMode(NeutralMode mode) {
         neutralMode = mode;
-        
+
         RobotMap.lVictor.setNeutralMode(mode);
         RobotMap.lTalon1.setNeutralMode(mode);
         RobotMap.lTalon2.setNeutralMode(mode);
@@ -338,6 +367,7 @@ public class Drivetrain extends Subsystem {
         RobotMap.rTalon1.setNeutralMode(mode);
         RobotMap.rTalon2.setNeutralMode(mode);
     }
+
     /**
      * Gets the neutral mode of all the drivetrain motors.
      */
@@ -389,5 +419,8 @@ public class Drivetrain extends Subsystem {
             return RobotMap.ahrs.getRate();
         }
 
+        @Override
+        public void close() {
+        }
     }
 }

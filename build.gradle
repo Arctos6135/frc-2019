@@ -53,13 +53,13 @@ repositories {
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 4.
 dependencies {
-    compile wpi.deps.wpilib()
     compile wpi.deps.vendor.java()
 
     compile files("lib/RobotPathfinder-3.0.0-alpha.1.1-dev.jar")
     nativeLib files("lib/libRobotPathfinder.so")
     compile files("lib/StdPlug-API-0.2.0.jar")
     compile files("lib/RobotLib-0.1.2.jar")
+    compile files("lib/wpilibj.jar")
     
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
