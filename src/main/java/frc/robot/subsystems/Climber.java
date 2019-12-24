@@ -9,7 +9,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.OI;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
@@ -17,9 +17,17 @@ import frc.robot.RobotMap;
 /**
  * Controls Hab 2 climber pistons.
  */
-public class Climber extends Subsystem {
-    // Put methods for controlling this subsystem
-    // here. Call these from Commands.
+public class Climber extends SubsystemBase {
+
+    public Climber() {
+        setState(Side.ESSIE, State.RETRACTED);
+        setState(Side.HANK, State.RETRACTED);
+    }
+
+    public Climber(String name) {
+        setState(Side.ESSIE, State.RETRACTED);
+        setState(Side.HANK, State.RETRACTED);
+    }
 
     /**
      * Enum for the two states of a climber piston, extended or retracted.
@@ -118,23 +126,5 @@ public class Climber extends Subsystem {
         if(getState(side) != State.UNKNOWN) {
             setState(side, getState(side).opposite(), wait);
         }
-    }
-
-    public Climber() {
-        super();
-        setState(Side.ESSIE, State.RETRACTED);
-        setState(Side.HANK, State.RETRACTED);
-    }
-
-    public Climber(String name) {
-        super(name);
-        setState(Side.ESSIE, State.RETRACTED);
-        setState(Side.HANK, State.RETRACTED);
-    }
-
-    @Override
-    public void initDefaultCommand() {
-        // Set the default command for a subsystem here.
-        // setDefaultCommand(new MySpecialCommand());
     }
 }

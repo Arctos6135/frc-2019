@@ -13,15 +13,13 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.GyroBase;
-import edu.wpi.first.wpilibj.SendableBase;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Subsystem;
-import edu.wpi.first.wpilibj.smartdashboard.SendableBuilder;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.commands.TeleopDrive;
 
-public class Drivetrain extends Subsystem {
+public class Drivetrain extends SubsystemBase {
 
     public static class Position {
         public double x;
@@ -53,11 +51,11 @@ public class Drivetrain extends Subsystem {
         setGear(Gear.LOW);
         resetHeading();
         setNeutralMode(NeutralMode.Coast);
+
+        setDefaultCommand(new TeleopDrive());
     }
 
     public Drivetrain(String name) {
-        super(name);
-
         lastLeft = getLeftDistance();
         lastRight = getRightDistance();
         initHeading = getHeading();
@@ -66,10 +64,7 @@ public class Drivetrain extends Subsystem {
         setGear(Gear.LOW);
         resetHeading();
         setNeutralMode(NeutralMode.Coast);
-    }
 
-    @Override
-    public void initDefaultCommand() {
         setDefaultCommand(new TeleopDrive());
     }
 

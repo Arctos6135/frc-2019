@@ -7,21 +7,16 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RobotMap;
 import frc.robot.commands.EssieDefault;
 
 /**
  * Essie is our ball mechanism. :D
  */
-public class Essie extends Subsystem {
-    // Put methods for controlling this subsystem
-    // here. Call these from Commands.
-
-    @Override
-    public void initDefaultCommand() {
-        // Set the default command for a subsystem here.
-        // setDefaultCommand(new MySpecialCommand());
+public class Essie extends SubsystemBase {
+    
+    public Essie() {
         setDefaultCommand(new EssieDefault());
     }
 

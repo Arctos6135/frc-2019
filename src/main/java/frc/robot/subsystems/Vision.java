@@ -14,12 +14,12 @@ import edu.wpi.first.networktables.EntryNotification;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
  * Vision subsystem. Connects directly to the Jetson using NetworkTables.
  */
-public class Vision extends Subsystem {
+public class Vision extends SubsystemBase {
 
     static final double CAMERA_Y_OFFSET = 15;
 
@@ -36,15 +36,6 @@ public class Vision extends Subsystem {
         }
     }
 
-    // Put methods for controlling this subsystem
-    // here. Call these from Commands.
-
-    @Override
-    public void initDefaultCommand() {
-        // Set the default command for a subsystem here.
-        // setDefaultCommand(new MySpecialCommand());
-    }
-
     NetworkTableInstance instance;
     public NetworkTable table;
     
@@ -55,8 +46,6 @@ public class Vision extends Subsystem {
      * Creates a new vision subsystem.
      */
     public Vision() {
-        super();
-
         instance = NetworkTableInstance.getDefault();
         table = instance.getTable("roborio-jetson");
         // Get the entries
@@ -75,8 +64,6 @@ public class Vision extends Subsystem {
      * @param name The name of this subsystem
      */
     public Vision(String name) {
-        super(name);
-
         instance = NetworkTableInstance.getDefault();
         table = instance.getTable("roborio-jetson");
         // Get the entries
