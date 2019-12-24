@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoCargoIntake;
-import frc.robot.commands.AutoClimb;
+import frc.robot.commands.CommandGroups;
 import frc.robot.commands.OperateClimber;
 import frc.robot.commands.OperateEssie;
 import frc.robot.commands.OperateHank;
@@ -299,10 +299,10 @@ public class OI {
         climberPistonToggleEssie.whenPressed(new OperateClimber(Climber.Side.ESSIE));
         climberPistonToggleHank.whenPressed(new OperateClimber(Climber.Side.HANK));
 
-        autoClimb.whenPressed(new AutoClimb());
+        autoClimb.whenPressed(CommandGroups.autoClimb());
         autoClimb.whenReleased(new InstantCommand(() -> {
             Command c = Robot.climber.getCurrentCommand();
-            if(c != null && c instanceof AutoClimb) {
+            if(c != null && c.getName().equals("AutoClimb")) {
                 c.cancel();
                 Robot.logger.logInfoFine("Auto climb was cancelled because the buttons were released");
             }
