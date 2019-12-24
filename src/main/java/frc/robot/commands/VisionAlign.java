@@ -7,17 +7,14 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.OI;
 import frc.robot.Robot;
 import frc.robot.subsystems.Vision.VisionException;
 
-public class VisionAlign extends Command {
+public class VisionAlign extends CommandBase {
     public VisionAlign() {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-        requires(Robot.drivetrain);
-        requires(Robot.vision);
+        addRequirements(Robot.vision, Robot.drivetrain);
     }
 
     private boolean error = false;
@@ -29,7 +26,7 @@ public class VisionAlign extends Command {
 
     // Called just before this Command runs the first time
     @Override
-    protected void initialize() {
+    public void initialize() {
         Robot.logger.logInfoFine("Basic vision align started");
         error = false;
         // Check that vision is ready
@@ -93,14 +90,14 @@ public class VisionAlign extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     @Override
-    protected void execute() {
+    public void execute() {
         if(turningCommand != null)
             turningCommand.execute();
     }
 
     // Make this return true when this Command no longer needs to run execute()
     @Override
-    protected boolean isFinished() {
+    public boolean isFinished() {
         if(error) {
             return true;
         }
@@ -114,9 +111,9 @@ public class VisionAlign extends Command {
 
     // Called once after isFinished returns true
     @Override
-    protected void end() {
+    public void end(boolean interrupted) {
         if(turningCommand != null) {
-            turningCommand.end();
+            turningCommand.end(interrupted);
         }
         if(Robot.vision.ready() && Robot.vision.getVisionEnabled()) {
             try {
@@ -127,25 +124,6 @@ public class VisionAlign extends Command {
                 OI.errorRumbleDriverMinor.execute();
             }
         }
-        Robot.logger.logInfoFine("Basic vision align ended");
-    }
-
-    // Called when another command which requires one or more of the same
-    // subsystems is scheduled to run
-    @Override
-    protected void interrupted() {
-        if(turningCommand != null) {
-            turningCommand.interrupted();
-        }
-        if(Robot.vision.ready() && Robot.vision.getVisionEnabled()) {
-            try {
-                Robot.vision.setVisionEnabled(false);
-            }
-            catch(VisionException e) {
-                Robot.logger.logError("Failed to disable vision");
-                OI.errorRumbleDriverMinor.execute();
-            }
-        }
-        Robot.logger.logInfoFine("Basic vision align interrupted");
+        Robot.logger.logInfoFine("Basic vision align " + (interrupted ? "interrupted" : "ended"));
     }
 }

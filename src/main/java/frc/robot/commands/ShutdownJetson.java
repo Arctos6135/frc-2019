@@ -7,7 +7,7 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Robot;
 
 /**
@@ -16,19 +16,18 @@ import frc.robot.Robot;
 public class ShutdownJetson extends InstantCommand {
 
     public ShutdownJetson() {
-        super();
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-        requires(Robot.vision);
+        addRequirements(Robot.vision);
+    }
 
-        // By default, a command will not run when the robot is disabled
-        // This allows the ShutdownJetson command to run anytime
-        setRunWhenDisabled(true);
+    @Override
+    public boolean runsWhenDisabled() {
+        // this command runs when the robot is disabled
+        return true;
     }
 
     // Called once when the command executes
     @Override
-    protected void initialize() {
+    public void initialize() {
         if(!Robot.vision.ready()) {
             Robot.logger.logWarning("Attempting to shutdown the Jetson, but it is not up!");
             return;

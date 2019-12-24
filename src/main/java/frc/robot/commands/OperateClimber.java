@@ -7,7 +7,8 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Climber.Side;
@@ -16,12 +17,14 @@ import frc.robot.subsystems.Drivetrain;
 /**
  * Operates the climber.
  */
-public class OperateClimber extends Command {
+public class OperateClimber extends CommandBase {
 
-    Side side;
-    Climber.State state;
-    boolean toggle = false;
-    boolean wait;
+    private Side side;
+    private Climber.State state;
+    private boolean toggle = false;
+    private boolean wait;
+
+    private Timer timer = new Timer();
 
     /**
      * Toggles one side of the climber. If wait is set to true, this command will
@@ -31,11 +34,8 @@ public class OperateClimber extends Command {
      * @param wait Whether or not to wait for the pistons
      */
     public OperateClimber(Side side, boolean wait) {
-        super();
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-        requires(Robot.climber);
-        requires(Robot.drivetrain);
+        addRequirements(Robot.climber, Robot.drivetrain);
+        
         this.side = side;
         this.state = null;
         this.toggle = true;
@@ -70,14 +70,11 @@ public class OperateClimber extends Command {
      * @param wait  Whether or not to wait for the pistons
      */
     public OperateClimber(Side side, Climber.State state, boolean wait) {
-        super();
-
         if(state == Climber.State.UNKNOWN) {
             throw new IllegalArgumentException("State cannot be UNKNOWN");
         }
 
-        requires(Robot.climber);
-        requires(Robot.drivetrain);
+        addRequirements(Robot.climber, Robot.drivetrain);
         this.side = side;
         this.state = state;
         this.wait = wait;
@@ -85,7 +82,10 @@ public class OperateClimber extends Command {
 
     // Called once when the command executes
     @Override
-    protected void initialize() {
+    public void initialize() {
+        timer.reset();
+        timer.start();
+
         // Go into low gear
         Robot.logger.logInfoFiner("Putting robot into low gear for climbing");
         Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
@@ -103,9 +103,9 @@ public class OperateClimber extends Command {
     }
 
     @Override
-    protected boolean isFinished() {
+    public boolean isFinished() {
         if (wait) {
-            if (timeSinceInitialized() >= 2.0) {
+            if (timer.get() >= 2.0) {
                 Robot.logger.logError("Wait for climber pistons to go into position timed out");
                 return true;
             }
@@ -113,5 +113,10 @@ public class OperateClimber extends Command {
         } else {
             return true;
         }
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        timer.stop();
     }
 }

@@ -10,56 +10,50 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 
 /**
- * This command operates Hank. When started, it pushes Hank out, and when ending/interrupted, it retracts Hank.
+ * This command operates Hank. When started, it pushes Hank out, and when
+ * ending/interrupted, it retracts Hank.
  * 
- * <b>Note that this command will never terminate on its own.</b>
- * As a result, it must be manually interrupted, or used with the {@link Button#whileHeld(Command)} or 
- * {@link Trigger#whileActive(Command)}.
+ * <b>Note that this command will never terminate on its own.</b> As a result,
+ * it must be manually interrupted, or used with the
+ * {@link Button#whileHeld(Command)} or {@link Trigger#whileActive(Command)}.
  */
-public class OperateHank extends Command {
+public class OperateHank extends CommandBase {
 
     /**
-     * This command operates Hank. When started, it pushes Hank out, and when ending/interrupted, it retracts Hank.
+     * This command operates Hank. When started, it pushes Hank out, and when
+     * ending/interrupted, it retracts Hank.
      * 
-     * <b>Note that this command will never terminate on its own.</b>
-     * As a result, it must be manually interrupted, or used with the {@link Button#whileHeld(Command)} or 
-     * {@link Trigger#whileActive(Command)}.
+     * <b>Note that this command will never terminate on its own.</b> As a result,
+     * it must be manually interrupted, or used with the
+     * {@link Button#whileHeld(Command)} or {@link Trigger#whileActive(Command)}.
      */
     public OperateHank() {
-        super();
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-        requires(Robot.hank);
+        addRequirements(Robot.hank);
     }
 
     // Called once when the command executes
     @Override
-    protected void initialize() {
+    public void initialize() {
         Robot.logger.logInfoFine("Hank operation started");
         Robot.hank.pushOut();
     }
 
     @Override
-    protected void execute() {
+    public void execute() {
     }
 
     @Override
-    protected boolean isFinished() {
+    public boolean isFinished() {
         return false;
     }
 
     @Override
-    protected void end() {
-        Robot.logger.logInfoFine("Hank operation ended");
-        Robot.hank.retract();
-    }
-
-    @Override
-    protected void interrupted() {
-        Robot.logger.logInfoFine("Hank operation interrupted");
+    public void end(boolean interrupted) {
+        Robot.logger.logInfoFine(interrupted ? "Hank operation interrupted" : "Hank operation ended");
         Robot.hank.retract();
     }
 }

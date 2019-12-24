@@ -7,21 +7,23 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.Robot;
 
 public class RestartVisionServer extends InstantCommand {
     public RestartVisionServer() {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-        requires(Robot.vision);
+        addRequirements(Robot.vision);
+    }
 
-        setRunWhenDisabled(true);
+    @Override
+    public boolean runsWhenDisabled() {
+        // This command runs when the robot is disabled.
+        return true;
     }
 
     // Called just before this Command runs the first time
     @Override
-    protected void initialize() {
+    public void initialize() {
         if(!Robot.vision.ready()) {
             Robot.logger.logWarning("Attempting to restart vision server, but vision is not up!");
             return;

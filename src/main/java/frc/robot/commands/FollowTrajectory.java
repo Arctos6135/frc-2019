@@ -29,6 +29,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
 import frc.robot.subsystems.Drivetrain;
@@ -42,7 +43,7 @@ import frc.robot.subsystems.Drivetrain;
  * {@link DynamicTankDriveFollower} instead of a regular
  * {@link TankDriveFollower}.
  */
-public class FollowTrajectory extends Command {
+public class FollowTrajectory extends CommandBase {
 
     /**
      * An implementation of {@link AdvancedPositionSource} using an {@link Encoder}.
@@ -129,9 +130,7 @@ public class FollowTrajectory extends Command {
      * @param trajectory The trajectory to follow
      */
     public FollowTrajectory(Followable<TankDriveMoment> trajectory) {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-        requires(Robot.drivetrain);
+        addRequirements(Robot.drivetrain);
         this.profile = trajectory;
     }
 
@@ -139,9 +138,6 @@ public class FollowTrajectory extends Command {
 
     private double initLeftPos, initRightPos, initTime;
 
-    // Called just before this Command runs the first time
-    // Note we made this method public! This is so that Commands that wrap around
-    // this one have an easier time.
     @Override
     public void initialize() {
         Robot.logger.logInfoFine("FollowTrajectory started");
@@ -228,27 +224,14 @@ public class FollowTrajectory extends Command {
 
     // Called once after isFinished returns true
     @Override
-    public void end() {
+    public void end(boolean interrupted) {
         Robot.drivetrain.setMotors(0, 0);
 
         if (gearToUse != null) {
             Robot.drivetrain.setGear(startingGear);
         }
 
-        Robot.logger.logInfoFine("FollowTrajectory ended");
-    }
-
-    // Called when another command which requires one or more of the same
-    // subsystems is scheduled to run
-    @Override
-    public void interrupted() {
-        Robot.drivetrain.setMotors(0, 0);
-
-        if (gearToUse != null) {
-            Robot.drivetrain.setGear(startingGear);
-        }
-
-        Robot.logger.logInfoFine("FollowTrajectory interrupted");
+        Robot.logger.logInfoFine(interrupted ? "FollowTrajectory interrupted" : "FollowTrajectory ended");
     }
 
     /**

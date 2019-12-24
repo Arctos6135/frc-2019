@@ -12,16 +12,12 @@ import com.arctos6135.robotpathfinder.core.Waypoint;
 import com.arctos6135.robotpathfinder.core.path.PathType;
 import com.arctos6135.robotpathfinder.core.trajectory.TankDriveTrajectory;
 
-//import java.util.concurrent.ExecutorService;
-//import java.util.concurrent.Executors;
-//import java.util.concurrent.Future;
-
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.OI;
 import frc.robot.Robot;
 import frc.robot.subsystems.Vision.VisionException;
 
-public class AdvancedVisionAlign extends Command {
+public class AdvancedVisionAlign extends CommandBase {
 
     private boolean error = false;
 
@@ -33,15 +29,12 @@ public class AdvancedVisionAlign extends Command {
     private FollowTrajectory followerCommand;
 
     public AdvancedVisionAlign() {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-        requires(Robot.drivetrain);
-        requires(Robot.vision);
+        addRequirements(Robot.drivetrain, Robot.vision);
     }
 
     // Called just before this Command runs the first time
     @Override
-    protected void initialize() {
+    public void initialize() {
         Robot.logger.logInfoFine("Advanced vision align started");
         error = false;
         // First check if vision is ready
@@ -143,7 +136,7 @@ public class AdvancedVisionAlign extends Command {
     double visionXOffset = Double.NaN, visionYOffset = Double.NaN, visionAngleOffset = Double.NaN;
     // Called repeatedly when this Command is scheduled to run
     @Override
-    protected void execute() {
+    public void execute() {
         
         /*try {
             // Try to get the vision values
@@ -232,7 +225,7 @@ public class AdvancedVisionAlign extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     @Override
-    protected boolean isFinished() {
+    public boolean isFinished() {
         if(error) {
             Robot.logger.logWarning("Advanced vision align encountered an error");
             return true;
@@ -242,9 +235,9 @@ public class AdvancedVisionAlign extends Command {
 
     // Called once after isFinished returns true
     @Override
-    protected void end() {
+    public void end(boolean interrupted) {
         if(followerCommand != null) {
-            followerCommand.end();
+            followerCommand.end(interrupted);
         }
         if(Robot.vision.ready() && Robot.vision.getVisionEnabled()) {
             try {
@@ -258,28 +251,6 @@ public class AdvancedVisionAlign extends Command {
         if(trajectory != null) {
             trajectory.free();
         }
-        Robot.logger.logInfoFine("Advanced vision align ended");
-    }
-
-    // Called when another command which requires one or more of the same
-    // subsystems is scheduled to run
-    @Override
-    protected void interrupted() {
-        if(followerCommand != null) {
-            followerCommand.interrupted();
-        }
-        if(Robot.vision.ready() && Robot.vision.getVisionEnabled()) {
-            try {
-                Robot.vision.setVisionEnabled(false);
-            }
-            catch(VisionException e) {
-                Robot.logger.logError("Failed to disable vision");
-                OI.errorRumbleDriverMinor.execute();
-            }
-        }
-        if(trajectory != null) {
-            trajectory.free();
-        }
-        Robot.logger.logInfoFine("Advanced vision align interrupted");
+        Robot.logger.logInfoFine("Advanced vision align " + (interrupted ? "interrupted" : "ended"));
     }
 }

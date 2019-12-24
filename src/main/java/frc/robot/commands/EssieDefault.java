@@ -7,28 +7,26 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.OI;
 import frc.robot.Robot;
 
-public class EssieDefault extends Command {
+public class EssieDefault extends CommandBase {
 
     private static final double THRESHOLD = 0.6;
 
     public EssieDefault() {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-        requires(Robot.essie);
+        addRequirements(Robot.essie);
     }
 
     // Called just before this Command runs the first time
     @Override
-    protected void initialize() {
+    public void initialize() {
     }
 
     // Called repeatedly when this Command is scheduled to run
     @Override
-    protected void execute() {
+    public void execute() {
         double val = OI.operatorController.getRawAxis(OI.Controls.ESSIE_OUTTAKE);
         
         if(val >= THRESHOLD) {
@@ -53,20 +51,13 @@ public class EssieDefault extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     @Override
-    protected boolean isFinished() {
+    public boolean isFinished() {
         return false;
     }
 
     // Called once after isFinished returns true
     @Override
-    protected void end() {
-        Robot.essie.stop();
-    }
-
-    // Called when another command which requires one or more of the same
-    // subsystems is scheduled to run
-    @Override
-    protected void interrupted() {
+    public void end(boolean interrupted) {
         Robot.essie.stop();
     }
 }

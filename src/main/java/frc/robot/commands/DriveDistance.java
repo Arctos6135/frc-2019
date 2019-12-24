@@ -11,10 +11,10 @@ import com.arctos6135.robotpathfinder.core.trajectory.TankDriveMoment;
 import com.arctos6135.robotpathfinder.follower.Followable;
 import com.arctos6135.robotpathfinder.motionprofile.followable.profiles.TrapezoidalTankDriveProfile;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 
-public class DriveDistance extends Command {
+public class DriveDistance extends CommandBase {
 
     final double distance;
 
@@ -22,16 +22,14 @@ public class DriveDistance extends Command {
     FollowTrajectory followerCommand;
 
     public DriveDistance(double distance) {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-        requires(Robot.drivetrain);
+        addRequirements(Robot.drivetrain);
 
         this.distance = distance;
     }
 
     // Called just before this Command runs the first time
     @Override
-    protected void initialize() {
+    public void initialize() {
         Robot.logger.logInfoFiner("Driving distance " + distance);
         profile = new TrapezoidalTankDriveProfile(FollowTrajectory.getSpecs(), distance);
         // Wrap around a FollowTrajectory
@@ -41,7 +39,7 @@ public class DriveDistance extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     @Override
-    protected void execute() {
+    public void execute() {
         try {
             followerCommand.execute();
         }
@@ -53,20 +51,13 @@ public class DriveDistance extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     @Override
-    protected boolean isFinished() {
+    public boolean isFinished() {
         return followerCommand.isFinished();
     }
 
     // Called once after isFinished returns true
     @Override
-    protected void end() {
-        followerCommand.end();
-    }
-
-    // Called when another command which requires one or more of the same
-    // subsystems is scheduled to run
-    @Override
-    protected void interrupted() {
-        followerCommand.interrupted();
+    public void end(boolean interrupted) {
+        followerCommand.end(interrupted);
     }
 }

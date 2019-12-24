@@ -11,7 +11,7 @@ import com.arctos6135.robotpathfinder.core.trajectory.TankDriveMoment;
 import com.arctos6135.robotpathfinder.follower.Followable;
 import com.arctos6135.robotpathfinder.motionprofile.followable.profiles.TrapezoidalTankDriveRotationProfile;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 
 /**
@@ -19,7 +19,7 @@ import frc.robot.Robot;
  * This command uses the {@link frc.robot.commands.FollowTrajectory FollowTrajectory} command internally
  * and thus requires RobotPathfinder to be properly tuned.
  */
-public class RotateToAngle extends Command {
+public class RotateToAngle extends CommandBase {
 
     /**
      * The direction to turn in.
@@ -40,16 +40,14 @@ public class RotateToAngle extends Command {
      * @param direction The direction to turn in
      */
     public RotateToAngle(double angle, Direction direction) {
-        // Use requires() here to declare subsystem dependencies
-        // eg. requires(chassis);
-        requires(Robot.drivetrain);
+        addRequirements(Robot.drivetrain);
         this.angle = angle;
         this.direction = direction;
     }
 
     // Called just before this Command runs the first time
     @Override
-    protected void initialize() {
+    public void initialize() {
         Robot.logger.logInfoFiner("Generating trajectory to rotate to angle...");
         // Use a RobotPathfinder trajectory here to save time and improve accuracy with the already tuned PIDs
         profile = new TrapezoidalTankDriveRotationProfile(FollowTrajectory.getSpecs(), 
@@ -63,26 +61,19 @@ public class RotateToAngle extends Command {
 
     // Called repeatedly when this Command is scheduled to run
     @Override
-    protected void execute() {
+    public void execute() {
         followerCommand.execute();
     }
 
     // Make this return true when this Command no longer needs to run execute()
     @Override
-    protected boolean isFinished() {
+    public boolean isFinished() {
         return followerCommand.isFinished();
     }
 
     // Called once after isFinished returns true
     @Override
-    protected void end() {
-        followerCommand.end();
-    }
-
-    // Called when another command which requires one or more of the same
-    // subsystems is scheduled to run
-    @Override
-    protected void interrupted() {
-        followerCommand.interrupted();
+    public void end(boolean interrupted) {
+        followerCommand.end(interrupted);
     }
 }
