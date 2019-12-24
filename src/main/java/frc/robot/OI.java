@@ -7,14 +7,16 @@
 
 package frc.robot;
 
+import com.arctos6135.robotlib.oi.Rumble;
+
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.buttons.Button;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import edu.wpi.first.wpilibj.buttons.POVButton;
-import edu.wpi.first.wpilibj.buttons.Trigger;
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.Button;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.AutoCargoIntake;
 import frc.robot.commands.AutoClimb;
 import frc.robot.commands.OperateClimber;
@@ -23,7 +25,6 @@ import frc.robot.commands.OperateHank;
 import frc.robot.commands.RestartVisionServer;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
-import frc.robot.misc.Rumble;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 
@@ -196,7 +197,7 @@ public class OI {
                 return RobotController.getUserButton();
             }
         };
-        shutdownJetson.whileActive(new ShutdownJetson());
+        shutdownJetson.whileActiveOnce(new ShutdownJetson());
 
         precisionDrive.whenPressed(new InstantCommand(() -> {
             // Precision drive is disabled when the robot is in low gear,
@@ -207,14 +208,21 @@ public class OI {
             }
         }));
 
-        Command debugCmd = new InstantCommand(() -> {
-            Robot.isInDebugMode = !Robot.isInDebugMode;
-            Robot.debugModeEntry.setBoolean(Robot.isInDebugMode);
-            if (Robot.isInDebugMode) {
-                Robot.logger.logInfo("Debug mode activated");
+        Command debugCmd = new InstantCommand() {
+            @Override
+            public void initialize() {
+                Robot.isInDebugMode = !Robot.isInDebugMode;
+                Robot.debugModeEntry.setBoolean(Robot.isInDebugMode);
+                if (Robot.isInDebugMode) {
+                    Robot.logger.logInfo("Debug mode activated");
+                }
             }
-        });
-        debugCmd.setRunWhenDisabled(true);
+
+            @Override
+            public boolean runsWhenDisabled() {
+                return true;
+            }
+        };
         debug.whenPressed(debugCmd);
 
         stopAuto.whenPressed(new InstantCommand(() -> {
