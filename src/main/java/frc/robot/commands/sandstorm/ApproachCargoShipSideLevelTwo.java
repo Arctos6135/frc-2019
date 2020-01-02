@@ -14,8 +14,8 @@ import frc.robot.misc.AutoPaths;
 public class ApproachCargoShipSideLevelTwo extends CommandGroup {
 
     public ApproachCargoShipSideLevelTwo(AutoDispatcher.Side side, boolean reverse) {
-        addSequential(new FollowTrajectory(reverse ? AutoPaths.driveOffHabLevelTwo.mirrorFrontBack() 
-                : AutoPaths.driveOffHabLevelTwo));
+        addSequential(
+                new FollowTrajectory(reverse ? AutoPaths.driveOffHabLevelTwoReversed : AutoPaths.driveOffHabLevelTwo));
         addSequential(new ApproachCargoShipSideLevelOne(side, reverse));
     }
 }

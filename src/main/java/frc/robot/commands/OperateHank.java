@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.misc.RobotLogger;
 
 /**
  * This command operates Hank. When started, it pushes Hank out, and when ending/interrupted, it retracts Hank.
@@ -39,7 +38,7 @@ public class OperateHank extends Command {
     // Called once when the command executes
     @Override
     protected void initialize() {
-        RobotLogger.logInfoFine("Hank operation started");
+        Robot.logger.logInfoFine("Hank operation started");
         Robot.hank.pushOut();
     }
 
@@ -54,13 +53,13 @@ public class OperateHank extends Command {
 
     @Override
     protected void end() {
-        RobotLogger.logInfoFine("Hank operation ended");
+        Robot.logger.logInfoFine("Hank operation ended");
         Robot.hank.retract();
     }
 
     @Override
     protected void interrupted() {
-        RobotLogger.logInfoFine("Hank operation interrupted");
+        Robot.logger.logInfoFine("Hank operation interrupted");
         Robot.hank.retract();
     }
 }

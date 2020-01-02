@@ -7,16 +7,18 @@
 
 package frc.robot.commands;
 
+import com.arctos6135.robotpathfinder.core.trajectory.TankDriveMoment;
+import com.arctos6135.robotpathfinder.follower.Followable;
+import com.arctos6135.robotpathfinder.motionprofile.followable.profiles.TrapezoidalTankDriveProfile;
+
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import robot.pathfinder.core.trajectory.TankDriveTrajectory;
-import robot.pathfinder.core.trajectory.TrajectoryGenerator;
 
 public class DriveDistance extends Command {
 
     final double distance;
 
-    TankDriveTrajectory trajectory;
+    Followable<TankDriveMoment> profile;
     FollowTrajectory followerCommand;
 
     public DriveDistance(double distance) {
@@ -30,16 +32,23 @@ public class DriveDistance extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        trajectory = TrajectoryGenerator.generateStraightTank(FollowTrajectory.getSpecs(), distance);
+        Robot.logger.logInfoFiner("Driving distance " + distance);
+        profile = new TrapezoidalTankDriveProfile(FollowTrajectory.getSpecs(), distance);
         // Wrap around a FollowTrajectory
-        followerCommand = new FollowTrajectory(trajectory);
+        followerCommand = new FollowTrajectory(profile);
         followerCommand.initialize();
     }
 
     // Called repeatedly when this Command is scheduled to run
     @Override
     protected void execute() {
-        followerCommand.execute();
+        try {
+            followerCommand.execute();
+        }
+        catch(Exception e) {
+            System.out.println("DriveDistance exception:");
+            e.printStackTrace();
+        }
     }
 
     // Make this return true when this Command no longer needs to run execute()

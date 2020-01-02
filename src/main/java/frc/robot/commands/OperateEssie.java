@@ -7,9 +7,10 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.Trigger;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.misc.RobotLogger;
 
 /**
  * This command operates Essie. When started, it operates Essie in the mode specified, and when stopped/interrupted,
@@ -47,7 +48,7 @@ public class OperateEssie extends Command {
     // Called just before this Command runs the first time
     @Override
     protected void initialize() {
-        RobotLogger.logInfoFine("Essie operation started with mode " + mode.toString());
+        Robot.logger.logInfoFine("Essie operation started with mode " + mode.toString());
         switch(mode) {
         case OUT_LOW:
             Robot.essie.startOuttakeLow();
@@ -75,7 +76,7 @@ public class OperateEssie extends Command {
     // Called once after isFinished returns true
     @Override
     protected void end() {
-        RobotLogger.logInfoFine("Essie operation ended");
+        Robot.logger.logInfoFine("Essie operation ended");
         Robot.essie.stop();
     }
 
@@ -83,7 +84,7 @@ public class OperateEssie extends Command {
     // subsystems is scheduled to run
     @Override
     protected void interrupted() {
-        RobotLogger.logInfoFine("Essie operation interrupted");
+        Robot.logger.logInfoFine("Essie operation interrupted");
         Robot.essie.stop();
     }
 }

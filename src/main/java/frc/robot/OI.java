@@ -23,7 +23,6 @@ import frc.robot.commands.OperateHank;
 import frc.robot.commands.RestartVisionServer;
 import frc.robot.commands.ShutdownJetson;
 import frc.robot.commands.TeleopDrive;
-import frc.robot.misc.RobotLogger;
 import frc.robot.misc.Rumble;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
@@ -165,14 +164,14 @@ public class OI {
         Button autoClimb = new POVButton(driverController, Controls.POV_AUTO_CLIMB);
 
         overrideMotorBlacklist1.whenActive(new InstantCommand(() -> {
-            RobotMap.essieMotorHigh.overrideBlacklist();
-            RobotMap.essieMotorLow.overrideBlacklist();
-            RobotLogger.logWarning("Motor protection manually overridden");
+            RobotMap.essieMotorHigh.clearBlacklist();
+            RobotMap.essieMotorLow.clearBlacklist();
+            Robot.logger.logWarning("Motor protection manually overridden");
         }));
         overrideMotorBlacklist2.whenActive(new InstantCommand(() -> {
-            RobotMap.essieMotorHigh.overrideBlacklist();
-            RobotMap.essieMotorLow.overrideBlacklist();
-            RobotLogger.logWarning("Motor protection manually overridden");
+            RobotMap.essieMotorHigh.clearBlacklist();
+            RobotMap.essieMotorLow.clearBlacklist();
+            Robot.logger.logWarning("Motor protection manually overridden");
         }));
 
         essieAutoIntake.whenPressed(new AutoCargoIntake());
@@ -184,7 +183,7 @@ public class OI {
             Command essieCommand = Robot.essie.getCurrentCommand();
             if(essieCommand != null && essieCommand instanceof AutoCargoIntake) {
                 essieCommand.cancel();
-                RobotLogger.logInfoFine("Essie autopickup cancelled");
+                Robot.logger.logInfoFine("Essie autopickup cancelled");
             }
         }));
 
@@ -204,14 +203,15 @@ public class OI {
             // as the robot already goes very slowly anyways.
             if(Robot.drivetrain.getGear() != Drivetrain.Gear.LOW) {
                 TeleopDrive.togglePrecisionDrive();
-                RobotLogger.logInfoFine("Precision drive changed to " + TeleopDrive.isPrecisionDrive());
+                Robot.logger.logInfoFine("Precision drive changed to " + TeleopDrive.isPrecisionDrive());
             }
         }));
 
         Command debugCmd = new InstantCommand(() -> {
             Robot.isInDebugMode = !Robot.isInDebugMode;
+            Robot.debugModeEntry.setBoolean(Robot.isInDebugMode);
             if (Robot.isInDebugMode) {
-                RobotLogger.logInfo("Debug mode activated");
+                Robot.logger.logInfo("Debug mode activated");
             }
         });
         debugCmd.setRunWhenDisabled(true);
@@ -221,12 +221,12 @@ public class OI {
             Command c = Robot.drivetrain.getCurrentCommand();
             if(c != null && !(c instanceof TeleopDrive)) {
                 c.cancel();
-                RobotLogger.logInfoFine("Cancelled a command of type " + c.getClass().getName());
+                Robot.logger.logInfoFine("Cancelled a command of type " + c.getClass().getName());
             }
         }));
         reverse.whenPressed(new InstantCommand(() -> {
             TeleopDrive.reverse();
-            RobotLogger.logInfoFine("Driving reversed");
+            Robot.logger.logInfoFine("Driving reversed");
         }));
 
         // This trigger is activated when the drive controls are active
@@ -242,7 +242,7 @@ public class OI {
             Command c = Robot.drivetrain.getCurrentCommand();
             if(c != null && !(c instanceof TeleopDrive)) {
                 c.cancel();
-                RobotLogger.logInfoFine("Cancelled a command of type " + c.getClass().getName());
+                Robot.logger.logInfoFine("Cancelled a command of type " + c.getClass().getName());
             }
         }));
 
@@ -253,15 +253,15 @@ public class OI {
                 if(Math.abs(Robot.drivetrain.getLeftSpeed()) <= RobotMap.SHIFT_LOW_TO_HIGH_MAX
                         && Math.abs(Robot.drivetrain.getRightSpeed()) <= RobotMap.SHIFT_LOW_TO_HIGH_MAX) {
                     Robot.drivetrain.setGear(Drivetrain.Gear.HIGH);
-                    RobotLogger.logInfoFine("Shifted to high gear");
+                    Robot.logger.logInfoFine("Shifted to high gear");
                 }
                 else {
                     noGearShiftRumble.execute();
-                    RobotLogger.logWarning("Attempt to shift to high gear when speed is too high");
+                    Robot.logger.logWarning("Attempt to shift to high gear when speed is too high");
                 }
             }
             else {
-                RobotLogger.logInfoFine("High gear button pressed; robot is already in high gear");
+                Robot.logger.logInfoFine("High gear button pressed; robot is already in high gear");
             }
         }));
         gearShiftLow.whenPressed(new InstantCommand(() -> {
@@ -269,7 +269,7 @@ public class OI {
                 if(Math.abs(Robot.drivetrain.getLeftSpeed()) <= RobotMap.SHIFT_HIGH_TO_LOW_MAX
                         && Math.abs(Robot.drivetrain.getRightSpeed()) <= RobotMap.SHIFT_HIGH_TO_LOW_MAX) {
                     Robot.drivetrain.setGear(Drivetrain.Gear.LOW);
-                    RobotLogger.logInfoFine("Shifted to low gear");
+                    Robot.logger.logInfoFine("Shifted to low gear");
                     // When setting gear from high to low, check if precision mode is enabled
                     // Disable precision mode as it is useless in low gear and there is no way to disable it
                     if(TeleopDrive.isPrecisionDrive()) {
@@ -278,11 +278,11 @@ public class OI {
                 }
                 else {
                     noGearShiftRumble.execute();
-                    RobotLogger.logWarning("Attempt to shift to low gear when speed is too high");
+                    Robot.logger.logWarning("Attempt to shift to low gear when speed is too high");
                 }
             }
             else {
-                RobotLogger.logInfoFine("Low gear button pressed; robot is already in low gear");
+                Robot.logger.logInfoFine("Low gear button pressed; robot is already in low gear");
             }
         }));
 
@@ -296,7 +296,7 @@ public class OI {
             Command c = Robot.climber.getCurrentCommand();
             if(c != null && c instanceof AutoClimb) {
                 c.cancel();
-                RobotLogger.logInfoFine("Auto climb was cancelled because the buttons were released");
+                Robot.logger.logInfoFine("Auto climb was cancelled because the buttons were released");
             }
         }));
     }
